@@ -62,6 +62,7 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
     DWORD lReturn = GetAdaptersAddresses(0, 0, nullptr, lCurrentAddresses, &lBuffer);
 
     if (lReturn == NO_ERROR) {
+        aWifiAdapterList.clear();
         while (lCurrentAddresses != nullptr) {
             // Check if the device is a wifi (802.11) device
             if (lCurrentAddresses->IfType == IF_TYPE_IEEE80211) {
