@@ -175,6 +175,8 @@ int main(int argc, char* argv[])
                                         mWindowModel.mAutoDiscoverPSPVitaNetworks,
                                         lTimeOut,
                                         &mWindowModel.mCurrentlyConnectedNetwork);
+
+                                    Logger::GetInstance().Log("Plugin Device created!", Logger::Level::INFO);
                                 }
                             } else {
                                 if (std::dynamic_pointer_cast<MonitorDevice>(lDevice) == nullptr) {
@@ -182,6 +184,8 @@ int main(int argc, char* argv[])
                                     auto lMonitorDevice = std::dynamic_pointer_cast<MonitorDevice>(lDevice);
                                     lMonitorDevice->SetSourceMACToFilter(MacToInt(mWindowModel.mOnlyAcceptFromMac));
                                     lMonitorDevice->SetAcknowledgePackets(mWindowModel.mAcknowledgeDataFrames);
+
+                                    Logger::GetInstance().Log("Monitor Device created!", Logger::Level::INFO);
                                 }
                             }
                             lXLinkKaiConnection->SetIncomingConnection(lDevice);
