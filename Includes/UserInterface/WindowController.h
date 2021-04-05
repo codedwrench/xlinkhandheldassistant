@@ -26,14 +26,17 @@ namespace WindowController_Constants
 using namespace WindowController_Constants;
 
 /**
- * This class will setup our window layout and basically handle everything around the user interface.
+ * This class will setup our window layout and basically handle everything
+ * around the user interface.
  */
 class WindowController
 {
 public:
     /**
-     * Constructor of WindowController, handles everything around the user interface.
-     * @param aModel - A model where the window can leave its data for the rest of the program.
+     * Constructor of WindowController, handles everything around the user
+     * interface.
+     * @param aModel - A model where the window can leave its data for the rest of
+     * the program.
      */
     WindowController(WindowModel& aModel);
     ~WindowController();

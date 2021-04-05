@@ -67,6 +67,30 @@ public:
     virtual std::string_view GetName() = 0;
 
     /**
+     * Returns True if the object has an arrow down action.
+     * @return true if arrow down action can be given.
+     */
+    virtual bool HasDownAction() = 0;
+
+    /**
+     * Returns True if the object has an arrow up action.
+     * @return true if arrow up action can be given.
+     */
+    virtual bool HasUpAction() = 0;
+
+    /**
+     * Set True if the object has an arrow down action.
+     * @param aHasAction - set true if arrow down action can be given.
+     */
+    virtual void SetHasDownAction(bool aHasAction) = 0;
+
+    /**
+     * Set True if the object has an arrow up action.
+     * @param aHasAction - set true if arrow up action can be given.
+     */
+    virtual void SetHasUpAction(bool aHasAction) = 0;
+
+    /**
      * Sets name of object.
      * @param aName - Name of object.
      */

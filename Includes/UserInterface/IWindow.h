@@ -70,7 +70,8 @@ public:
     virtual std::pair<int, int> GetSize() = 0;
 
     /**
-     * Resizes window. Note: You cannot resize a Window beyond the screen boundaries.
+     * Resizes window. Note: You cannot resize a Window beyond the screen
+     * boundaries.
      * @param aLines - Amount of lines to resize the window to.
      * @param aColumns - Amount of columns to resize the window to.
      * @return true if successful.
@@ -147,7 +148,7 @@ public:
      * @param aYCoord - Y coord to clear the line at.
      * @param aLength - Length to clear.
      */
-    virtual void ClearLine(int aYCoord, int aLength) = 0;
+    virtual void ClearLine(int aYCoord, int aXCoord, int aLength) = 0;
 
     /**
      * Clears window.

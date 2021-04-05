@@ -11,6 +11,13 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE "Release")
 
+set(GIT_VERSION unknown)
+message(STATUS "${GIT_VERSION}")
+execute_process(COMMAND git describe --abbrev=7 --always --tags OUTPUT_VARIABLE GIT_VERSION)
+
+# Strip trailing stuff
+string(REGEX REPLACE "[,\n]" "" GIT_VERSION "${GIT_VERSION}")
+
 if (MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2 /MT")
 else ()
@@ -73,10 +80,6 @@ if (MSVC OR MSYS OR MINGW)
     
     set(CURSES_INCLUDE_DIRS "c:/pdcurses/")
     set(CURSES_LIBRARIES ${PDCURSES_LIBRARIES})
-
-    # The logger module uses ERROR in an enum class, GDI also uses this, but screw GDI
-    # We have no GUI anyway!
-    add_definitions( -DNOGDI )
 else ()
     find_package(Curses REQUIRED)
     find_package(LibNL REQUIRED)
@@ -107,17 +110,29 @@ add_executable(xlinkhandheldassistant main.cpp
         Sources/MonitorDevice.cpp
         Sources/Parameter80211Reader.cpp
         Sources/XLinkKaiConnection.cpp
+        Sources/RadioTapReader.cpp
+        Sources/WindowModel.cpp
+        Sources/WirelessPSPPluginDevice.cpp
+        Sources/UserInterface/AboutWindow.cpp
         Sources/UserInterface/Button.cpp
         Sources/UserInterface/CheckBox.cpp
-        Sources/UserInterface/NetworkingWindow.cpp
-        Sources/RadioTapReader.cpp
-        Sources/WirelessPSPPluginDevice.cpp
+        Sources/UserInterface/HUDController.cpp
+        Sources/UserInterface/HUDWindow.cpp
+        Sources/UserInterface/KeyboardController.cpp
+        Sources/UserInterface/MainWindowController.cpp
+        Sources/UserInterface/OptionsWindow.cpp
+        Sources/UserInterface/RadioBox.cpp
+        Sources/UserInterface/RadioBoxGroup.cpp
         Sources/UserInterface/String.cpp
         Sources/UserInterface/TextField.cpp
         Sources/UserInterface/UIObject.cpp
         Sources/UserInterface/Window.cpp
-        Sources/UserInterface/WindowController.cpp
-        Sources/UserInterface/XLinkWindow.cpp
+        Sources/UserInterface/WindowControllerBase.cpp
+        Sources/UserInterface/Wizard/MonitorDeviceStep.cpp
+        Sources/UserInterface/Wizard/PluginOptionsStep.cpp
+        Sources/UserInterface/Wizard/WizardController.cpp
+        Sources/UserInterface/Wizard/WizardSelectorStep.cpp
+        Sources/UserInterface/Wizard/XLinkOptionsStep.cpp
         Includes/Handler8023.h
         Includes/Handler80211.h
         Includes/IConnector.h
@@ -130,22 +145,36 @@ add_executable(xlinkhandheldassistant main.cpp
         Includes/PCapReader.h
         Includes/RadioTapReader.h
         Includes/MonitorDevice.h
+        Includes/NetConversionFunctions.h
         Includes/XLinkKaiConnection.h
+        Includes/WindowModel.h
         Includes/WirelessPSPPluginDevice.h
+        Includes/UserInterface/AboutWindow.h
         Includes/UserInterface/Button.h
         Includes/UserInterface/CheckBox.h
+        Includes/UserInterface/DefaultElements.h
         Includes/UserInterface/IUIObject.h
         Includes/UserInterface/IWindow.h
+        Includes/UserInterface/IWindowController.h
+        Includes/UserInterface/HUDController.h
+        Includes/UserInterface/HUDWindow.h
+        Includes/UserInterface/MainWindowController.h
+        Includes/UserInterface/KeyboardController.h
         Includes/UserInterface/NCursesKeys.h
-        Includes/NetConversionFunctions.h
-        Includes/UserInterface/NetworkingWindow.h
+        Includes/UserInterface/OptionsWindow.h
+        Includes/UserInterface/RadioBox.h
+        Includes/UserInterface/RadioBoxGroup.h
         Includes/UserInterface/String.h
         Includes/UserInterface/TextField.h
         Includes/UserInterface/UIObject.h
         Includes/UserInterface/Window.h
         Includes/UserInterface/WindowController.h
-	Includes/WindowModel.h
-        Includes/UserInterface/XLinkWindow.h)
+        Includes/UserInterface/WindowControllerBase.h
+        Includes/UserInterface/Wizard/MonitorDeviceStep.h
+        Includes/UserInterface/Wizard/PluginOptionsStep.h
+        Includes/UserInterface/Wizard/WizardController.h
+        Includes/UserInterface/Wizard/WizardSelectorStep.h
+        Includes/UserInterface/Wizard/XLinkOptionsStep.h)
         
 if(WIN32)
     if(MSYS)
@@ -156,11 +185,19 @@ elseif (UNIX)
     target_sources(xlinkhandheldassistant PRIVATE Sources/WifiInterfaceLinuxBSD.cpp Includes/WifiInterfaceLinuxBSD.h)
 endif()
 
+# The logger module uses ERROR in an enum class, GDI also uses this, but screw GDI
+# We have no GUI anyway!
+add_definitions(-DGIT_VERSION="${GIT_VERSION}" -DNOGDI)
 
 if (BUILD_STATIC)    
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ ${CMAKE_EXE_LINKER_FLAGS}")
 endif ()
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sources/UserInterface/on.txt
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sources/UserInterface/off.txt
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 target_include_directories(xlinkhandheldassistant PRIVATE ${PCAP_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${CURSES_INCLUDE_DIRS} ${LibNL_INCLUDE_DIR})
 target_link_libraries(xlinkhandheldassistant Threads::Threads ${PCAP_LIBRARY} ${Boost_LIBRARIES} ${CURSES_LIBRARIES} ${PLATFORM_SPECIFIC_LIBRARIES} ${LibNL_LIBRARIES})

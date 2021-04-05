@@ -9,7 +9,20 @@ std::string BoolToString(bool aBool)
     return aBool ? "true" : "false";
 }
 
-bool StringToBool(std::string_view aString)
+static ConnectionMethod ConvertConnectionMethodText(std::string_view aLevel)
+{
+    ConnectionMethod lReturn{Monitor};
+
+    for (std::size_t lCount = 0; lCount < cConnectionMethodTexts.size(); lCount++) {
+        if (cConnectionMethodTexts.at(lCount).find(aLevel) != std::string::npos) {
+            lReturn = static_cast<ConnectionMethod>(lCount);
+        }
+    }
+
+    return lReturn;
+}
+
+static bool StringToBool(std::string_view aString)
 {
     bool lReturn{false};
 
@@ -27,17 +40,20 @@ bool WindowModel::SaveToFile(std::string_view aPath) const
     lFile.open(aPath.data());
 
     if (lFile.is_open() && lFile.good()) {
-        lFile << cSaveLogLevel << ": \"" << Logger::ConvertLogLevelToString(mLogLevel) << "\"" << std::endl;
+        lFile << cSaveAcknowledgeDataFrames << ": " << BoolToString(mAcknowledgeDataFrames) << std::endl;
         lFile << cSaveAutoDiscoverPSPVita << ": " << BoolToString(mAutoDiscoverPSPVitaNetworks) << std::endl;
         lFile << cSaveAutoDiscoverXLinkKai << ": " << BoolToString(mAutoDiscoverXLinkKaiInstance) << std::endl;
-        lFile << cSaveUseXLinkKaiHints << ": " << BoolToString(mXLinkKaiHints) << std::endl;
-        lFile << cSavePSPPlugin << ": " << BoolToString(mUsePSPPlugin) << std::endl;
         lFile << cSaveChannel << ": \"" << mChannel << "\"" << std::endl;
+        lFile << cSaveConnectionMethod << ": \""
+              << cConnectionMethodTexts.at(WindowModel_Constants::cDefaultConnectionMethod) << "\"" << std::endl;
+        lFile << cSaveLogLevel << ": \"" << Logger::ConvertLogLevelToString(mLogLevel) << "\"" << std::endl;
+        lFile << cSaveOnlyAcceptFromMac << ": \"" << mOnlyAcceptFromMac << "\"" << std::endl;
+        lFile << cSaveReConnectionTimeOutS << ": \"" << mReConnectionTimeOutS << "\"" << std::endl;
+        lFile << cSaveUseSSIDFromXLinkKai << ": " << BoolToString(mUseSSIDFromXLinkKai) << std::endl;
+        lFile << cSaveUseXLinkKaiHints << ": " << BoolToString(mUseXLinkKaiHints) << std::endl;
         lFile << cSaveWifiAdapter << ": \"" << mWifiAdapter << "\"" << std::endl;
         lFile << cSaveXLinkIp << ": \"" << mXLinkIp << "\"" << std::endl;
         lFile << cSaveXLinkPort << ": \"" << mXLinkPort << "\"" << std::endl;
-        lFile << cSaveAcknowledgeDataFrames << ": " << BoolToString(mAcknowledgeDataFrames) << std::endl;
-        lFile << cSaveOnlyAcceptFromMac << ": \"" << mOnlyAcceptFromMac << "\"" << std::endl;
         lFile.close();
 
         if (lFile.good()) {
@@ -73,28 +89,32 @@ bool WindowModel::LoadFromFile(std::string_view aPath)
                 std::string lResult{lLine.substr(lUntilDelimiter + 1, lLine.size() - lUntilDelimiter - 1)};
                 try {
                     if (!lResult.empty()) {
-                        if (lOption == cSaveLogLevel) {
-                            mLogLevel = Logger::ConvertLogLevelStringToLevel(lResult.substr(1, lResult.size() - 2));
+                        if (lOption == cSaveAcknowledgeDataFrames) {
+                            mAcknowledgeDataFrames = StringToBool(lResult);
                         } else if (lOption == cSaveAutoDiscoverPSPVita) {
                             mAutoDiscoverPSPVitaNetworks = StringToBool(lResult);
                         } else if (lOption == cSaveAutoDiscoverXLinkKai) {
                             mAutoDiscoverXLinkKaiInstance = StringToBool(lResult);
-                        } else if (lOption == cSaveUseXLinkKaiHints) {
-                            mXLinkKaiHints = StringToBool(lResult);
-                        } else if (lOption == cSavePSPPlugin) {
-                            mUsePSPPlugin = StringToBool(lResult);
-                        } else if (lOption == cSaveWifiAdapter) {
-                            mWifiAdapter = lResult.substr(1, lResult.size() - 2);
                         } else if (lOption == cSaveChannel) {
                             mChannel = lResult.substr(1, lResult.size() - 2);
+                        } else if (lOption == cSaveConnectionMethod) {
+                            mConnectionMethod = ConvertConnectionMethodText(lResult.substr(1, lResult.size() - 2));
+                        } else if (lOption == cSaveLogLevel) {
+                            mLogLevel = Logger::ConvertLogLevelStringToLevel(lResult.substr(1, lResult.size() - 2));
+                        } else if (lOption == cSaveOnlyAcceptFromMac) {
+                            mOnlyAcceptFromMac = lResult.substr(1, lResult.size() - 2);
+                        } else if (lOption == cSaveReConnectionTimeOutS) {
+                            mReConnectionTimeOutS = lResult.substr(1, lResult.size() - 2);
+                        } else if (lOption == cSaveUseSSIDFromXLinkKai) {
+                            mUseSSIDFromXLinkKai = StringToBool(lResult.substr(1, lResult.size() - 2));
+                        } else if (lOption == cSaveUseXLinkKaiHints) {
+                            mUseXLinkKaiHints = StringToBool(lResult);
+                        } else if (lOption == cSaveWifiAdapter) {
+                            mWifiAdapter = lResult.substr(1, lResult.size() - 2);
                         } else if (lOption == cSaveXLinkIp) {
                             mXLinkIp = lResult.substr(1, lResult.size() - 2);
                         } else if (lOption == cSaveXLinkPort) {
                             mXLinkPort = lResult.substr(1, lResult.size() - 2);
-                        } else if (lOption == cSaveAcknowledgeDataFrames) {
-                            mAcknowledgeDataFrames = StringToBool(lResult);
-                        } else if (lOption == cSaveOnlyAcceptFromMac) {
-                            mOnlyAcceptFromMac = lResult.substr(1, lResult.size() - 2);
                         } else {
                             Logger::GetInstance().Log(std::string("Option:") + lOption + " unknown",
                                                       Logger::Level::DEBUG);

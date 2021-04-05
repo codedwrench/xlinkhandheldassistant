@@ -24,6 +24,26 @@ bool UIObject::HandleKey(unsigned int /*aKeyCode*/)
     return false;
 }
 
+bool UIObject::HasDownAction()
+{
+    return mHasDownAction;
+}
+
+bool UIObject::HasUpAction()
+{
+    return mHasUpAction;
+}
+
+void UIObject::SetHasDownAction(bool aHasAction)
+{
+    mHasDownAction = aHasAction;
+}
+
+void UIObject::SetHasUpAction(bool aHasAction)
+{
+    mHasUpAction = aHasAction;
+}
+
 void UIObject::Scale()
 {
     Dimensions lParameters{mScaleCalculation()};
@@ -48,7 +68,7 @@ void UIObject::SetVisible(bool aVisible)
 
     // Also clear the line that this is on.
     if (!mVisible) {
-        mWindow.ClearLine(mYCoord, mWindow.GetSize().second);
+        mWindow.ClearLine(mYCoord, 0, mWindow.GetSize().second);
     }
 }
 

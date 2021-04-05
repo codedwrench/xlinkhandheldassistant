@@ -14,20 +14,19 @@ Window::Window(WindowModel&                       aModel,
                bool                               aVisible) :
     mModel{aModel},
     mTitle{aTitle}, mScaleCalculation(aCalculation), mNCursesWindow{nullptr}, mHeight{0}, mWidth{0},
-    mDrawBorder(aDrawBorder), mExclusive{aExclusive}, mVisible{aVisible}, mSelectedObject{0}, mObjects{}
+    mDrawBorder(aDrawBorder), mExclusive{aExclusive}, mVisible{aVisible}, mSelectedObject{-1}, mObjects{}
 {
     Dimensions lWindowParameters{aCalculation()};
-    mHeight        = lWindowParameters.at(0);
-    mWidth         = lWindowParameters.at(1);
+    mHeight        = lWindowParameters.at(2);
+    mWidth         = lWindowParameters.at(3);
     mNCursesWindow = NCursesWindow(
         newwin(lWindowParameters.at(2), lWindowParameters.at(3), lWindowParameters.at(0), lWindowParameters.at(1)),
         [](WINDOW* aWin) { delwin(aWin); });
-    SetUp();
 }
 
 void Window::SetUp()
 {
-    // Base window has no setup yet.
+    Scale();
 }
 
 bool Window::HandleKey(unsigned int aKeyCode)
@@ -72,18 +71,24 @@ void Window::Draw()
     Refresh();
 }
 
-void Window::ClearLine(int aYCoord, int aLength)
+void Window::ClearLine(int aYCoord, int aXCoord, int aLength)
 {
     std::string lEmptySpace;
     lEmptySpace.resize(aLength, ' ');
-    DrawString(aYCoord, 0, 1, lEmptySpace);
+    DrawString(aYCoord, aXCoord, 1, lEmptySpace);
 }
 
 void Window::DrawString(int aYCoord, int aXCoord, int aColorPair, std::string_view aString)
 {
     wattrset(mNCursesWindow.get(), COLOR_PAIR(aColorPair));
-    mvwaddstr(mNCursesWindow.get(), aYCoord, aXCoord, aString.data());
-    wattrset(mNCursesWindow.get(), COLOR_PAIR(1));
+    std::stringstream lStream{aString.data()};
+    std::string       lLineToDraw{};
+    int               lYCoord{aYCoord};
+    while (std::getline(lStream, lLineToDraw, '\n')) {
+        mvwaddstr(mNCursesWindow.get(), lYCoord, aXCoord, lLineToDraw.data());
+        wattrset(mNCursesWindow.get(), COLOR_PAIR(1));
+        lYCoord++;
+    }
 }
 
 void Window::AddObject(std::shared_ptr<IUIObject> aObject)
@@ -178,33 +183,40 @@ bool Window::AdvanceSelectionVertical()
 {
     bool lReturn{false};
     int  lCounter{0};
-    if (mSelectedObject >= 0) {
-        int lSelectionIndex{mObjects.at(mSelectedObject)->GetYCoord()};
-        int lLowestHigherSelection{std::numeric_limits<int>::max()};
-        int lLowestHigherSelectionYCoord{std::numeric_limits<int>::max()};
+    if (!mObjects.empty()) {
+        if (mSelectedObject >= 0) {
+            if (!mObjects.at(mSelectedObject)->HasDownAction()) {
+                int lSelectionIndex{mObjects.at(mSelectedObject)->GetYCoord()};
+                int lLowestHigherSelection{std::numeric_limits<int>::max()};
+                int lLowestHigherSelectionYCoord{std::numeric_limits<int>::max()};
 
-        for (auto& lObject : mObjects) {
-            int lYCoord{lObject->GetYCoord()};
-            if (lObject->IsVisible() && lObject->IsSelectable() && lYCoord > lSelectionIndex &&
-                lYCoord < lLowestHigherSelectionYCoord) {
-                lLowestHigherSelection       = lCounter;
-                lLowestHigherSelectionYCoord = mObjects.at(lLowestHigherSelection)->GetYCoord();
+                for (auto& lObject : mObjects) {
+                    int lYCoord{lObject->GetYCoord()};
+                    if (lObject->IsVisible() && lObject->IsSelectable() && lYCoord > lSelectionIndex &&
+                        lYCoord < lLowestHigherSelectionYCoord) {
+                        lLowestHigherSelection       = lCounter;
+                        lLowestHigherSelectionYCoord = mObjects.at(lLowestHigherSelection)->GetYCoord();
+                    }
+                    lCounter++;
+                }
+
+                if (lLowestHigherSelection != std::numeric_limits<int>::max()) {
+                    mObjects.at(mSelectedObject)->SetSelected(false);
+                    mObjects.at(lLowestHigherSelection)->SetSelected(true);
+                    mSelectedObject = lLowestHigherSelection;
+                    lReturn         = true;
+                }
+            } else {
+                mObjects.at(mSelectedObject)->HandleKey(KEY_DOWN);
             }
-            lCounter++;
-        }
-
-        if (lLowestHigherSelection != std::numeric_limits<int>::max()) {
-            mObjects.at(mSelectedObject)->SetSelected(false);
-            mObjects.at(lLowestHigherSelection)->SetSelected(true);
-            mSelectedObject = lLowestHigherSelection;
-            lReturn         = true;
+        } else {
+            mSelectedObject = 0;
+            mObjects.at(0)->SetSelected(true);
+            lReturn = true;
         }
     } else {
-        mSelectedObject = 0;
-        mObjects.at(0)->SetSelected(true);
         lReturn = true;
     }
-
 
     return lReturn;
 }
@@ -213,30 +225,38 @@ bool Window::RecedeSelectionVertical()
 {
     bool lReturn{false};
     int  lCounter{0};
-    if (mSelectedObject >= 0) {
-        int lSelectionIndex{mObjects.at(mSelectedObject)->GetYCoord()};
-        int lHighestLowerSelection{-1};
-        int lHighestLowerSelectionYCoord{-1};
+    if (!mObjects.empty()) {
+        if (mSelectedObject >= 0) {
+            if (!mObjects.at(mSelectedObject)->HasUpAction()) {
+                int lSelectionIndex{mObjects.at(mSelectedObject)->GetYCoord()};
+                int lHighestLowerSelection{-1};
+                int lHighestLowerSelectionYCoord{-1};
 
-        for (auto& lObject : mObjects) {
-            int lYCoord{lObject->GetYCoord()};
-            if (lObject->IsVisible() && lObject->IsSelectable() && lYCoord < lSelectionIndex &&
-                lYCoord > lHighestLowerSelectionYCoord) {
-                lHighestLowerSelection       = lCounter;
-                lHighestLowerSelectionYCoord = mObjects.at(lHighestLowerSelection)->GetYCoord();
+                for (auto& lObject : mObjects) {
+                    int lYCoord{lObject->GetYCoord()};
+                    if (lObject->IsVisible() && lObject->IsSelectable() && lYCoord < lSelectionIndex &&
+                        lYCoord > lHighestLowerSelectionYCoord) {
+                        lHighestLowerSelection       = lCounter;
+                        lHighestLowerSelectionYCoord = mObjects.at(lHighestLowerSelection)->GetYCoord();
+                    }
+                    lCounter++;
+                }
+
+                if (lHighestLowerSelection != -1) {
+                    mObjects.at(mSelectedObject)->SetSelected(false);
+                    mObjects.at(lHighestLowerSelection)->SetSelected(true);
+                    mSelectedObject = lHighestLowerSelection;
+                    lReturn         = true;
+                }
+            } else {
+                mObjects.at(mSelectedObject)->HandleKey(KEY_UP);
             }
-            lCounter++;
-        }
-
-        if (lHighestLowerSelection != -1) {
-            mObjects.at(mSelectedObject)->SetSelected(false);
-            mObjects.at(lHighestLowerSelection)->SetSelected(true);
-            mSelectedObject = lHighestLowerSelection;
-            lReturn         = true;
+        } else {
+            mSelectedObject = static_cast<int>(mObjects.size()) - 1;
+            mObjects.at(mSelectedObject)->SetSelected(true);
+            lReturn = true;
         }
     } else {
-        mSelectedObject = static_cast<int>(mObjects.size()) - 1;
-        mObjects.at(mSelectedObject)->SetSelected(true);
         lReturn = true;
     }
 
@@ -247,31 +267,35 @@ bool Window::AdvanceSelectionHorizontal()
 {
     bool lReturn{false};
     int  lCounter{0};
-    if (mSelectedObject >= 0) {
-        int lSelectionIndex{mObjects.at(mSelectedObject)->GetXCoord()};
-        int lLowestHigherSelection{std::numeric_limits<int>::max()};
-        int lLowestHigherSelectionXCoord{std::numeric_limits<int>::max()};
+    if (!mObjects.empty()) {
+        if (mSelectedObject >= 0) {
+            int lSelectionIndex{mObjects.at(mSelectedObject)->GetXCoord()};
+            int lLowestHigherSelection{std::numeric_limits<int>::max()};
+            int lLowestHigherSelectionXCoord{std::numeric_limits<int>::max()};
+            int lCount = 0;
 
-        for (auto& lObject : mObjects) {
-            int lXCoord{lObject->GetXCoord()};
-            if (lObject->IsVisible() && lObject->IsSelectable() && lXCoord > lSelectionIndex &&
-                lXCoord < lLowestHigherSelectionXCoord) {
-                lLowestHigherSelection       = lCounter;
-                lLowestHigherSelectionXCoord = mObjects.at(lLowestHigherSelection)->GetXCoord();
+            for (auto& lObject : mObjects) {
+                int lXCoord{lObject->GetXCoord()};
+                if (lObject->IsVisible() && lObject->IsSelectable() && lXCoord > lSelectionIndex &&
+                    lXCoord < lLowestHigherSelectionXCoord) {
+                    lLowestHigherSelection       = lCounter;
+                    lLowestHigherSelectionXCoord = mObjects.at(lLowestHigherSelection)->GetXCoord();
+                    lCount++;
+                }
+                lCounter++;
             }
-            lCounter++;
-        }
 
-        if (lLowestHigherSelection != std::numeric_limits<int>::max()) {
-            mObjects.at(mSelectedObject)->SetSelected(false);
-            mObjects.at(lLowestHigherSelection)->SetSelected(true);
-            mSelectedObject = lLowestHigherSelection;
-            lReturn         = true;
+            if (lLowestHigherSelection != std::numeric_limits<int>::max()) {
+                mObjects.at(mSelectedObject)->SetSelected(false);
+                mObjects.at(lLowestHigherSelection)->SetSelected(true);
+                mSelectedObject = lLowestHigherSelection;
+                lReturn         = true;
+            }
+        } else {
+            mSelectedObject = 0;
+            mObjects.at(0)->SetSelected(true);
+            lReturn = true;
         }
-    } else {
-        mSelectedObject = 0;
-        mObjects.at(0)->SetSelected(true);
-        lReturn = true;
     }
 
     return lReturn;
@@ -344,7 +368,7 @@ void Window::ClearWindow()
     std::pair<int, int> lSize{GetSize()};
 
     for (int lCount = 0; lCount < lSize.first; lCount++) {
-        ClearLine(lCount, lSize.second);
+        ClearLine(lCount, 0, lSize.second);
     }
 }
 

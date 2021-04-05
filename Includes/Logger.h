@@ -2,22 +2,22 @@
 
 /* Copyright (c) 2020 [Rick de Bondt] - Logger.h
  *
- * This file contains the header for a Logger class which will be used to log things happening in the applications based
- * on different levels.
+ * This file contains the header for a Logger class which will be used to log
+ * things happening in the applications based on different levels.
  *
  * */
 
 #include <array>
 #include <fstream>
 
-// Does not exist in Visual Studio yet, https://github.com/microsoft/STL/pull/664
+// Does not exist in Visual Studio yet,
+// https://github.com/microsoft/STL/pull/664
 #if defined(__GNUC__) || defined(__GNUG__)
 #include <experimental/source_location>
 #endif
 
 #include <sstream>
 #include <string>
-
 
 /**
  * Logger class, can log text to file or stdout.
@@ -92,8 +92,8 @@ public:
     static std::string ConvertLogLevelToString(Logger::Level aLogLevel);
 
     /**
-     * Sets the loglevel to debug, warning or error, based upon this variable certain logmessages will be shown or not
-     * shown.
+     * Sets the loglevel to debug, warning or error, based upon this variable
+     * certain logmessages will be shown or not shown.
      * @param aLevel - The level to set.
      */
     void SetLogLevel(Level aLevel);
@@ -101,7 +101,8 @@ public:
     /**
      * Converts the loglevel string to actual loglevel.
      * @param aLevel - The level to convert.
-     * @return Level containing the loglevel. Default loglevel if string not recognized.
+     * @return Level containing the loglevel. Default loglevel if string not
+     * recognized.
      */
     static Level ConvertLogLevelStringToLevel(std::string_view aLevel);
 
@@ -113,13 +114,16 @@ public:
 
     /**
      * Enables or disables logging to disk.
-     * @param aLoggingToDiskEnabled - Set true when logging to disk should be enabled.
+     * @param aLoggingToDiskEnabled - Set true when logging to disk should be
+     * enabled.
      */
     void SetLogToDisk(bool aLoggingToDiskEnabled);
 
     /**
-     * Enables or disables logging to screen. When using the TUI interface logging to screen is unwanted.
-     * @param aLoggingToScreenEnabled - Set true when logging to screen should be enabled.
+     * Enables or disables logging to screen. When using the TUI interface logging
+     * to screen is unwanted.
+     * @param aLoggingToScreenEnabled - Set true when logging to screen should be
+     * enabled.
      */
     void SetLogToScreen(bool aLoggingToScreenEnabled);
 

@@ -31,8 +31,8 @@ class Window : public IWindow
 {
 public:
     /**
-     * @param aCalculation - The calculation that needs to be done to get to the scaling values
-     * (takes height, width; returns starty, startx, height, width).
+     * @param aCalculation - The calculation that needs to be done to get to the
+     * scaling values (takes height, width; returns starty, startx, height, width).
      **/
     Window(WindowModel&                       aModel,
            std::string_view                   aTitle,
@@ -49,9 +49,9 @@ public:
 
     ~Window() = default;
 
-    void SetUp() override;
+    virtual void SetUp() override;
 
-    void ClearLine(int aYCoord, int aLength) override;
+    void ClearLine(int aYCoord, int aXCoord, int aLength) override;
 
     void ClearWindow() override;
 

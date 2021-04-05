@@ -26,6 +26,10 @@ public:
     void               SetVisible(bool aVisible) override;
     [[nodiscard]] bool IsVisible() const override;
 
+    bool               HasDownAction() override;
+    bool               HasUpAction() override;
+    void               SetHasDownAction(bool aHasAction) override;
+    void               SetHasUpAction(bool aHasAction) override;
     void               SetSelected(bool aSelected) override;
     [[nodiscard]] bool IsSelectable() const override;
     [[nodiscard]] bool IsSelected() const override;
@@ -40,6 +44,8 @@ protected:
 
 private:
     IWindow&                    mWindow;
+    bool                        mHasUpAction{false};
+    bool                        mHasDownAction{false};
     std::string                 mName;
     bool                        mSelectable;
     bool                        mVisible;
