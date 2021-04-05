@@ -11,7 +11,7 @@ std::string BoolToString(bool aBool)
 
 static ConnectionMethod ConvertConnectionMethodText(std::string_view aLevel)
 {
-    ConnectionMethod lReturn{Monitor};
+    ConnectionMethod lReturn{Plugin};
 
     for (std::size_t lCount = 0; lCount < cConnectionMethodTexts.size(); lCount++) {
         if (cConnectionMethodTexts.at(lCount).find(aLevel) != std::string::npos) {

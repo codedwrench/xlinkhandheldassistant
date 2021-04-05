@@ -29,10 +29,15 @@ void WizardSelectorStep::SetUp()
                                                    "Choose your connection method:",
                                                    ScaleSelectorBoxes,
                                                    reinterpret_cast<int&>(GetModel().mConnectionMethod))};
-    lSelector->AddRadioBox("Monitor Device");
+
     lSelector->AddRadioBox("Plugin Device");
-    lSelector->AddRadioBox("USB Device");
-    lSelector->AddRadioBox("Simulated Device");
+#if not defined(_WIN32) && not defined(_WIN64)
+    lSelector->AddRadioBox("Monitor Device");
+#endif
+
+    // TODO: Add
+    //lSelector->AddRadioBox("USB Device");
+    //lSelector->AddRadioBox("Simulated Device");
 
     // Objects need to be added for them to be drawn
     AddObject(lSelector);

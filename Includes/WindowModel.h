@@ -22,8 +22,12 @@ namespace WindowModel_Constants
 
     enum ConnectionMethod
     {
+#if not defined(_WIN32) && not defined(_WIN64)
         Monitor = 0, /**< Monitor mode device */
-        Plugin,      /**< Plugin device */
+	Plugin,
+#else
+        Plugin = 0,      /**< Plugin device */
+#endif
         USB,         /**< USB device */
         Simulation   /**< Simulation device */
     };
@@ -60,7 +64,7 @@ namespace WindowModel_Constants
     static constexpr bool             cDefaultAutoDiscoverPSPVita{false};
     static constexpr bool             cDefaultAutoDiscoverXLinkKai{false};
     static constexpr std::string_view cDefaultChannel{"1"};
-    static constexpr ConnectionMethod cDefaultConnectionMethod{ConnectionMethod::Monitor};
+    static constexpr ConnectionMethod cDefaultConnectionMethod{ConnectionMethod::Plugin};
     static constexpr Logger::Level    cDefaultLogLevel{Logger::Level::ERROR};
     static constexpr std::string_view cDefaultOnlyAcceptFromMac{""};
     static constexpr std::string_view cDefaultReConnectionTimeOutS{"15"};

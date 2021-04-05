@@ -72,7 +72,7 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
                 if (lFriendlyName.rfind("Virtual", 0) != 0) {
                     std::pair<std::string, std::string> lWifiInformation{};
                     // Without \Device\NPF_ in front of this, it doesn't work
-                    lWifiInformation.first  = "\Device\NPF_" + std::string(lCurrentAddresses->AdapterName,
+                    lWifiInformation.first  = "\\Device\\NPF_" + std::string(lCurrentAddresses->AdapterName,
                                                                           lCurrentAddresses->AdapterName +
                                                                               strlen(lCurrentAddresses->AdapterName));
                     lWifiInformation.second = lFriendlyName;
@@ -142,16 +142,6 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
 void WizardController::HandleConnectionMethod()
 {
     switch (GetWindowModel().mConnectionMethod) {
-        case WindowModel_Constants::ConnectionMethod::Monitor:
-            mWizardStep = MonitorOptions;
-
-            // We are going to fill the WiFi-adapter list now, since we need it here
-            FillWifiAdapters(GetWindowModel().mWifiAdapterList);
-
-            // Add the Monitor wizard step
-            ReplaceWindow<MonitorDeviceStep>(GetWindows(), GetWindowModel(), "Monitor options");
-
-            break;
         case WindowModel_Constants::ConnectionMethod::Plugin:
             mWizardStep = PluginOptions;
 
@@ -162,6 +152,18 @@ void WizardController::HandleConnectionMethod()
             ReplaceWindow<PluginOptionsStep>(GetWindows(), GetWindowModel(), "Plugin options");
 
             break;
+#if not defined(_WIN32) && not defined(_WIN64)
+        case WindowModel_Constants::ConnectionMethod::Monitor:
+            mWizardStep = MonitorOptions;
+
+            // We are going to fill the WiFi-adapter list now, since we need it here
+            FillWifiAdapters(GetWindowModel().mWifiAdapterList);
+
+            // Add the Monitor wizard step
+            ReplaceWindow<MonitorDeviceStep>(GetWindows(), GetWindowModel(), "Monitor options");
+
+            break;
+#endif
         case WindowModel_Constants::ConnectionMethod::Simulation:
             mWizardStep = SimulationOptions;
 
