@@ -22,7 +22,7 @@ namespace WindowModel_Constants
 
     enum ConnectionMethod
     {
-	Plugin = 0,  /**< Plugin device
+	Plugin = 0,  /**< Plugin device */
 #if not defined(_WIN32) && not defined(_WIN64)
         Monitor,     /**< Monitor mode device */
 #endif
@@ -37,9 +37,13 @@ namespace WindowModel_Constants
         Error
     };
 
-    static constexpr std::array<std::string_view, 4> cConnectionMethodTexts{"Monitor", "Plugin", "USB", "Simulation"};
-    static constexpr std::array<std::string_view, 3> cEngineStatusTexts{"Idle", "Running", "Error"};
+#if not defined(_WIN32) && not defined(_WIN64)
+    static constexpr std::array<std::string_view, 4> cConnectionMethodTexts{"Plugin", "Monitor", "USB", "Simulation"};
+#else
+    static constexpr std::array<std::string_view, 4> cConnectionMethodTexts{"Plugin", "USB", "Simulation"};
+#endif
 
+    static constexpr std::array<std::string_view, 3> cEngineStatusTexts{"Idle", "Running", "Error"};
     static constexpr std::string_view cSaveFilePath{"config.txt"};
 
     // Keys in the config file
