@@ -22,11 +22,9 @@ namespace WindowModel_Constants
 
     enum ConnectionMethod
     {
+	Plugin = 0,  /**< Plugin device
 #if not defined(_WIN32) && not defined(_WIN64)
-        Monitor = 0, /**< Monitor mode device */
-	Plugin,
-#else
-        Plugin = 0,      /**< Plugin device */
+        Monitor,     /**< Monitor mode device */
 #endif
         USB,         /**< USB device */
         Simulation   /**< Simulation device */
