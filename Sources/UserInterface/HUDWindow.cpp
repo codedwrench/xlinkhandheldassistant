@@ -25,6 +25,11 @@ namespace
                 0};
     }
 
+    Dimensions ScaleConnectedTo(const int& aMaxWidth, const std::string& aText)
+    {
+        return {1, aMaxWidth - static_cast<int>(std::string("Connected to: ").length() + aText.length() + 1), 0, 0};
+    }
+
     Dimensions ScaleEngineStatus(const int& aMaxHeight, const int& aMaxWidth, std::string_view aText)
     {
         return {(aMaxHeight - 1),
@@ -70,7 +75,7 @@ Dimensions HUDWindow::ScaleReConnectionButton()
 {
     // TODO: REALLY FUCKING FIX THIS ARRAY ACCESSING YOU'VE BEEN DOING
     return {GetHeightReference() - 2,
-            GetObjects().at(2)->GetXCoord() - static_cast<int>(std::string("[ Re-Connect ]").length()) - 2,
+            GetObjects().at(3)->GetXCoord() - static_cast<int>(std::string("[ Re-Connect ]").length()) - 2,
             0,
             0};
 }
@@ -101,6 +106,12 @@ void HUDWindow::SetUp()
         *this, mOffPicture, [&] { return ScalePicture(GetHeightReference(), GetWidthReference(), mOffPicture); })});
 
     AddObject({std::make_shared<String>(
+        *this,
+        "Connected to: " + GetModel().mCurrentlyConnectedNetwork,
+        [&] { return ScaleConnectedTo(GetWidthReference(), GetModel().mCurrentlyConnectedNetwork); },
+        !GetModel().mCurrentlyConnectedNetwork.empty())});
+
+    AddObject({std::make_shared<String>(
         *this, "Status: " + std::string(WindowModel_Constants::cEngineStatusTexts.at(GetModel().mEngineStatus)), [&] {
             return ScaleEngineStatus(GetHeightReference(),
                                      GetWidthReference(),
@@ -121,7 +132,7 @@ void HUDWindow::SetUp()
         "Re-Connect",
         [&] { return ScaleReConnectionButton(); },
         [&] {
-            GetModel().mReConnect = true;
+            GetModel().mCommand = WindowModel_Constants::Command::ReConnect;
             return true;
         },
         false,
@@ -149,11 +160,11 @@ void HUDWindow::Draw()
     if (GetModel().mEngineStatus == WindowModel_Constants::EngineStatus::Idle) {
         // TODO: This still needs a better method
         std::dynamic_pointer_cast<String>(GetObjects().at(0))->SetName(mOffPicture);
-        std::dynamic_pointer_cast<Button>(GetObjects().at(4))->SetName("Start Engine");
+        std::dynamic_pointer_cast<Button>(GetObjects().at(5))->SetName("Start Engine");
     } else if (GetModel().mEngineStatus == WindowModel_Constants::EngineStatus::Running) {
         std::dynamic_pointer_cast<String>(GetObjects().at(0))->SetName(mOnPicture);
 
-        auto lStartStopButton = std::dynamic_pointer_cast<Button>(GetObjects().at(4));
+        auto lStartStopButton = std::dynamic_pointer_cast<Button>(GetObjects().at(5));
 
         // Clear line so you won't get double text
         ClearLine(
@@ -162,7 +173,17 @@ void HUDWindow::Draw()
         lStartStopButton->SetName("Stop Engine");
     }
 
-    GetObjects().at(1)->SetName(std::string("Status: ") +
+    if(mOldConnected != GetModel().mCurrentlyConnectedNetwork)
+    {
+        // The Connected to: will otherwise show up multiple times
+        ClearLine(1, 1, GetWidthReference() - 1);
+        mOldConnected = GetModel().mCurrentlyConnectedNetwork;
+        GetObjects().at(1)->SetVisible(!GetModel().mCurrentlyConnectedNetwork.empty());
+        GetObjects().at(1)->SetName("Connected to: " + GetModel().mCurrentlyConnectedNetwork);
+        GetObjects().at(1)->Scale();
+    }
+
+    GetObjects().at(2)->SetName(std::string("Status: ") +
                                 std::string(WindowModel_Constants::cEngineStatusTexts.at(GetModel().mEngineStatus)));
 
     Window::Draw();

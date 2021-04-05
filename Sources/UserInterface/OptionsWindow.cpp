@@ -41,13 +41,10 @@ void OptionsWindow::SetUp()
         return true;
     })});
 
-    auto lLogLevelSelector{std::make_shared<RadioBoxGroup>(*this,
-                                                   "Configure log level:",
-                                                   ScaleLogLevelSelector,
-                                                   reinterpret_cast<int&>(GetModel().mLogLevel))};
+    auto lLogLevelSelector{std::make_shared<RadioBoxGroup>(
+        *this, "Configure log level:", ScaleLogLevelSelector, reinterpret_cast<int&>(GetModel().mLogLevel))};
 
-    for(std::string_view lLogLevel : Logger::cLevelTexts)
-    {
+    for (std::string_view lLogLevel : Logger::cLevelTexts) {
         lLogLevelSelector->AddRadioBox(lLogLevel);
     }
 

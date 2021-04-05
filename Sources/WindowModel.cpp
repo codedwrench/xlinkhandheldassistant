@@ -44,8 +44,7 @@ bool WindowModel::SaveToFile(std::string_view aPath) const
         lFile << cSaveAutoDiscoverPSPVita << ": " << BoolToString(mAutoDiscoverPSPVitaNetworks) << std::endl;
         lFile << cSaveAutoDiscoverXLinkKai << ": " << BoolToString(mAutoDiscoverXLinkKaiInstance) << std::endl;
         lFile << cSaveChannel << ": \"" << mChannel << "\"" << std::endl;
-        lFile << cSaveConnectionMethod << ": \""
-              << cConnectionMethodTexts.at(mConnectionMethod) << "\"" << std::endl;
+        lFile << cSaveConnectionMethod << ": \"" << cConnectionMethodTexts.at(mConnectionMethod) << "\"" << std::endl;
         lFile << cSaveLogLevel << ": \"" << Logger::ConvertLogLevelToString(mLogLevel) << "\"" << std::endl;
         lFile << cSaveOnlyAcceptFromMac << ": \"" << mOnlyAcceptFromMac << "\"" << std::endl;
         lFile << cSaveReConnectionTimeOutS << ": \"" << mReConnectionTimeOutS << "\"" << std::endl;

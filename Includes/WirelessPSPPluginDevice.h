@@ -24,7 +24,7 @@ namespace WirelessPSPPluginDevice_Constants
 {
     static constexpr unsigned int         cSnapshotLength{65535};
     static constexpr unsigned int         cPCAPTimeoutMs{1};
-    static constexpr std::chrono::seconds cReadWatchdogTimeout{5};
+    static constexpr std::chrono::seconds cReconnectionTimeOut{15};
 }  // namespace WirelessPSPPluginDevice_Constants
 
 using namespace WirelessPSPPluginDevice_Constants;
@@ -35,20 +35,25 @@ using namespace WirelessPSPPluginDevice_Constants;
 class WirelessPSPPluginDevice : public IPCapDevice
 {
 public:
+    WirelessPSPPluginDevice(
+        bool                 aAutoConnect         = false,
+        std::chrono::seconds aReConnectionTimeOut = WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+        std::string*         aCurrentlyConnected  = nullptr);
     void               BlackList(uint64_t aMAC) override;
     void               ClearMACBlackList();
     [[nodiscard]] bool IsMACBlackListed(uint64_t aMAC) const;
 
-    void                 Close() override;
+    void Close() override;
+
+    /**
+     * Connects to PSP AdHoc network.
+     * @return true if successful.
+     */
+    bool ConnectToAdHoc();
+
     std::string          DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
     const unsigned char* GetData() override;
     const pcap_pkthdr*   GetHeader() override;
-
-    /**
-     * Gets locked onto BSSID, this is the BSSID found when searching for beacon frames with the filtered SSID.
-     * @return Locked onto BSSID/
-     */
-    uint64_t GetLockedBSSID();
 
     bool Open(std::string_view aName, std::vector<std::string>& aSSIDFilter) override;
     bool Send(std::string_view aData, bool aModifyData);
@@ -57,7 +62,6 @@ public:
     bool StartReceiverThread() override;
 
 private:
-    bool ConnectToAdhoc();
     bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);
     void ShowPacketStatistics(const pcap_pkthdr* aHeader) const;
 
@@ -67,11 +71,14 @@ private:
     const unsigned char*            mData{nullptr};
     pcap_t*                         mHandler{nullptr};
     uint64_t                        mAdapterMACAddress{};
+    bool                            mAutoConnect{};
     const pcap_pkthdr*              mHeader{nullptr};
+    std::string*                    mCurrentlyConnected{nullptr};
     unsigned int                    mPacketCount{0};
     std::shared_ptr<std::thread>    mReceiverThread{nullptr};
     bool                            mSendReceivedData{false};
     std::vector<std::string>        mSSIDFilter{};
+    std::chrono::seconds            mReConnectionTimeOut{WirelessPSPPluginDevice_Constants::cReconnectionTimeOut};
     std::shared_ptr<IWifiInterface> mWifiInterface{nullptr};
     std::shared_ptr<std::thread>    mWifiTimeoutThread{nullptr};
     /**

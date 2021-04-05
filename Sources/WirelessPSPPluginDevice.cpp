@@ -12,6 +12,19 @@
 
 using namespace std::chrono;
 
+/**
+ * Constructor for the PSP plugin device.
+ * @param aAutoConnect - Whether or not to connect to networks automatically.
+ * @param aReconnectionTimeOut - How long to wait when the connection is stale to reconnect.
+ * @param aCurrentlyConnected - Reference to string where the currently connected SSID is stored.
+ */
+WirelessPSPPluginDevice::WirelessPSPPluginDevice(bool                 aAutoConnect,
+                                                 std::chrono::seconds aReconnectionTimeOut,
+                                                 std::string*         aCurrentlyConnected) :
+    mAutoConnect(aAutoConnect),
+    mReConnectionTimeOut(aReconnectionTimeOut), mCurrentlyConnected(aCurrentlyConnected)
+{}
+
 // Keeping the SSID filter in because of future autoconnect
 bool WirelessPSPPluginDevice::Open(std::string_view aName, std::vector<std::string>& aSSIDFilter)
 {
@@ -19,7 +32,7 @@ bool WirelessPSPPluginDevice::Open(std::string_view aName, std::vector<std::stri
 
     mWifiInterface = std::make_shared<WifiInterface>(aName);
     mSSIDFilter    = aSSIDFilter;
-    ConnectToAdhoc();
+    ConnectToAdHoc();
 
     std::array<char, PCAP_ERRBUF_SIZE> lErrorBuffer{};
 
@@ -65,7 +78,7 @@ void WirelessPSPPluginDevice::Close()
         mReceiverThread->join();
     }
 
-    if (mWifiTimeoutThread != nullptr) {
+    if (mAutoConnect && mWifiTimeoutThread != nullptr) {
         while (!mWifiTimeoutThread->joinable()) {
             // Wait
             std::this_thread::sleep_for(1ms);
@@ -254,7 +267,7 @@ bool WirelessPSPPluginDevice::Send(std::string_view aData, bool aModifyData)
     return lReturn;
 }
 
-bool WirelessPSPPluginDevice::ConnectToAdhoc()
+bool WirelessPSPPluginDevice::ConnectToAdHoc()
 {
     bool lReturn{};
     // Send leave IBSS command just in case
@@ -264,6 +277,9 @@ bool WirelessPSPPluginDevice::ConnectToAdhoc()
         for (const auto& lFilter : mSSIDFilter) {
             if (lNetwork.ssid.find(lFilter) != std::string::npos && lNetwork.isadhoc && !lNetwork.isconnected) {
                 lReturn = mWifiInterface->Connect(lNetwork);
+                if (mCurrentlyConnected != nullptr) {
+                    *mCurrentlyConnected = lNetwork.ssid;
+                }
             }
         }
     }
@@ -282,14 +298,13 @@ bool WirelessPSPPluginDevice::StartReceiverThread()
     if (mHandler != nullptr) {
         // Run
         if (mReceiverThread == nullptr) {
-            if (mWifiTimeoutThread == nullptr) {
+            if (mAutoConnect && mWifiTimeoutThread == nullptr && mReConnectionTimeOut.count() > 0) {
                 mWifiTimeoutThread = std::make_shared<std::thread>([&] {
                     while (mConnected) {
-                        if (std::chrono::system_clock::now() >
-                            (mReadWatchdog + WirelessPSPPluginDevice_Constants::cReadWatchdogTimeout)) {
+                        if (std::chrono::system_clock::now() > (mReadWatchdog + mReConnectionTimeOut)) {
                             Logger::GetInstance().Log("Switching networks due to timeout!", Logger::Level::DEBUG);
                             // Read timed out try to connect to another network.
-                            ConnectToAdhoc();
+                            ConnectToAdHoc();
                             mReadWatchdog = std::chrono::system_clock::now();
                         }
                         std::this_thread::sleep_for(1s);

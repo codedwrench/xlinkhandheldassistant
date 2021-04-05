@@ -15,8 +15,8 @@ namespace WindowModel_Constants
         StopEngine,
         StartSearchNetworks,
         StopSearchNetworks,
-        SaveSettings,
         WaitForTime,
+        ReConnect,
         NoCommand
     };
 
@@ -63,7 +63,7 @@ namespace WindowModel_Constants
     static constexpr ConnectionMethod cDefaultConnectionMethod{ConnectionMethod::Monitor};
     static constexpr Logger::Level    cDefaultLogLevel{Logger::Level::ERROR};
     static constexpr std::string_view cDefaultOnlyAcceptFromMac{""};
-    static constexpr std::string_view cDefaultReConnectionTimeOutS{"30"};
+    static constexpr std::string_view cDefaultReConnectionTimeOutS{"15"};
     static constexpr bool             cDefaultUseSSIDFromXLinkKai{false};
     static constexpr bool             cDefaultUseXLinkKaiHints{false};
     static constexpr std::string_view cDefaultWifiAdapter{""};
@@ -94,6 +94,7 @@ public:
 
     // Runtime components
     std::string mProgramPath{};
+    std::string mCurrentlyConnectedNetwork{};
 
     // non-descriptive, descriptive
     std::vector<std::pair<std::string, std::string>> mWifiAdapterList{};
@@ -103,7 +104,6 @@ public:
     bool                           mAboutSelected{false};
     WindowModel_Constants::Command mCommand{WindowModel_Constants::Command::NoCommand};
     bool                           mOptionsSelected{false};
-    bool                           mReConnect{false};
     bool                           mStopProgram{false};
     bool                           mWindowDone{false};  //!< Tells the program to move to the next step
     bool                           mWizardSelected{false};

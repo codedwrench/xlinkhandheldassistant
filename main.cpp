@@ -133,8 +133,9 @@ int main(int argc, char* argv[])
                 lContinue = false;
             }
         } else {
-            lWindowController = std::make_shared<MainWindowController>(mWindowModel, lSkipWizard);
-            lKeyboardController = std::make_shared<KeyboardController>([&](unsigned int aAction) { lWindowController->KeyAction(aAction); });
+            lWindowController   = std::make_shared<MainWindowController>(mWindowModel, lSkipWizard);
+            lKeyboardController = std::make_shared<KeyboardController>(
+                [&](unsigned int aAction) { lWindowController->KeyAction(aAction); });
 
             if (lWindowController->SetUp()) {
                 lKeyboardController->StartThread();
@@ -168,13 +169,17 @@ int main(int argc, char* argv[])
                             // If we are using a PSP plugin device set up normal WiFi adapter
                             if (mWindowModel.mConnectionMethod == WindowModel_Constants::ConnectionMethod::Plugin) {
                                 if (std::dynamic_pointer_cast<WirelessPSPPluginDevice>(lDevice) == nullptr) {
-                                    lDevice = std::make_shared<WirelessPSPPluginDevice>();
+                                    std::chrono::seconds lTimeOut =
+                                        std::chrono::seconds(std::stoi(mWindowModel.mReConnectionTimeOutS));
+                                    lDevice = std::make_shared<WirelessPSPPluginDevice>(
+                                        mWindowModel.mAutoDiscoverPSPVitaNetworks,
+                                        lTimeOut,
+                                        &mWindowModel.mCurrentlyConnectedNetwork);
                                 }
                             } else {
                                 if (std::dynamic_pointer_cast<MonitorDevice>(lDevice) == nullptr) {
-                                    lDevice = std::make_shared<MonitorDevice>();
-                                    std::shared_ptr<MonitorDevice> lMonitorDevice =
-                                        std::dynamic_pointer_cast<MonitorDevice>(lDevice);
+                                    lDevice             = std::make_shared<MonitorDevice>();
+                                    auto lMonitorDevice = std::dynamic_pointer_cast<MonitorDevice>(lDevice);
                                     lMonitorDevice->SetSourceMACToFilter(MacToInt(mWindowModel.mOnlyAcceptFromMac));
                                     lMonitorDevice->SetAcknowledgePackets(mWindowModel.mAcknowledgeDataFrames);
                                 }
@@ -245,6 +250,9 @@ int main(int argc, char* argv[])
                             lDevice->Close();
                             lSSIDFilters.clear();
 
+                            // Let's actually just remove the device, easier this way
+                            lDevice = nullptr;
+
                             mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Idle;
                             mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
                             break;
@@ -254,8 +262,12 @@ int main(int argc, char* argv[])
                         case WindowModel_Constants::Command::StopSearchNetworks:
                             // TODO: implement.
                             break;
-                        case WindowModel_Constants::Command::SaveSettings:
-                            mWindowModel.SaveToFile(lProgramPath + cConfigFileName.data());
+                        case WindowModel_Constants::Command::ReConnect:
+                            if (std::dynamic_pointer_cast<WirelessPSPPluginDevice>(lDevice) != nullptr) {
+                                std::dynamic_pointer_cast<WirelessPSPPluginDevice>(lDevice)->ConnectToAdHoc();
+                            }
+
+                            mWindowModel.mCommand = WindowModel_Constants::Command::NoCommand;
                             break;
                         case WindowModel_Constants::Command::NoCommand:
                             break;
