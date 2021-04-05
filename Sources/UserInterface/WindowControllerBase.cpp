@@ -72,6 +72,8 @@ bool WindowControllerBase::Process()
 
         curs_set(0);
     } else {
+        // Save any configuration that may have changed
+        GetWindowModel().SaveToFile(GetWindowModel().mProgramPath + "config.txt");
         lReturn = false;
     }
 

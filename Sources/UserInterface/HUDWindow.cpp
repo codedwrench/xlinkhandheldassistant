@@ -162,7 +162,8 @@ void HUDWindow::Draw()
         lStartStopButton->SetName("Stop Engine");
     }
 
-    GetObjects().at(1)->SetName(std::string("Status: ") + std::string(WindowModel_Constants::cEngineStatusTexts.at(GetModel().mEngineStatus)));
+    GetObjects().at(1)->SetName(std::string("Status: ") +
+                                std::string(WindowModel_Constants::cEngineStatusTexts.at(GetModel().mEngineStatus)));
 
     Window::Draw();
 }

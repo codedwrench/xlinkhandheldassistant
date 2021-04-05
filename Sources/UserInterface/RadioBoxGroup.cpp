@@ -37,6 +37,14 @@ void RadioBoxGroup::ClearRadioBoxes()
     mRadioBoxes.clear();
 }
 
+void RadioBoxGroup::SetChecked(int aRadioBox)
+{
+    for (auto& lRadioBox : mRadioBoxes) {
+        lRadioBox.SetChecked(false);
+    }
+    mRadioBoxes.at(aRadioBox).SetChecked(true);
+}
+
 void RadioBoxGroup::Draw()
 {
     GetWindow().DrawString(GetYCoord(), GetXCoord(), 1, GetName());

@@ -80,7 +80,7 @@ bool MainWindowController::Process()
         // If we are dealing with a wizard controller, the wizard is done
         if (dynamic_cast<WizardController*>(GetSubController().get()) != nullptr) {
             // Save the config
-            GetWindowModel().SaveToFile("config.txt");
+            GetWindowModel().SaveToFile(GetWindowModel().mProgramPath + "config.txt");
 
             // Pull up HUD
             SetSubController(std::make_unique<HUDController>(GetWindowModel()));

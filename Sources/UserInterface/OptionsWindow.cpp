@@ -5,6 +5,7 @@
 
 #include "../../Includes/UserInterface/Button.h"
 #include "../../Includes/UserInterface/DefaultElements.h"
+#include "../../Includes/UserInterface/RadioBoxGroup.h"
 
 /* Copyright (c) 2021 [Rick de Bondt] - OptionsWindow.cpp */
 
@@ -12,8 +13,9 @@ namespace
 {
     Dimensions ScaleStartWizardButton() { return {2, 4, 0, 0}; }
     Dimensions ScaleAboutButton() { return {3, 4, 0, 0}; }
-    Dimensions ScaleDoneButton() { return {6, 4, 0, 0}; }
-    Dimensions ScaleExitButton() { return {7, 4, 0, 0}; }
+    Dimensions ScaleLogLevelSelector() { return {5, 4, 0, 0}; }
+    Dimensions ScaleDoneButton() { return {13, 4, 0, 0}; }
+    Dimensions ScaleExitButton() { return {14, 4, 0, 0}; }
 }  // namespace
 
 OptionsWindow::OptionsWindow(WindowModel&                       aModel,
@@ -38,6 +40,20 @@ void OptionsWindow::SetUp()
         GetModel().mAboutSelected = true;
         return true;
     })});
+
+    auto lLogLevelSelector{std::make_shared<RadioBoxGroup>(*this,
+                                                   "Configure log level:",
+                                                   ScaleLogLevelSelector,
+                                                   reinterpret_cast<int&>(GetModel().mLogLevel))};
+
+    for(std::string_view lLogLevel : Logger::cLevelTexts)
+    {
+        lLogLevelSelector->AddRadioBox(lLogLevel);
+    }
+
+    lLogLevelSelector->SetChecked(static_cast<int>(GetModel().mLogLevel));
+
+    AddObject(lLogLevelSelector);
 
     AddObject({std::make_shared<Button>(*this, "Return to the HUD", ScaleDoneButton, [&] {
         GetModel().mWindowDone = true;

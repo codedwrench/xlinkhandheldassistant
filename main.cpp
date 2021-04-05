@@ -17,6 +17,7 @@
 #include "Includes/UserInterface/MainWindowController.h"
 #include "Includes/WirelessPSPPluginDevice.h"
 #include "Includes/XLinkKaiConnection.h"
+
 namespace
 {
     constexpr std::string_view cLogFileName{"log.txt"};
@@ -28,6 +29,8 @@ namespace
     // Indicates if the program should be running or not, used to gracefully exit the program.
     bool gRunning{true};
 }  // namespace
+
+namespace po = boost::program_options;
 
 // Add npcap to the dll path for windows
 #if defined(_WIN32) || defined(_WIN64)
@@ -49,7 +52,6 @@ bool InitNPcapDLLPath()
 }
 #endif
 
-
 static void SignalHandler(const boost::system::error_code& aError, int aSignalNumber)
 {
     if (!aError) {
@@ -60,7 +62,7 @@ static void SignalHandler(const boost::system::error_code& aError, int aSignalNu
     }
 }
 
-int main(int /*argc*/, char* argv[])
+int main(int argc, char* argv[])
 {
     std::string lProgramPath{"./"};
 
@@ -83,151 +85,191 @@ int main(int /*argc*/, char* argv[])
         gRunning = false;
     }
 #endif
+    po::options_description lDescription("Options");
+    // clang-format off
+    lDescription.add_options()
+        ("help,h", "Shows this help message.")
+        ("verbose,v", "Disables HUD and shows log directly on screen.");
+    // clang-format on
+    po::variables_map lVariableMap;
+    po::store(po::command_line_parser(argc, argv).options(lDescription).run(), lVariableMap);
 
-    // Handle quit signals gracefully.
-    boost::asio::io_service lSignalIoService{};
-    boost::asio::signal_set lSignals(lSignalIoService, SIGINT, SIGTERM);
-    lSignals.async_wait(&SignalHandler);
-    std::thread lThread{[lIoService = &lSignalIoService] { lIoService->run(); }};
-    WindowModel mWindowModel{};
+    if (lVariableMap.count("help") || lVariableMap.count("h")) {
+        std::cout << lDescription << std::endl;
+    } else {
+        po::notify(lVariableMap);
 
-    bool lSkipWizard{false};
+        bool                                  lContinue{true};
+        std::vector<std::string>              lSSIDFilters{};
+        std::shared_ptr<MainWindowController> lWindowController{nullptr};
+        std::shared_ptr<KeyboardController>   lKeyboardController{nullptr};
 
-    if (mWindowModel.LoadFromFile(cConfigFileName.data())) {
-        lSkipWizard = true;
-    }
+        // Handle quit signals gracefully.
+        boost::asio::io_service lSignalIoService{};
+        boost::asio::signal_set lSignals(lSignalIoService, SIGINT, SIGTERM);
+        lSignals.async_wait(&SignalHandler);
+        std::thread lThread{[lIoService = &lSignalIoService] { lIoService->run(); }};
 
-    mWindowModel.mProgramPath = lProgramPath;
+        WindowModel mWindowModel{};
 
-    Logger::GetInstance().Init(mWindowModel.mLogLevel, cLogToDisk, lProgramPath + cLogFileName.data());
+        // Check if wizard can be skipped
+        bool lSkipWizard{false};
+        if (mWindowModel.LoadFromFile(lProgramPath + cConfigFileName.data())) {
+            lSkipWizard = true;
+        }
 
-    std::vector<std::string> lSSIDFilters{};
-    MainWindowController lWindowController(mWindowModel, lSkipWizard);
-    KeyboardController   lKeyboardController([&](unsigned int aAction) { lWindowController.KeyAction(aAction); });
+        mWindowModel.mProgramPath = lProgramPath;
 
-    if (lWindowController.SetUp()) {
-        lKeyboardController.StartThread();
+        Logger::GetInstance().Init(mWindowModel.mLogLevel, cLogToDisk, lProgramPath + cLogFileName.data());
 
-        std::shared_ptr<IPCapDevice>        lDevice{nullptr};
-        std::shared_ptr<XLinkKaiConnection> lXLinkKaiConnection{std::make_shared<XLinkKaiConnection>()};
+        if (lVariableMap.count("verbose") || lVariableMap.count("v")) {
+            Logger::GetInstance().SetLogToScreen(true);
+            if (lSkipWizard) {
+                // Start the engine immediately
+                mWindowModel.mCommand = WindowModel_Constants::Command::StartEngine;
+            } else {
+                Logger::GetInstance().Log("No config file found! First run the wizard before running in verbose mode",
+                                          Logger::Level::ERROR);
+                lContinue = false;
+            }
+        } else {
+            lWindowController = std::make_shared<MainWindowController>(mWindowModel, lSkipWizard);
+            lKeyboardController = std::make_shared<KeyboardController>([&](unsigned int aAction) { lWindowController->KeyAction(aAction); });
 
-        bool lSuccess{false};
+            if (lWindowController->SetUp()) {
+                lKeyboardController->StartThread();
 
-        // If we need more entry methods, make an actual state machine
-        bool                                               lWaitEntry{true};
-        std::chrono::time_point<std::chrono::system_clock> lWaitStart{std::chrono::seconds{0}};
+            } else {
+                Logger::GetInstance().Log("Error initializing the TUI", Logger::Level::ERROR);
+                // Stop the app, we have no TUI
+                lContinue = false;
+            }
+        }
 
-        while (gRunning) {
-            if (lWindowController.Process()) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                switch (mWindowModel.mCommand) {
-                    case WindowModel_Constants::Command::StartEngine:
-                        if (mWindowModel.mLogLevel != Logger::GetInstance().GetLogLevel()) {
-                            Logger::GetInstance().SetLogLevel(mWindowModel.mLogLevel);
-                        }
+        if (lContinue) {
+            std::shared_ptr<IPCapDevice>        lDevice{nullptr};
+            std::shared_ptr<XLinkKaiConnection> lXLinkKaiConnection{std::make_shared<XLinkKaiConnection>()};
 
-                        // If we are using a PSP plugin device set up normal WiFi adapter
-                        if (mWindowModel.mConnectionMethod == WindowModel_Constants::ConnectionMethod::Plugin) {
-                            if (std::dynamic_pointer_cast<WirelessPSPPluginDevice>(lDevice) == nullptr) {
-                                lDevice = std::make_shared<WirelessPSPPluginDevice>();
+            bool lSuccess{false};
+
+            // If we need more entry methods, make an actual state machine
+            bool                                               lWaitEntry{true};
+            std::chrono::time_point<std::chrono::system_clock> lWaitStart{std::chrono::seconds{0}};
+
+            while (gRunning) {
+                if (lWindowController == nullptr || lWindowController->Process()) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                    switch (mWindowModel.mCommand) {
+                        case WindowModel_Constants::Command::StartEngine:
+                            if (mWindowModel.mLogLevel != Logger::GetInstance().GetLogLevel()) {
+                                Logger::GetInstance().SetLogLevel(mWindowModel.mLogLevel);
                             }
-                        } else {
-                            if (std::dynamic_pointer_cast<MonitorDevice>(lDevice) == nullptr) {
-                                lDevice = std::make_shared<MonitorDevice>();
-                                std::shared_ptr<MonitorDevice> lMonitorDevice =
-                                    std::dynamic_pointer_cast<MonitorDevice>(lDevice);
-                                lMonitorDevice->SetSourceMACToFilter(MacToInt(mWindowModel.mOnlyAcceptFromMac));
-                                lMonitorDevice->SetAcknowledgePackets(mWindowModel.mAcknowledgeDataFrames);
+
+                            // If we are using a PSP plugin device set up normal WiFi adapter
+                            if (mWindowModel.mConnectionMethod == WindowModel_Constants::ConnectionMethod::Plugin) {
+                                if (std::dynamic_pointer_cast<WirelessPSPPluginDevice>(lDevice) == nullptr) {
+                                    lDevice = std::make_shared<WirelessPSPPluginDevice>();
+                                }
+                            } else {
+                                if (std::dynamic_pointer_cast<MonitorDevice>(lDevice) == nullptr) {
+                                    lDevice = std::make_shared<MonitorDevice>();
+                                    std::shared_ptr<MonitorDevice> lMonitorDevice =
+                                        std::dynamic_pointer_cast<MonitorDevice>(lDevice);
+                                    lMonitorDevice->SetSourceMACToFilter(MacToInt(mWindowModel.mOnlyAcceptFromMac));
+                                    lMonitorDevice->SetAcknowledgePackets(mWindowModel.mAcknowledgeDataFrames);
+                                }
                             }
-                        }
-                        lXLinkKaiConnection->SetIncomingConnection(lDevice);
-                        lDevice->SetConnector(lXLinkKaiConnection);
+                            lXLinkKaiConnection->SetIncomingConnection(lDevice);
+                            lDevice->SetConnector(lXLinkKaiConnection);
 
-                        // If we are auto discovering PSP/VITA networks add those to the filter list
-                        if (mWindowModel.mAutoDiscoverPSPVitaNetworks) {
-                            lSSIDFilters.emplace_back(cPSPSSIDFilterName.data());
-                            lSSIDFilters.emplace_back(cVitaSSIDFilterName.data());
-                        }
+                            // If we are auto discovering PSP/VITA networks add those to the filter list
+                            if (mWindowModel.mAutoDiscoverPSPVitaNetworks) {
+                                lSSIDFilters.emplace_back(cPSPSSIDFilterName.data());
+                                lSSIDFilters.emplace_back(cVitaSSIDFilterName.data());
+                            }
 
-                        // Set the XLink Kai connection up, if we are autodiscovering we don't need to provide an IP
-                        if (!mWindowModel.mAutoDiscoverXLinkKaiInstance) {
-                            lSuccess =
-                                lXLinkKaiConnection->Open(mWindowModel.mXLinkIp, std::stoi(mWindowModel.mXLinkPort));
-                        } else {
-                            lSuccess = lXLinkKaiConnection->Open("");
-                        }
+                            // Set the XLink Kai connection up, if we are autodiscovering we don't need to provide an IP
+                            if (!mWindowModel.mAutoDiscoverXLinkKaiInstance) {
+                                lSuccess = lXLinkKaiConnection->Open(mWindowModel.mXLinkIp,
+                                                                     std::stoi(mWindowModel.mXLinkPort));
+                            } else {
+                                lSuccess = lXLinkKaiConnection->Open("");
+                            }
 
-                        // Now set up the wifi interface
-                        if (lSuccess) {
-                            if (lDevice->Open(mWindowModel.mWifiAdapter, lSSIDFilters)) {
-                                if (lDevice->StartReceiverThread() && lXLinkKaiConnection->StartReceiverThread()) {
-                                    mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Running;
-                                    mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
+                            // Now set up the wifi interface
+                            if (lSuccess) {
+                                if (lDevice->Open(mWindowModel.mWifiAdapter, lSSIDFilters)) {
+                                    if (lDevice->StartReceiverThread() && lXLinkKaiConnection->StartReceiverThread()) {
+                                        mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Running;
+                                        mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
+                                    } else {
+                                        Logger::GetInstance().Log("Failed to start receiver threads",
+                                                                  Logger::Level::ERROR);
+                                        mWindowModel.mEngineStatus     = WindowModel_Constants::EngineStatus::Error;
+                                        mWindowModel.mCommand          = WindowModel_Constants::Command::WaitForTime;
+                                        mWindowModel.mTimeToWait       = std::chrono::seconds(5);
+                                        mWindowModel.mCommandAfterWait = WindowModel_Constants::Command::StopEngine;
+                                    }
                                 } else {
-                                    Logger::GetInstance().Log("Failed to start receiver threads", Logger::Level::ERROR);
+                                    Logger::GetInstance().Log("Failed to activate monitor interface",
+                                                              Logger::Level::ERROR);
                                     mWindowModel.mEngineStatus     = WindowModel_Constants::EngineStatus::Error;
                                     mWindowModel.mCommand          = WindowModel_Constants::Command::WaitForTime;
                                     mWindowModel.mTimeToWait       = std::chrono::seconds(5);
                                     mWindowModel.mCommandAfterWait = WindowModel_Constants::Command::StopEngine;
                                 }
                             } else {
-                                Logger::GetInstance().Log("Failed to activate monitor interface", Logger::Level::ERROR);
-                                mWindowModel.mEngineStatus     = WindowModel_Constants::EngineStatus::Error;
+                                Logger::GetInstance().Log(
+                                    "Failed to open connection to XLink Kai, retrying in 10 seconds!",
+                                    Logger::Level::ERROR);
+                                // Have it take some time between tries
                                 mWindowModel.mCommand          = WindowModel_Constants::Command::WaitForTime;
-                                mWindowModel.mTimeToWait       = std::chrono::seconds(5);
-                                mWindowModel.mCommandAfterWait = WindowModel_Constants::Command::StopEngine;
+                                mWindowModel.mTimeToWait       = std::chrono::seconds(10);
+                                mWindowModel.mCommandAfterWait = WindowModel_Constants::Command::NoCommand;
                             }
-                        } else {
-                            Logger::GetInstance().Log("Failed to open connection to XLink Kai, retrying in 10 seconds!",
-                                                      Logger::Level::ERROR);
-                            // Have it take some time between tries
-                            mWindowModel.mCommand          = WindowModel_Constants::Command::WaitForTime;
-                            mWindowModel.mTimeToWait       = std::chrono::seconds(10);
-                            mWindowModel.mCommandAfterWait = WindowModel_Constants::Command::NoCommand;
-                        }
-                        break;
-                    case WindowModel_Constants::Command::WaitForTime:
-                        // Wait state, use this to add a delay without making the UI unresponsive.
-                        if (lWaitEntry) {
-                            lWaitStart = std::chrono::system_clock::now();
-                            lWaitEntry = false;
-                        }
+                            break;
+                        case WindowModel_Constants::Command::WaitForTime:
+                            // Wait state, use this to add a delay without making the UI unresponsive.
+                            if (lWaitEntry) {
+                                lWaitStart = std::chrono::system_clock::now();
+                                lWaitEntry = false;
+                            }
 
-                        if (std::chrono::system_clock::now() > lWaitStart + mWindowModel.mTimeToWait) {
-                            mWindowModel.mCommand = mWindowModel.mCommandAfterWait;
-                            lWaitEntry            = true;
-                        }
-                        break;
-                    case WindowModel_Constants::Command::StopEngine:
-                        lXLinkKaiConnection->Close();
-                        lDevice->Close();
-                        lSSIDFilters.clear();
+                            if (std::chrono::system_clock::now() > lWaitStart + mWindowModel.mTimeToWait) {
+                                mWindowModel.mCommand = mWindowModel.mCommandAfterWait;
+                                lWaitEntry            = true;
+                            }
+                            break;
+                        case WindowModel_Constants::Command::StopEngine:
+                            lXLinkKaiConnection->Close();
+                            lDevice->Close();
+                            lSSIDFilters.clear();
 
-                        mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Idle;
-                        mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
-                        break;
-                    case WindowModel_Constants::Command::StartSearchNetworks:
-                        // TODO: implement.
-                        break;
-                    case WindowModel_Constants::Command::StopSearchNetworks:
-                        // TODO: implement.
-                        break;
-                    case WindowModel_Constants::Command::SaveSettings:
-                        mWindowModel.SaveToFile(cConfigFileName);
-                        break;
-                    case WindowModel_Constants::Command::NoCommand:
-                        break;
+                            mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Idle;
+                            mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
+                            break;
+                        case WindowModel_Constants::Command::StartSearchNetworks:
+                            // TODO: implement.
+                            break;
+                        case WindowModel_Constants::Command::StopSearchNetworks:
+                            // TODO: implement.
+                            break;
+                        case WindowModel_Constants::Command::SaveSettings:
+                            mWindowModel.SaveToFile(lProgramPath + cConfigFileName.data());
+                            break;
+                        case WindowModel_Constants::Command::NoCommand:
+                            break;
+                    }
+                } else {
+                    gRunning = false;
                 }
-            } else {
-                gRunning = false;
             }
+        } else {
+            gRunning = false;
         }
-    } else {
-        gRunning = false;
-    }
-
-    lSignalIoService.stop();
-    if (lThread.joinable()) {
-        lThread.join();
+        lSignalIoService.stop();
+        if (lThread.joinable()) {
+            lThread.join();
+        }
     }
 }

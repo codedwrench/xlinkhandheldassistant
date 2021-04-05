@@ -39,6 +39,12 @@ public:
     void AddRadioBox(std::string_view aName);
 
     /**
+     * Checks a radiobox without user interaction.
+     * @param aRadioBox - The index of the radiobox to check.
+     */
+    void SetChecked(int aRadioBox);
+
+    /**
      * Removes all radioboxes from this radio button group.
      */
     void ClearRadioBoxes();

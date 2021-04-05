@@ -8,8 +8,8 @@
 
 #include <memory>
 
-#include "IWindowController.h"
 #include "../WindowModel.h"
+#include "IWindowController.h"
 
 class WindowControllerBase : public IWindowController
 {
