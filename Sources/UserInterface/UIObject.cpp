@@ -48,9 +48,6 @@ void UIObject::SetHasUpAction(bool aHasAction)
 void UIObject::Scale()
 {
     Dimensions lParameters{mScaleCalculation()};
-    Logger::GetInstance().Log(
-        "Moving: " + mName + " to: " + std::to_string(lParameters.at(0)) + " " + std::to_string(lParameters.at(1)),
-        Logger::Level::INFO);
     mYCoord = lParameters.at(0);
     mXCoord = lParameters.at(1);
 }
