@@ -15,8 +15,4 @@ public:
     bool SetUp() override;
     bool KeyAction(unsigned int aAction) override;
     bool Process() override;
-
-private:
-    int mHeight{};
-    int mWidth{};
 };

@@ -14,7 +14,7 @@
 class HUDWindow : public Window
 {
 public:
-    HUDWindow(WindowModel& aModel, std::string_view aTitle, const std::function<Dimensions()>& aCalculation);
+    HUDWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
 
     virtual void SetUp() final;
     void         Draw() override;

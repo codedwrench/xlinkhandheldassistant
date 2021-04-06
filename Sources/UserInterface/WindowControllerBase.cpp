@@ -4,6 +4,16 @@
 
 WindowControllerBase::WindowControllerBase(WindowModel& aWindowModel) : mWindowModel(aWindowModel) {}
 
+const int& WindowControllerBase::GetHeightReference()
+{
+    return mHeight;
+}
+
+const int& WindowControllerBase::GetWidthReference()
+{
+    return mWidth;
+}
+
 std::vector<std::shared_ptr<IWindow>>& WindowControllerBase::GetWindows()
 {
     return mWindows;
@@ -19,15 +29,29 @@ std::unique_ptr<IWindowController>& WindowControllerBase::GetSubController()
     return mSubController;
 }
 
+bool WindowControllerBase::SetUp()
+{
+    int lHeight{0};
+    int lWidth{0};
+    getmaxyx(stdscr, lHeight, lWidth);
+    mHeight = lHeight;
+    mWidth  = lWidth;
+
+    return true;
+}
+
 bool WindowControllerBase::KeyAction(unsigned int aAction)
 {
     bool lReturn{true};
 
-    if (aAction != ERR) {
+    if (aAction != ERR && mSubController == nullptr) {
         if (aAction == 'q') {
             GetWindowModel().mStopProgram = true;
-        } else if (mSubController != nullptr) {
-            lReturn = mSubController->KeyAction(aAction);
+        } else if (aAction == KEY_RESIZE) {
+			#if defined(_WIN32) || defined(_WIN64)
+			resize_term(0, 0);
+			#endif
+            mDimensionsChanged = true;
         } else {
             // For now send the key action to all visible windows
             for (auto& lWindow : mWindows) {
@@ -36,7 +60,9 @@ bool WindowControllerBase::KeyAction(unsigned int aAction)
                 }
             }
         }
-    }
+    } else if (mSubController != nullptr) {
+        lReturn = mSubController->KeyAction(aAction);
+	}
 
     return lReturn;
 }
@@ -46,31 +72,39 @@ bool WindowControllerBase::Process()
     bool lReturn{true};
 
     if (!mWindowModel.mStopProgram) {
-        bool lDimensionsChanged{false};
-        int  lHeight{0};
-        int  lWidth{0};
-        getmaxyx(stdscr, lHeight, lWidth);
+        if (mSubController == nullptr) {
+            if (mDimensionsChanged) {			
+				Logger::GetInstance().Log("Dimensions changed", Logger::Level::INFO);
+                int lHeight{0};
+                int lWidth{0};
+                getmaxyx(stdscr, lHeight, lWidth);
 
-        if ((lHeight != mHeight) || (lWidth != mWidth)) {
-            mHeight            = lHeight;
-            mWidth             = lWidth;
-            lDimensionsChanged = true;
-        }
-
-        for (auto& lWindow : mWindows) {
-            if (lWindow->IsVisible()) {
-                if (lDimensionsChanged) {
-                    lWindow->Scale();
+                if ((lHeight != mHeight) || (lWidth != mWidth)) {
+                    mHeight = lHeight;
+                    mWidth  = lWidth;
                 }
-                lWindow->Draw();
+
             }
+
+            for (auto& lWindow : mWindows) {
+                if (lWindow->IsVisible()) {
+                    if (mDimensionsChanged) {
+                        lWindow->Scale();
+                    } else {
+						lWindow->Draw();
+					}
+                }
+            }
+
+			refresh();
+            curs_set(0);
         }
 
         if (GetSubController() != nullptr) {
             lReturn = GetSubController()->Process();
         }
 
-        curs_set(0);
+        mDimensionsChanged = false;
     } else {
         // Save any configuration that may have changed
         GetWindowModel().SaveToFile(GetWindowModel().mProgramPath + "config.txt");
@@ -78,6 +112,16 @@ bool WindowControllerBase::Process()
     }
 
     return lReturn;
+}
+
+void WindowControllerBase::SetHeight(int aHeight)
+{
+    mHeight = aHeight;
+}
+
+void WindowControllerBase::SetWidth(int aWidth)
+{
+    mWidth = aWidth;
 }
 
 void WindowControllerBase::SetReleaseCallback(std::function<void()> aCallback)

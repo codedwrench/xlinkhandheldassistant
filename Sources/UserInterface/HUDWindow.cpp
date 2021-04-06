@@ -13,6 +13,7 @@ namespace
 {
     Dimensions ScalePicture(const int& aMaxHeight, const int& aMaxWidth, const std::string& aPicture)
     {
+		Logger::GetInstance().Log("Scaling Picture to: " + std::to_string(aMaxHeight) + " " + std::to_string(aMaxWidth), Logger::Level::INFO); 
         // Pictures need to have the right amount of spaces
         // For height \n characters get counted and divided by 2
         // For width, the space until the first \n gets counted and divided by 2
@@ -80,7 +81,7 @@ Dimensions HUDWindow::ScaleReConnectionButton()
             0};
 }
 
-HUDWindow::HUDWindow(WindowModel& aModel, std::string_view aTitle, const std::function<Dimensions()>& aCalculation) :
+HUDWindow::HUDWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 
@@ -173,8 +174,7 @@ void HUDWindow::Draw()
         lStartStopButton->SetName("Stop Engine");
     }
 
-    if(mOldConnected != GetModel().mCurrentlyConnectedNetwork)
-    {
+    if (mOldConnected != GetModel().mCurrentlyConnectedNetwork) {
         // The Connected to: will otherwise show up multiple times
         ClearLine(1, 1, GetWidthReference() - 1);
         mOldConnected = GetModel().mCurrentlyConnectedNetwork;

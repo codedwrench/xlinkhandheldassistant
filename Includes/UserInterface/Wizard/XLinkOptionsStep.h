@@ -23,7 +23,7 @@ using namespace XLinkOptionsStep_Constants;
 class XLinkOptionsStep : public Window
 {
 public:
-    XLinkOptionsStep(WindowModel& aModel, std::string_view aTitle, const std::function<Dimensions()>& aCalculation);
+    XLinkOptionsStep(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
 
     void SetUp() override;
     void Draw() override;

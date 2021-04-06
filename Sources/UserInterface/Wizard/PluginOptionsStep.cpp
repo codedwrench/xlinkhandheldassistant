@@ -23,7 +23,7 @@ namespace
 
 PluginOptionsStep::PluginOptionsStep(WindowModel&                       aModel,
                                      std::string_view                   aTitle,
-                                     const std::function<Dimensions()>& aCalculation) :
+                                     std::function<Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

@@ -8,7 +8,7 @@
 
 Window::Window(WindowModel&                       aModel,
                std::string_view                   aTitle,
-               const std::function<Dimensions()>& aCalculation,
+               std::function<Dimensions()> aCalculation,
                bool                               aDrawBorder,
                bool                               aExclusive,
                bool                               aVisible) :
@@ -120,28 +120,24 @@ WindowModel& Window::GetModel()
 
 std::pair<int, int> Window::GetSize()
 {
-    int lHeight{0};
-    int lWidth{0};
-    getmaxyx(mNCursesWindow.get(), lHeight, lWidth);
-
-    mHeight = lHeight;
-    mWidth  = lWidth;
-
-    return {lHeight, lWidth};
+    return {mHeight, mWidth};
 }
 
 bool Window::Scale()
 {
     bool       lReturn{false};
     Dimensions lParameters{mScaleCalculation()};
+	
+	Logger::GetInstance().Log("Scaling: " + mTitle + " Params:" + std::to_string(lParameters.at(0)) + " " + std::to_string(lParameters.at(1)) + " " + std::to_string(lParameters.at(2)) + " " + std::to_string(lParameters.at(3)), Logger::Level::INFO);
 
-    if (Resize(lParameters.at(2), lParameters.at(3))) {
+    mHeight = lParameters.at(2);
+    mWidth  = lParameters.at(3);
+
+    if (Resize(mHeight, mWidth)) {
         if (Move(lParameters.at(0), lParameters.at(1))) {
+			ClearWindow();
             lReturn = true;
         }
-
-        mHeight = lParameters.at(2);
-        mWidth  = lParameters.at(3);
 
         for (auto& lObject : mObjects) {
             lObject->Scale();
@@ -157,9 +153,6 @@ bool Window::Resize(int aLines, int aColumns)
     if (wresize(mNCursesWindow.get(), aLines, aColumns) == ERR) {
         Logger::GetInstance().Log("Could not resize window to desired size", Logger::Level::TRACE);
         lReturn = false;
-    } else {
-        // Clear window as to not have artifacts.
-        ClearWindow();
     }
 
     return lReturn;

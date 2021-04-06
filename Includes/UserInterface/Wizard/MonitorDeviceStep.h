@@ -19,7 +19,7 @@ using namespace MonitorDeviceStep_Constants;
 class MonitorDeviceStep : public Window
 {
 public:
-    MonitorDeviceStep(WindowModel& aModel, std::string_view aTitle, const std::function<Dimensions()>& aCalculation);
+    MonitorDeviceStep(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
 
     void SetUp() override;
     void Draw() override;

@@ -20,7 +20,7 @@ using namespace WizardSelectorStep_Constants;
 class WizardSelectorStep : public Window
 {
 public:
-    WizardSelectorStep(WindowModel& aModel, std::string_view aTitle, const std::function<Dimensions()>& aCalculation);
+    WizardSelectorStep(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
 
     virtual void SetUp() final;
     void         Draw() override;

@@ -68,7 +68,7 @@ Dimensions XLinkWindow::ScaleStatusMessage(const int& aMaxHeight, const int& aMa
 
 XLinkWindow::XLinkWindow(WindowModel&                       aModel,
                          std::string_view                   aTitle,
-                         const std::function<Dimensions()>& aCalculation) :
+                         std::function<Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation),
     mOldEngineStatus(WindowModel_Constants::EngineStatus::Idle)
 {

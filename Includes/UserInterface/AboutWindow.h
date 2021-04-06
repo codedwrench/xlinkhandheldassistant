@@ -14,7 +14,7 @@
 class AboutWindow : public Window
 {
 public:
-    AboutWindow(WindowModel& aModel, std::string_view aTitle, const std::function<Dimensions()>& aCalculation);
+    AboutWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
 
     virtual void SetUp() final;
     void         Draw() override;

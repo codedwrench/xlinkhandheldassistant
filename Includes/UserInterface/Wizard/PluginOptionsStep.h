@@ -20,7 +20,7 @@ using namespace PluginOptionsStep_Constants;
 class PluginOptionsStep : public Window
 {
 public:
-    PluginOptionsStep(WindowModel& aModel, std::string_view aTitle, const std::function<Dimensions()>& aCalculation);
+    PluginOptionsStep(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
 
     virtual void SetUp() final;
     void         Draw() override;

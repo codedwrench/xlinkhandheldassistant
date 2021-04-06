@@ -23,6 +23,7 @@ bool MainWindowController::SetUp()
     cbreak();
     noecho();
     timeout(500);
+    resize_term(0, 0);
 
     int lHeight{0};
     int lWidth{0};
@@ -39,6 +40,8 @@ bool MainWindowController::SetUp()
             init_pair(6, COLOR_MAGENTA, COLOR_BLACK);
             init_pair(7, COLOR_BLACK, COLOR_WHITE);
         }
+
+        WindowControllerBase::SetUp();
 
         if (!mSkipWizard) {
             // Setup subcontroller, we start with the wizard:

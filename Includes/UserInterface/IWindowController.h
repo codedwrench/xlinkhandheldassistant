@@ -70,10 +70,35 @@ protected:
      * @return true if there is a subcontroller set.
      */
     virtual WindowModel& GetWindowModel() = 0;
+	
+	/**
+	 * Gets height of the entire window as a reference.
+	 * @return height of the window.
+	 */
+	virtual const int& GetHeightReference() = 0;
+	
+	/**
+	 * Gets width of the entire window as a reference.
+	 * @return width of the window.
+	 */
+	virtual const int& GetWidthReference() = 0;
 
     /**
      * Checks if there is a subcontroller set, used in KeyAction.
      * @return true if there is a subcontroller set.
      */
     virtual bool HasSubControllerSet() = 0;
+	
+	/**
+	 * Sets height of the entire window. Use when obtaining size from for example the setup.
+	 * @param aHeigth - Height to set.
+	 */
+	virtual void SetHeight(int aHeigth) = 0;
+	
+	/**
+	 * Sets width of the entire window. Use when obtaining size from for example the setup.
+	 * @param aWidth - Width to set.
+	 */
+	virtual void SetWidth(int aWidth) = 0;
+
 };
