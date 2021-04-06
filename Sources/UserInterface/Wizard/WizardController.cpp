@@ -21,14 +21,16 @@ Dimensions ScaleWizard(const int& aHeight, const int& aWidth)
 {
     Dimensions lDimensions{};
 
-	lDimensions.at(2) = aHeight;
-	lDimensions.at(3) = aWidth;
+    lDimensions.at(2) = aHeight;
+    lDimensions.at(3) = aWidth;
 
     return lDimensions;
 }
 
-template<class WindowType>
-void ReplaceWindow(std::vector<std::shared_ptr<IWindow>>& aWindows, WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aDimensions)
+template<class WindowType> void ReplaceWindow(std::vector<std::shared_ptr<IWindow>>& aWindows,
+                                              WindowModel&                           aModel,
+                                              std::string_view                       aTitle,
+                                              std::function<Dimensions()>            aDimensions)
 {
     if (!aWindows.empty()) {
         aWindows.pop_back();
@@ -76,8 +78,8 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
                     std::pair<std::string, std::string> lWifiInformation{};
                     // Without \Device\NPF_ in front of this, it doesn't work
                     lWifiInformation.first  = "\\Device\\NPF_" + std::string(lCurrentAddresses->AdapterName,
-                                                                          lCurrentAddresses->AdapterName +
-                                                                              strlen(lCurrentAddresses->AdapterName));
+                                                                            lCurrentAddresses->AdapterName +
+                                                                                strlen(lCurrentAddresses->AdapterName));
                     lWifiInformation.second = lFriendlyName;
                     aWifiAdapterList.push_back(lWifiInformation);
                 }
@@ -152,7 +154,9 @@ void WizardController::HandleConnectionMethod()
             FillWifiAdapters(GetWindowModel().mWifiAdapterList);
 
             // Add the Plugin wizard step
-            ReplaceWindow<PluginOptionsStep>(GetWindows(), GetWindowModel(), "Plugin options", [&]{ return ScaleWizard(GetHeightReference(), GetWidthReference()); });
+            ReplaceWindow<PluginOptionsStep>(GetWindows(), GetWindowModel(), "Plugin options", [&] {
+                return ScaleWizard(GetHeightReference(), GetWidthReference());
+            });
 
             break;
 #if not defined(_WIN32) && not defined(_WIN64)
@@ -163,7 +167,9 @@ void WizardController::HandleConnectionMethod()
             FillWifiAdapters(GetWindowModel().mWifiAdapterList);
 
             // Add the Monitor wizard step
-            ReplaceWindow<MonitorDeviceStep>(GetWindows(), GetWindowModel(), "Monitor options", [&]{ return ScaleWizard(GetHeightReference(), GetWidthReference()); });
+            ReplaceWindow<MonitorDeviceStep>(GetWindows(), GetWindowModel(), "Monitor options", [&] {
+                return ScaleWizard(GetHeightReference(), GetWidthReference());
+            });
 
             break;
 #endif
@@ -171,14 +177,18 @@ void WizardController::HandleConnectionMethod()
             mWizardStep = SimulationOptions;
 
             // Add the Simulation wizard step
-            ReplaceWindow<WizardSelectorStep>(GetWindows(), GetWindowModel(), "Simulation options", [&]{ return ScaleWizard(GetHeightReference(), GetWidthReference()); });
+            ReplaceWindow<WizardSelectorStep>(GetWindows(), GetWindowModel(), "Simulation options", [&] {
+                return ScaleWizard(GetHeightReference(), GetWidthReference());
+            });
 
             break;
         case WindowModel_Constants::ConnectionMethod::USB:
             mWizardStep = USBOptions;
 
             // Add the USB wizard step
-            ReplaceWindow<WizardSelectorStep>(GetWindows(), GetWindowModel(), "USB options", [&]{ return ScaleWizard(GetHeightReference(), GetWidthReference()); });
+            ReplaceWindow<WizardSelectorStep>(GetWindows(), GetWindowModel(), "USB options", [&] {
+                return ScaleWizard(GetHeightReference(), GetWidthReference());
+            });
 
             break;
         default:
@@ -206,7 +216,9 @@ bool WizardController::Process()
                     GetWindowModel().mWifiAdapterList.at(GetWindowModel().mWifiAdapterSelection).first;
 
                 mWizardStep = XLinkKaiOptions;
-                ReplaceWindow<XLinkOptionsStep>(GetWindows(), GetWindowModel(), "XLink Kai options", [&]{ return ScaleWizard(GetHeightReference(), GetWidthReference()); });
+                ReplaceWindow<XLinkOptionsStep>(GetWindows(), GetWindowModel(), "XLink Kai options", [&] {
+                    return ScaleWizard(GetHeightReference(), GetWidthReference());
+                });
                 break;
             case PluginOptions:
                 // Convert the wifi adapter selection to a string
@@ -214,7 +226,9 @@ bool WizardController::Process()
                     GetWindowModel().mWifiAdapterList.at(GetWindowModel().mWifiAdapterSelection).first;
 
                 mWizardStep = XLinkKaiOptions;
-                ReplaceWindow<XLinkOptionsStep>(GetWindows(), GetWindowModel(), "XLink Kai options", [&]{ return ScaleWizard(GetHeightReference(), GetWidthReference()); });
+                ReplaceWindow<XLinkOptionsStep>(GetWindows(), GetWindowModel(), "XLink Kai options", [&] {
+                    return ScaleWizard(GetHeightReference(), GetWidthReference());
+                });
                 break;
             case SimulationOptions:
                 break;
@@ -234,9 +248,11 @@ bool WizardController::Process()
 
 bool WizardController::SetUp()
 {
-	WindowControllerBase::SetUp();
+    WindowControllerBase::SetUp();
 
     // Add the setup wizard
-    ReplaceWindow<WizardSelectorStep>(GetWindows(), GetWindowModel(), "Set-Up Wizard", [&]{ return ScaleWizard(GetHeightReference(), GetWidthReference()); });
+    ReplaceWindow<WizardSelectorStep>(GetWindows(), GetWindowModel(), "Set-Up Wizard", [&] {
+        return ScaleWizard(GetHeightReference(), GetWidthReference());
+    });
     return true;
 }

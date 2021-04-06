@@ -18,9 +18,7 @@ namespace
     Dimensions ScaleExitButton() { return {14, 4, 0, 0}; }
 }  // namespace
 
-OptionsWindow::OptionsWindow(WindowModel&                       aModel,
-                             std::string_view                   aTitle,
-                             std::function<Dimensions()> aCalculation) :
+OptionsWindow::OptionsWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

@@ -19,21 +19,21 @@ public:
     bool Process() override;
     void SetReleaseCallback(std::function<void()> aCallback) override;
     void SetSubController(std::unique_ptr<IWindowController> aController) override;
-	bool SetUp() override;
+    bool SetUp() override;
     void UnsetSubController() override;
 
 protected:
     std::unique_ptr<IWindowController>&    GetSubController() override;
     std::vector<std::shared_ptr<IWindow>>& GetWindows() override;
     WindowModel&                           GetWindowModel() override;
-	const int&							   GetHeightReference() override;
-	const int&							   GetWidthReference() override;
+    const int&                             GetHeightReference() override;
+    const int&                             GetWidthReference() override;
     bool                                   HasSubControllerSet() override;
-	void								   SetHeight(int aHeigth) override;
-	void								   SetWidth(int aWidth) override;
+    void                                   SetHeight(int aHeigth) override;
+    void                                   SetWidth(int aWidth) override;
 
 private:
-	bool                                  mDimensionsChanged{false};
+    bool                                  mDimensionsChanged{true};
     int                                   mHeight{};
     int                                   mWidth{};
     std::vector<std::shared_ptr<IWindow>> mWindows{};

@@ -17,8 +17,8 @@ namespace
     Dimensions ScalePortTextField(const int& /*aMaxHeight*/, const int& /*aMaxWidth*/) { return {3, 2, 0, 0}; }
 }  // namespace
 
-XLinkOptionsStep::XLinkOptionsStep(WindowModel&                       aModel,
-                                   std::string_view                   aTitle,
+XLinkOptionsStep::XLinkOptionsStep(WindowModel&                aModel,
+                                   std::string_view            aTitle,
                                    std::function<Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}

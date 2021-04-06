@@ -22,8 +22,8 @@ namespace
     Dimensions ScaleUseWifiAdapterRadioBoxGroup() { return {6, 4, 0, 0}; }
 }  // namespace
 
-MonitorDeviceStep::MonitorDeviceStep(WindowModel&                       aModel,
-                                     std::string_view                   aTitle,
+MonitorDeviceStep::MonitorDeviceStep(WindowModel&                aModel,
+                                     std::string_view            aTitle,
                                      std::function<Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}

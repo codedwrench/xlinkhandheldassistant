@@ -48,9 +48,9 @@ bool WindowControllerBase::KeyAction(unsigned int aAction)
         if (aAction == 'q') {
             GetWindowModel().mStopProgram = true;
         } else if (aAction == KEY_RESIZE) {
-			#if defined(_WIN32) || defined(_WIN64)
-			resize_term(0, 0);
-			#endif
+#if defined(_WIN32) || defined(_WIN64)
+            resize_term(0, 0);
+#endif
             mDimensionsChanged = true;
         } else {
             // For now send the key action to all visible windows
@@ -62,7 +62,7 @@ bool WindowControllerBase::KeyAction(unsigned int aAction)
         }
     } else if (mSubController != nullptr) {
         lReturn = mSubController->KeyAction(aAction);
-	}
+    }
 
     return lReturn;
 }
@@ -73,17 +73,14 @@ bool WindowControllerBase::Process()
 
     if (!mWindowModel.mStopProgram) {
         if (mSubController == nullptr) {
-            if (mDimensionsChanged) {			
-				Logger::GetInstance().Log("Dimensions changed", Logger::Level::INFO);
-                int lHeight{0};
-                int lWidth{0};
-                getmaxyx(stdscr, lHeight, lWidth);
+            int lHeight{0};
+            int lWidth{0};
+            getmaxyx(stdscr, lHeight, lWidth);
 
-                if ((lHeight != mHeight) || (lWidth != mWidth)) {
-                    mHeight = lHeight;
-                    mWidth  = lWidth;
-                }
-
+            if ((lHeight != mHeight) || (lWidth != mWidth)) {
+                mDimensionsChanged = true;
+                mHeight            = lHeight;
+                mWidth             = lWidth;
             }
 
             for (auto& lWindow : mWindows) {
@@ -91,12 +88,12 @@ bool WindowControllerBase::Process()
                     if (mDimensionsChanged) {
                         lWindow->Scale();
                     } else {
-						lWindow->Draw();
-					}
+                        lWindow->Draw();
+                    }
                 }
             }
 
-			refresh();
+            refresh();
             curs_set(0);
         }
 

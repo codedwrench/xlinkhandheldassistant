@@ -43,6 +43,7 @@ bool HUDController::SetUp()
     // Add the HUD
     ReplaceWindow<HUDWindow>(
         GetWindows(), GetWindowModel(), "HUD", [&] { return ScaleHUD(GetHeightReference(), GetWidthReference()); });
+
     return true;
 }
 

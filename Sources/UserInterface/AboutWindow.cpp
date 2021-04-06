@@ -58,9 +58,7 @@ namespace
 
 }  // namespace
 
-AboutWindow::AboutWindow(WindowModel&                       aModel,
-                         std::string_view                   aTitle,
-                         std::function<Dimensions()> aCalculation) :
+AboutWindow::AboutWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

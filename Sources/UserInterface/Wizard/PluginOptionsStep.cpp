@@ -21,8 +21,8 @@ namespace
 
 }  // namespace
 
-PluginOptionsStep::PluginOptionsStep(WindowModel&                       aModel,
-                                     std::string_view                   aTitle,
+PluginOptionsStep::PluginOptionsStep(WindowModel&                aModel,
+                                     std::string_view            aTitle,
                                      std::function<Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
@@ -40,7 +40,7 @@ void PluginOptionsStep::SetUp()
                                           GetModel().mAutoDiscoverPSPVitaNetworks)});
 
     // TODO: Add
-    //AddObject({std::make_shared<CheckBox>(
+    // AddObject({std::make_shared<CheckBox>(
     //    *this, "Use SSID from XLink Kai for connection", ScaleXLinkSSIDCheckBox, GetModel().mUseSSIDFromXLinkKai)});
 
     AddObject({std::make_shared<TextField>(*this,
@@ -70,7 +70,7 @@ void PluginOptionsStep::Draw()
 {
     // If autoconnect checkbox is checked, then show these sub-options
     GetObjects().at(1)->SetVisible(std::dynamic_pointer_cast<CheckBox>(GetObjects().at(0))->IsChecked());
-    //GetObjects().at(2)->SetVisible(std::dynamic_pointer_cast<CheckBox>(GetObjects().at(0))->IsChecked());
+    // GetObjects().at(2)->SetVisible(std::dynamic_pointer_cast<CheckBox>(GetObjects().at(0))->IsChecked());
 
     Window::Draw();
 }

@@ -13,7 +13,6 @@ namespace
 {
     Dimensions ScalePicture(const int& aMaxHeight, const int& aMaxWidth, const std::string& aPicture)
     {
-		Logger::GetInstance().Log("Scaling Picture to: " + std::to_string(aMaxHeight) + " " + std::to_string(aMaxWidth), Logger::Level::INFO); 
         // Pictures need to have the right amount of spaces
         // For height \n characters get counted and divided by 2
         // For width, the space until the first \n gets counted and divided by 2

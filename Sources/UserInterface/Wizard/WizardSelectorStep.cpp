@@ -15,8 +15,8 @@ namespace
     Dimensions ScaleSelectorBoxes() { return {2, 4, 0, 0}; }
 }  // namespace
 
-WizardSelectorStep::WizardSelectorStep(WindowModel&                       aModel,
-                                       std::string_view                   aTitle,
+WizardSelectorStep::WizardSelectorStep(WindowModel&                aModel,
+                                       std::string_view            aTitle,
                                        std::function<Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
@@ -36,8 +36,8 @@ void WizardSelectorStep::SetUp()
 #endif
 
     // TODO: Add
-    //lSelector->AddRadioBox("USB Device");
-    //lSelector->AddRadioBox("Simulated Device");
+    // lSelector->AddRadioBox("USB Device");
+    // lSelector->AddRadioBox("Simulated Device");
 
     // Objects need to be added for them to be drawn
     AddObject(lSelector);
