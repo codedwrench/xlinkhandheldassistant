@@ -126,6 +126,11 @@ uint64_t Handler80211::GetLockedBSSID() const
     return mLockedBSSID;
 }
 
+std::string Handler80211::GetLockedSSID() const
+{
+    return mLockedSSID;
+}
+
 uint64_t Handler80211::GetSourceMAC() const
 {
     return mSourceMac;
@@ -295,10 +300,11 @@ void Handler80211::Update(std::string_view aPacket)
                         UpdateBSSID();
                         if (mBSSID != mLockedBSSID) {
                             mLockedBSSID = mBSSID;
-                            Logger::GetInstance().Log(std::string("SSID switched:") +
-                                                          mParameter80211Reader->GetSSID().data() +
-                                                          ", BSSID: " + IntToMac(mBSSID),
-                                                      Logger::Level::DEBUG);
+                            mLockedSSID  = mParameter80211Reader->GetSSID().data();
+
+                            Logger::GetInstance().Log(
+                                std::string("SSID switched:") + mLockedSSID + ", BSSID: " + IntToMac(mBSSID),
+                                Logger::Level::DEBUG);
 
                             mIsDropped = false;
                         }

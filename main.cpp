@@ -180,11 +180,9 @@ int main(int argc, char* argv[])
                                 }
                             } else {
                                 if (std::dynamic_pointer_cast<MonitorDevice>(lDevice) == nullptr) {
-                                    lDevice             = std::make_shared<MonitorDevice>();
-                                    auto lMonitorDevice = std::dynamic_pointer_cast<MonitorDevice>(lDevice);
-                                    lMonitorDevice->SetSourceMACToFilter(MacToInt(mWindowModel.mOnlyAcceptFromMac));
-                                    lMonitorDevice->SetAcknowledgePackets(mWindowModel.mAcknowledgeDataFrames);
-
+                                    lDevice = std::make_shared<MonitorDevice>(MacToInt(mWindowModel.mOnlyAcceptFromMac),
+                                                                              mWindowModel.mAcknowledgeDataFrames,
+                                                                              &mWindowModel.mCurrentlyConnectedNetwork);
                                     Logger::GetInstance().Log("Monitor Device created!", Logger::Level::INFO);
                                 }
                             }
@@ -284,7 +282,7 @@ int main(int argc, char* argv[])
             mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Idle;
             mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
 
-            if(lDevice != nullptr) {
+            if (lDevice != nullptr) {
                 lDevice->Close();
             }
 

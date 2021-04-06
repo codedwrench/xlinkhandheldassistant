@@ -29,6 +29,16 @@ class MonitorDevice : public IPCapDevice
 {
 public:
     /**
+     * Constructs the monitor device
+     * @param aSourceMacToFilter - If a specific MAC needs to be filtered out.
+     * @param aAcknowledgeDataFrames - If Data frames should be acknowledged.
+     * @param aCurrentlyConnectedNetwork - For use in the user interface, shows SSID.
+     */
+    MonitorDevice(uint64_t     aSourceMacToFilter         = std::uint64_t(0),
+                  bool         aAcknowledgeDataFrames     = false,
+                  std::string* aCurrentlyConnectedNetwork = nullptr);
+
+    /**
      * Adds a MAC address to the blacklist.
      * @param aMAC - MAC address to blacklist.
      */
@@ -64,6 +74,7 @@ private:
     bool                         mAcknowledgePackets{false};
     bool                         mConnected{false};
     std::shared_ptr<IConnector>  mConnector{nullptr};
+    std::string*                 mCurrentlyConnectedNetwork{nullptr};
     const unsigned char*         mData{nullptr};
     pcap_t*                      mHandler{nullptr};
     const pcap_pkthdr*           mHeader{nullptr};

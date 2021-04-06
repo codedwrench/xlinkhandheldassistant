@@ -11,6 +11,17 @@
 
 using namespace std::chrono;
 
+MonitorDevice::MonitorDevice(uint64_t     aSourceMacToFilter,
+                             bool         aAcknowledgeDataFrames,
+                             std::string* aCurrentlyConnectedNetwork) :
+    mAcknowledgePackets(aAcknowledgeDataFrames),
+    mCurrentlyConnectedNetwork(aCurrentlyConnectedNetwork)
+{
+    if (aSourceMacToFilter != 0) {
+        mPacketHandler.AddToMACWhiteList(aSourceMacToFilter);
+    }
+}
+
 bool MonitorDevice::Open(std::string_view aName, std::vector<std::string>& aSSIDFilter)
 {
     bool lReturn{true};
@@ -95,6 +106,13 @@ bool MonitorDevice::ReadCallback(const unsigned char* aData, const pcap_pkthdr* 
 
     mData   = aData;
     mHeader = aHeader;
+
+    // For use in userinterface
+    if(mCurrentlyConnectedNetwork != nullptr)
+    {
+        *mCurrentlyConnectedNetwork = mPacketHandler.GetLockedSSID();
+    }
+
     mPacketCount++;
 
     return lReturn;
