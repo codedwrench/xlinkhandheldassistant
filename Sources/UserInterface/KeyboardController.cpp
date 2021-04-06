@@ -6,6 +6,7 @@
 #include <thread>
 #include <utility>
 
+#define PDC_WIDE
 #include <curses.h>
 
 KeyboardController::KeyboardController(std::function<void(unsigned int)> aCallback) : mCallback(std::move(aCallback)) {}

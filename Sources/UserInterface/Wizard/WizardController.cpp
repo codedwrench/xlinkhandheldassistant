@@ -1,7 +1,7 @@
 #include "../../../Includes/UserInterface/Wizard/WizardController.h"
 
 #include <iostream>
-
+#define PDC_WIDE
 #include <curses.h>
 #include <pcap.h>
 

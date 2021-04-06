@@ -84,7 +84,12 @@ void Window::DrawString(int aYCoord, int aXCoord, int aColorPair, std::string_vi
     std::string       lLineToDraw{};
     int               lYCoord{aYCoord};
     while (std::getline(lStream, lLineToDraw, '\n')) {
+#if defined(_WIN32) || defined(_WIN64)
+	std::wstring lWiden {lLineToDraw.begin(), lLineToDraw.end()};
+        mvwaddwstr(mNCursesWindow.get(), lYCoord, aXCoord, lWiden.data());
+#else
         mvwaddstr(mNCursesWindow.get(), lYCoord, aXCoord, lLineToDraw.data());
+#endif
         wattrset(mNCursesWindow.get(), COLOR_PAIR(1));
         lYCoord++;
     }

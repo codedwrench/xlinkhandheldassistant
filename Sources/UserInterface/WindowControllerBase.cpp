@@ -48,9 +48,6 @@ bool WindowControllerBase::KeyAction(unsigned int aAction)
         if (aAction == 'q') {
             GetWindowModel().mStopProgram = true;
         } else if (aAction == KEY_RESIZE) {
-#if defined(_WIN32) || defined(_WIN64)
-            resize_term(0, 0);
-#endif
             mDimensionsChanged = true;
         } else {
             // For now send the key action to all visible windows
@@ -82,6 +79,16 @@ bool WindowControllerBase::Process()
                 mHeight            = lHeight;
                 mWidth             = lWidth;
             }
+
+#if defined(_WIN32) || defined(_WIN64)
+	    if(is_termresized()) {
+                mDimensionsChanged = true;
+	    }
+
+	    if(mDimensionsChanged) {
+            	resize_term(0, 0);
+	    }
+#endif
 
             for (auto& lWindow : mWindows) {
                 if (lWindow->IsVisible()) {
