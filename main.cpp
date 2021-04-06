@@ -280,9 +280,27 @@ int main(int argc, char* argv[])
                     gRunning = false;
                 }
             }
+
+            mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Idle;
+            mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
+	    
+            lDevice->Close();
+            lXLinkKaiConnection->Close();
+            lSSIDFilters.clear();
+
+            lDevice             = nullptr;
+            lXLinkKaiConnection = nullptr;
         } else {
             gRunning = false;
         }
+
+        if (lKeyboardController != nullptr) {
+            lKeyboardController->StopThread();
+            lKeyboardController = nullptr;
+        }
+
+        lWindowController = nullptr;
+
         lSignalIoService.stop();
         if (lThread.joinable()) {
             lThread.join();

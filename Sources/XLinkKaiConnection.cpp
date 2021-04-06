@@ -238,10 +238,10 @@ bool XLinkKaiConnection::StartReceiverThread()
                                                   Logger::Level::ERROR);
                         mConnected        = false;
                         mConnectInitiated = false;
-                        mSettingsSent = false;
+                        mSettingsSent     = false;
                     } else if (mConnected && !mConnectInitiated && !mSettingsSent) {
                         Send(cSettingDDSOnlyString, "");
-                        mSettingsSent = true;                        
+                        mSettingsSent = true;
                     } else {
                         mIoService.poll();
                         // Very small delay to make the computer happy

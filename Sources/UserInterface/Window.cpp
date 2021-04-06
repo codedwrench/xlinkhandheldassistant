@@ -24,9 +24,7 @@ Window::Window(WindowModel&                aModel,
         [](WINDOW* aWin) { delwin(aWin); });
 }
 
-void Window::SetUp()
-{
-}
+void Window::SetUp() {}
 
 bool Window::HandleKey(unsigned int aKeyCode)
 {
@@ -85,7 +83,7 @@ void Window::DrawString(int aYCoord, int aXCoord, int aColorPair, std::string_vi
     int               lYCoord{aYCoord};
     while (std::getline(lStream, lLineToDraw, '\n')) {
 #if defined(_WIN32) || defined(_WIN64)
-	std::wstring lWiden {lLineToDraw.begin(), lLineToDraw.end()};
+        std::wstring lWiden{lLineToDraw.begin(), lLineToDraw.end()};
         mvwaddwstr(mNCursesWindow.get(), lYCoord, aXCoord, lWiden.data());
 #else
         mvwaddstr(mNCursesWindow.get(), lYCoord, aXCoord, lLineToDraw.data());

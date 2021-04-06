@@ -81,13 +81,13 @@ bool WindowControllerBase::Process()
             }
 
 #if defined(_WIN32) || defined(_WIN64)
-	    if(is_termresized()) {
+            if (is_termresized()) {
                 mDimensionsChanged = true;
-	    }
+            }
 
-	    if(mDimensionsChanged) {
-            	resize_term(0, 0);
-	    }
+            if (mDimensionsChanged) {
+                resize_term(0, 0);
+            }
 #endif
 
             for (auto& lWindow : mWindows) {
