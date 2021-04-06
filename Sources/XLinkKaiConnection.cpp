@@ -228,6 +228,7 @@ bool XLinkKaiConnection::StartReceiverThread()
                         Logger::GetInstance().Log("Timeout waiting for XLink Kai to connect", Logger::Level::ERROR);
                         mConnectInitiated = false;
                         mConnected        = false;
+                        mSettingsSent     = false;
                         // Retry in 10 seconds
                         std::this_thread::sleep_for(10s);
                     } else if (mConnected && !mConnectInitiated &&
@@ -237,6 +238,10 @@ bool XLinkKaiConnection::StartReceiverThread()
                                                   Logger::Level::ERROR);
                         mConnected        = false;
                         mConnectInitiated = false;
+                        mSettingsSent = false;
+                    } else if (mConnected && !mConnectInitiated && !mSettingsSent) {
+                        Send(cSettingDDSOnlyString, "");
+                        mSettingsSent = true;                        
                     } else {
                         mIoService.poll();
                         // Very small delay to make the computer happy

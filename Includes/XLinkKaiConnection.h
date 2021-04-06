@@ -25,6 +25,8 @@ namespace XLinkKai_Constants
     static constexpr std::string_view     cDisconnectFormat{"disconnect"};
     static constexpr std::string_view     cDisconnectedFormat{"disconnected"};
     static constexpr std::string_view     cEthernetDataFormat{"e"};
+    static constexpr std::string_view     cSettingFormat{"setting"};
+    static constexpr std::string_view     cSettingDDSOnly{"ddsonly"};
     static constexpr std::string_view     cLocallyUniqueName{"XLHA_Device"};
     static constexpr std::string_view     cEmulatorName{"XLHA"};
     static constexpr unsigned int         cPort{34523};
@@ -47,6 +49,9 @@ namespace XLinkKai_Constants
 
     static const std::string cEthernetDataString{std::string(cEthernetDataFormat) + cSeparator.data() +
                                                  cEthernetDataFormat.data() + cSeparator.data()};
+
+    static const std::string cSettingDDSOnlyString{std::string(cSettingFormat) + cSeparator.data() +
+                                                   cSettingDDSOnly.data() + cSeparator.data() + "true"};
 }  // namespace XLinkKai_Constants
 
 using namespace XLinkKai_Constants;
@@ -125,6 +130,7 @@ private:
 
     bool                                               mConnected{false};
     bool                                               mConnectInitiated{false};
+    bool                                               mSettingsSent{false};
     std::chrono::time_point<std::chrono::system_clock> mConnectionTimerStart{std::chrono::seconds{0}};
     std::chrono::time_point<std::chrono::system_clock> mKeepAliveTimerStart{std::chrono::seconds{0}};
 
