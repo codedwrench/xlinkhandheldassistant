@@ -283,8 +283,11 @@ int main(int argc, char* argv[])
 
             mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Idle;
             mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
-	    
-            lDevice->Close();
+
+            if(lDevice != nullptr) {
+                lDevice->Close();
+            }
+
             lXLinkKaiConnection->Close();
             lSSIDFilters.clear();
 
