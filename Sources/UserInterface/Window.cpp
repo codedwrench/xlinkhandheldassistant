@@ -1,5 +1,7 @@
 #include "../../Includes/UserInterface/Window.h"
 
+#include <codecvt>
+#include <locale>
 #include <iostream>
 
 #include "../../Includes/Logger.h"
@@ -83,8 +85,9 @@ void Window::DrawString(int aYCoord, int aXCoord, int aColorPair, std::string_vi
     int               lYCoord{aYCoord};
     while (std::getline(lStream, lLineToDraw, '\n')) {
 #if defined(_WIN32) || defined(_WIN64)
-        std::wstring lWiden{lLineToDraw.begin(), lLineToDraw.end()};
-        mvwaddwstr(mNCursesWindow.get(), lYCoord, aXCoord, lWiden.data());
+        // conversion
+        std::wstring lWidenedLineToDraw = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(lLineToDraw.data());
+        mvwaddwstr(mNCursesWindow.get(), lYCoord, aXCoord, lWidenedLineToDraw.data());
 #else
         mvwaddstr(mNCursesWindow.get(), lYCoord, aXCoord, lLineToDraw.data());
 #endif

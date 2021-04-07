@@ -51,6 +51,10 @@ WizardController::WizardController(WindowModel& aModel) : WindowControllerBase(a
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <string>
+#include <codecvt>
+#include <locale>
+
 // Link with Iphlpapi.lib
 #pragma comment(lib, "IPHLPAPI.lib")
 
@@ -70,16 +74,15 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
         while (lCurrentAddresses != nullptr) {
             // Check if the device is a wifi (802.11) device
             if (lCurrentAddresses->IfType == IF_TYPE_IEEE80211) {
-                std::string lFriendlyName{lCurrentAddresses->FriendlyName,
-                                          lCurrentAddresses->FriendlyName + wcslen(lCurrentAddresses->FriendlyName)};
+				std::string lFriendlyName = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(lCurrentAddresses->FriendlyName,
+                                          lCurrentAddresses->FriendlyName + wcslen(lCurrentAddresses->FriendlyName));
 
                 // Try to skip virtual adapters
                 if (lFriendlyName.rfind("Virtual", 0) != 0) {
                     std::pair<std::string, std::string> lWifiInformation{};
+
                     // Without \Device\NPF_ in front of this, it doesn't work
-                    lWifiInformation.first  = "\\Device\\NPF_" + std::string(lCurrentAddresses->AdapterName,
-                                                                            lCurrentAddresses->AdapterName +
-                                                                                strlen(lCurrentAddresses->AdapterName));
+                    lWifiInformation.first  = "\\Device\\NPF_" + lFriendlyName;
                     lWifiInformation.second = lFriendlyName;
                     aWifiAdapterList.push_back(lWifiInformation);
                 }
