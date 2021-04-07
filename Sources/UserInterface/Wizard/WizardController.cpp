@@ -82,7 +82,9 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
                     std::pair<std::string, std::string> lWifiInformation{};
 
                     // Without \Device\NPF_ in front of this, it doesn't work
-                    lWifiInformation.first  = "\\Device\\NPF_" + lFriendlyName;
+                    lWifiInformation.first  = "\\Device\\NPF_" + std::string(lCurrentAddresses->AdapterName,
+                                                                            lCurrentAddresses->AdapterName +
+                                                                                strlen(lCurrentAddresses->AdapterName));;
                     lWifiInformation.second = lFriendlyName;
                     aWifiAdapterList.push_back(lWifiInformation);
                 }
