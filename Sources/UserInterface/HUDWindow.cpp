@@ -16,11 +16,15 @@ namespace
         // Pictures need to have the right amount of spaces
         // For height \n characters get counted and divided by 2
         // For width, the space until the first \n gets counted and divided by 2
+
+	auto lFirstReturn{aPicture.find('\n')};
+	auto lPictureWidth{(lFirstReturn == std::string::npos) ? aPicture.length() : lFirstReturn};
+
         return {(aMaxHeight / 2) -
                     static_cast<int>(std::count_if(
                         aPicture.begin(), aPicture.end(), [](char aCharacter) { return (aCharacter == '\n'); })) /
                         2,
-                static_cast<int>((aMaxWidth / 2) - (aPicture.find('\n') / 2)),
+                static_cast<int>((aMaxWidth / 2) - (lPictureWidth / 2)),
                 0,
                 0};
     }
@@ -103,7 +107,7 @@ void HUDWindow::SetUp()
     GetSize();
 
     AddObject({std::make_shared<String>(
-        *this, mOffPicture, [&] { return ScalePicture(GetHeightReference(), GetWidthReference(), mOffPicture); })});
+        *this, *mActivePicture, [&] { return ScalePicture(GetHeightReference(), GetWidthReference(), *mActivePicture); })});
 
     AddObject({std::make_shared<String>(
         *this,
@@ -159,10 +163,14 @@ void HUDWindow::Draw()
 {
     if (GetModel().mEngineStatus == WindowModel_Constants::EngineStatus::Idle) {
         // TODO: This still needs a better method
-        std::dynamic_pointer_cast<String>(GetObjects().at(0))->SetName(mOffPicture);
-        std::dynamic_pointer_cast<Button>(GetObjects().at(5))->SetName("Start Engine");
+        mActivePicture = &mOffPicture;
+        GetObjects().at(0)->SetName(*mActivePicture);
+	GetObjects().at(0)->Scale();
+        GetObjects().at(5)->SetName("Start Engine");
     } else if (GetModel().mEngineStatus == WindowModel_Constants::EngineStatus::Running) {
-        std::dynamic_pointer_cast<String>(GetObjects().at(0))->SetName(mOnPicture);
+	mActivePicture = &mOnPicture;
+        GetObjects().at(0)->SetName(*mActivePicture);
+        GetObjects().at(0)->Scale();
 
         auto lStartStopButton = std::dynamic_pointer_cast<Button>(GetObjects().at(5));
 
