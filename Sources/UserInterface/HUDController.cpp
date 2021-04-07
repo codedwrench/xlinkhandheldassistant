@@ -7,6 +7,7 @@
 #include "../Includes/UserInterface/AboutWindow.h"
 #include "../Includes/UserInterface/HUDWindow.h"
 #include "../Includes/UserInterface/OptionsWindow.h"
+#include "../Includes/UserInterface/ThemeWindow.h"
 
 Dimensions ScaleHUD(const int& aHeight, const int& aWidth)
 {
@@ -75,8 +76,19 @@ bool HUDController::Process()
         });
     }
 
+    if (GetWindowModel().mThemeSelected) {
+        GetWindowModel().mThemeSelected = false;
+        ReplaceWindow<ThemeWindow>(GetWindows(), GetWindowModel(), "Theme", [&] {
+            return ScaleHUD(GetHeightReference(), GetWidthReference());
+        });
+    }
+
     if (GetWindowModel().mWindowDone) {
         GetWindowModel().mWindowDone = false;
+
+        // Save any changes that may have been made
+        GetWindowModel().SaveToFile(GetWindowModel().mProgramPath + "config.txt");
+
         ReplaceWindow<HUDWindow>(
             GetWindows(), GetWindowModel(), "HUD", [&] { return ScaleHUD(GetHeightReference(), GetWidthReference()); });
     }

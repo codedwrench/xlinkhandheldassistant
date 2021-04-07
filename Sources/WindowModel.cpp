@@ -48,6 +48,7 @@ bool WindowModel::SaveToFile(std::string_view aPath) const
         lFile << cSaveLogLevel << ": \"" << Logger::ConvertLogLevelToString(mLogLevel) << "\"" << std::endl;
         lFile << cSaveOnlyAcceptFromMac << ": \"" << mOnlyAcceptFromMac << "\"" << std::endl;
         lFile << cSaveReConnectionTimeOutS << ": \"" << mReConnectionTimeOutS << "\"" << std::endl;
+        lFile << cSaveTheme << ": \"" << mTheme << "\"" << std::endl;
         lFile << cSaveUseSSIDFromXLinkKai << ": " << BoolToString(mUseSSIDFromXLinkKai) << std::endl;
         lFile << cSaveUseXLinkKaiHints << ": " << BoolToString(mUseXLinkKaiHints) << std::endl;
         lFile << cSaveWifiAdapter << ": \"" << mWifiAdapter << "\"" << std::endl;
@@ -104,6 +105,8 @@ bool WindowModel::LoadFromFile(std::string_view aPath)
                             mOnlyAcceptFromMac = lResult.substr(1, lResult.size() - 2);
                         } else if (lOption == cSaveReConnectionTimeOutS) {
                             mReConnectionTimeOutS = lResult.substr(1, lResult.size() - 2);
+                        } else if (lOption == cSaveTheme) {
+                            mTheme = lResult.substr(1, lResult.size() - 2);
                         } else if (lOption == cSaveUseSSIDFromXLinkKai) {
                             mUseSSIDFromXLinkKai = StringToBool(lResult.substr(1, lResult.size() - 2));
                         } else if (lOption == cSaveUseXLinkKaiHints) {

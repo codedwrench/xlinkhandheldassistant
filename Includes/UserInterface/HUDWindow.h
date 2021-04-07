@@ -21,10 +21,10 @@ public:
 
 private:
     // If you want nice ascii art, add on/off txt files
-    std::string mOffPicture{"    O    "};
-    std::string mOnPicture{"( ( O ) )"};
+    std::string        mOffPicture{"    O    "};
+    std::string        mOnPicture{"( ( O ) )"};
     const std::string* mActivePicture{&mOffPicture};
-    std::string mOldConnected{""};
+    std::string        mOldConnected{""};
 
     Dimensions ScaleReConnectionButton();
 };

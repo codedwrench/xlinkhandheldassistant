@@ -55,6 +55,7 @@ namespace WindowModel_Constants
     static constexpr std::string_view cSaveLogLevel{"LogLevel"};
     static constexpr std::string_view cSaveOnlyAcceptFromMac{"OnlyAcceptFromMac"};
     static constexpr std::string_view cSaveReConnectionTimeOutS{"ReConnectionTimeOutS"};
+    static constexpr std::string_view cSaveTheme{"Theme"};
     static constexpr std::string_view cSaveUseSSIDFromXLinkKai{"UseSSIDFromXLinkKai"};
     static constexpr std::string_view cSaveUseXLinkKaiHints{"UseXLinkKaiHints"};
     static constexpr std::string_view cSaveWifiAdapter{"WifiAdapter"};
@@ -70,6 +71,7 @@ namespace WindowModel_Constants
     static constexpr Logger::Level    cDefaultLogLevel{Logger::Level::ERROR};
     static constexpr std::string_view cDefaultOnlyAcceptFromMac{""};
     static constexpr std::string_view cDefaultReConnectionTimeOutS{"15"};
+    static constexpr std::string_view cDefaultTheme{"Default"};
     static constexpr bool             cDefaultUseSSIDFromXLinkKai{false};
     static constexpr bool             cDefaultUseXLinkKaiHints{false};
     static constexpr std::string_view cDefaultWifiAdapter{""};
@@ -89,6 +91,7 @@ public:
     Logger::Level                           mLogLevel{WindowModel_Constants::cDefaultLogLevel};
     std::string                             mOnlyAcceptFromMac{WindowModel_Constants::cDefaultOnlyAcceptFromMac};
     std::string                             mReConnectionTimeOutS{WindowModel_Constants::cDefaultReConnectionTimeOutS};
+    std::string                             mTheme{WindowModel_Constants::cDefaultTheme};
     bool                                    mUseSSIDFromXLinkKai{WindowModel_Constants::cDefaultUseSSIDFromXLinkKai};
     bool                                    mUseXLinkKaiHints{WindowModel_Constants::cDefaultUseXLinkKaiHints};
     std::string                             mWifiAdapter{WindowModel_Constants::cDefaultWifiAdapter};
@@ -99,17 +102,18 @@ public:
     WindowModel_Constants::EngineStatus mEngineStatus{WindowModel_Constants::EngineStatus::Idle};
 
     // Runtime components
-    std::string mProgramPath{};
     std::string mCurrentlyConnectedNetwork{};
+    std::string mProgramPath{};
+    int         mWifiAdapterSelection{0};  // This is going to be converted to a string
 
     // non-descriptive, descriptive
     std::vector<std::pair<std::string, std::string>> mWifiAdapterList{};
-    int mWifiAdapterSelection{0};  // This is going to be converted to a string
 
     // Commands
     bool                           mAboutSelected{false};
     WindowModel_Constants::Command mCommand{WindowModel_Constants::Command::NoCommand};
     bool                           mOptionsSelected{false};
+    bool                           mThemeSelected{false};
     bool                           mStopProgram{false};
     bool                           mWindowDone{false};  //!< Tells the program to move to the next step
     bool                           mWizardSelected{false};

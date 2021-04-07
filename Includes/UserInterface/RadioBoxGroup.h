@@ -39,6 +39,12 @@ public:
     void AddRadioBox(std::string_view aName);
 
     /**
+     * Gets a radiobox name.
+     * @param aRadioBox - The index of the radiobox to check.
+     */
+    std::string_view GetRadioBoxName(int aRadioBox);
+
+    /**
      * Checks a radiobox without user interaction.
      * @param aRadioBox - The index of the radiobox to check.
      */

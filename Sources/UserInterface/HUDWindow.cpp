@@ -17,8 +17,8 @@ namespace
         // For height \n characters get counted and divided by 2
         // For width, the space until the first \n gets counted and divided by 2
 
-	auto lFirstReturn{aPicture.find('\n')};
-	auto lPictureWidth{(lFirstReturn == std::string::npos) ? aPicture.length() : lFirstReturn};
+        auto lFirstReturn{aPicture.find('\n')};
+        auto lPictureWidth{(lFirstReturn == std::string::npos) ? aPicture.length() : lFirstReturn};
 
         return {(aMaxHeight / 2) -
                     static_cast<int>(std::count_if(
@@ -93,12 +93,13 @@ void HUDWindow::SetUp()
     Window::SetUp();
 
     // Lets grab our OFF/ON picture
-    std::string lOffPicture = LoadPicture(GetModel().mProgramPath + "off.txt");
+    std::string lOffPicture =
+        LoadPicture(GetModel().mProgramPath + "Themes" + "/" + GetModel().mTheme + "/" + "off.txt");
     if (!lOffPicture.empty()) {
         mOffPicture = lOffPicture;
     }
 
-    std::string lOnPicture = LoadPicture(GetModel().mProgramPath + "on.txt");
+    std::string lOnPicture = LoadPicture(GetModel().mProgramPath + "Themes" + "/" + GetModel().mTheme + "/" + "on.txt");
     if (!lOnPicture.empty()) {
         mOnPicture = lOnPicture;
     }
@@ -106,8 +107,9 @@ void HUDWindow::SetUp()
     // Get size of window so scaling works properly.
     GetSize();
 
-    AddObject({std::make_shared<String>(
-        *this, *mActivePicture, [&] { return ScalePicture(GetHeightReference(), GetWidthReference(), *mActivePicture); })});
+    AddObject({std::make_shared<String>(*this, *mActivePicture, [&] {
+        return ScalePicture(GetHeightReference(), GetWidthReference(), *mActivePicture);
+    })});
 
     AddObject({std::make_shared<String>(
         *this,
@@ -165,10 +167,10 @@ void HUDWindow::Draw()
         // TODO: This still needs a better method
         mActivePicture = &mOffPicture;
         GetObjects().at(0)->SetName(*mActivePicture);
-	GetObjects().at(0)->Scale();
+        GetObjects().at(0)->Scale();
         GetObjects().at(5)->SetName("Start Engine");
     } else if (GetModel().mEngineStatus == WindowModel_Constants::EngineStatus::Running) {
-	mActivePicture = &mOnPicture;
+        mActivePicture = &mOnPicture;
         GetObjects().at(0)->SetName(*mActivePicture);
         GetObjects().at(0)->Scale();
 

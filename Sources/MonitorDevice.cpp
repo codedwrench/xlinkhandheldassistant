@@ -108,8 +108,7 @@ bool MonitorDevice::ReadCallback(const unsigned char* aData, const pcap_pkthdr* 
     mHeader = aHeader;
 
     // For use in userinterface
-    if(mCurrentlyConnectedNetwork != nullptr)
-    {
+    if (mCurrentlyConnectedNetwork != nullptr) {
         *mCurrentlyConnectedNetwork = mPacketHandler.GetLockedSSID();
     }
 

@@ -13,7 +13,8 @@ namespace
 {
     Dimensions ScaleStartWizardButton() { return {2, 4, 0, 0}; }
     Dimensions ScaleAboutButton() { return {3, 4, 0, 0}; }
-    Dimensions ScaleLogLevelSelector() { return {5, 4, 0, 0}; }
+    Dimensions ScaleThemeButton() { return {4, 4, 0, 0}; }
+    Dimensions ScaleLogLevelSelector() { return {6, 4, 0, 0}; }
     Dimensions ScaleDoneButton() { return {13, 4, 0, 0}; }
     Dimensions ScaleExitButton() { return {14, 4, 0, 0}; }
 }  // namespace
@@ -31,6 +32,11 @@ void OptionsWindow::SetUp()
 
     AddObject({std::make_shared<Button>(*this, "Reconfigure the application", ScaleStartWizardButton, [&] {
         GetModel().mWizardSelected = true;
+        return true;
+    })});
+
+    AddObject({std::make_shared<Button>(*this, "Select a theme", ScaleThemeButton, [&] {
+        GetModel().mThemeSelected = true;
         return true;
     })});
 

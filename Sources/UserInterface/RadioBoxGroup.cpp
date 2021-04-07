@@ -37,6 +37,11 @@ void RadioBoxGroup::ClearRadioBoxes()
     mRadioBoxes.clear();
 }
 
+std::string_view RadioBoxGroup::GetRadioBoxName(int aRadioBox)
+{
+    return mRadioBoxes.at(aRadioBox).GetName();
+}
+
 void RadioBoxGroup::SetChecked(int aRadioBox)
 {
     for (auto& lRadioBox : mRadioBoxes) {

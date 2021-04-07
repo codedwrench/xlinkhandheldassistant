@@ -125,6 +125,7 @@ add_executable(xlinkhandheldassistant main.cpp
         Sources/UserInterface/RadioBoxGroup.cpp
         Sources/UserInterface/String.cpp
         Sources/UserInterface/TextField.cpp
+        Sources/UserInterface/ThemeWindow.cpp
         Sources/UserInterface/UIObject.cpp
         Sources/UserInterface/Window.cpp
         Sources/UserInterface/WindowControllerBase.cpp
@@ -166,6 +167,7 @@ add_executable(xlinkhandheldassistant main.cpp
         Includes/UserInterface/RadioBoxGroup.h
         Includes/UserInterface/String.h
         Includes/UserInterface/TextField.h
+        Includes/UserInterface/ThemeWindow.h
         Includes/UserInterface/UIObject.h
         Includes/UserInterface/Window.h
         Includes/UserInterface/WindowController.h
@@ -193,10 +195,7 @@ if (BUILD_STATIC)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ ${CMAKE_EXE_LINKER_FLAGS}")
 endif ()
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sources/UserInterface/on.txt
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sources/UserInterface/off.txt
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sources/UserInterface/Themes
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 target_include_directories(xlinkhandheldassistant PRIVATE ${PCAP_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${CURSES_INCLUDE_DIRS} ${LibNL_INCLUDE_DIR})
