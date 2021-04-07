@@ -68,6 +68,7 @@ int main(int argc, char* argv[])
     std::string lProgramPath{"./"};
 
 #if not defined(_WIN32) && not defined(_WIN64)
+    setlocale(LC_ALL, "");
     // Make robust against sudo path change.
     std::array<char, PATH_MAX> lResolvedPath{};
     if (realpath(argv[0], lResolvedPath.data()) != nullptr) {
