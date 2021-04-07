@@ -6,6 +6,7 @@
  *
  **/
 
+#define PDC_WIDE
 #include <curses.h>
 
 #include "IWindow.h"

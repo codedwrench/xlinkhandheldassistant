@@ -5,6 +5,7 @@
 
 #include <boost/program_options.hpp>
 
+#define PDC_WIDE
 #include <curses.h>
 
 #include "Includes/IPCapDevice.h"
