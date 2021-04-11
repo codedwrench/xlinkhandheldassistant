@@ -17,6 +17,7 @@ namespace WindowModel_Constants
         StopSearchNetworks,
         WaitForTime,
         ReConnect,
+        SetHosting,
         NoCommand
     };
 
@@ -103,6 +104,7 @@ public:
 
     // Runtime components
     std::string mCurrentlyConnectedNetwork{};
+    bool        mHosting{false};
     std::string mProgramPath{};
     int         mWifiAdapterSelection{0};  // This is going to be converted to a string
 

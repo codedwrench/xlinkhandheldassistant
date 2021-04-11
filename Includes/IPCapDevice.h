@@ -87,6 +87,12 @@ public:
     virtual void SetConnector(std::shared_ptr<IConnector> aDevice) = 0;
 
     /**
+     * Sets whether user is hosting or not.
+     * @param aHosting - If the user is hosting.
+     */
+    virtual void SetHosting(bool aHosting) = 0;
+
+    /**
      * Starts receiving on device.
      * @return true if successful (for a file based device this will start replaying the capture).
      */

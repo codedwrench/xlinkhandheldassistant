@@ -8,6 +8,7 @@
 #include <thread>
 
 #include "../Includes/NetConversionFunctions.h"
+#include "../Includes/XLinkKaiConnection.h"
 
 using namespace std::chrono;
 
@@ -110,6 +111,10 @@ bool MonitorDevice::ReadCallback(const unsigned char* aData, const pcap_pkthdr* 
     // For use in userinterface
     if (mCurrentlyConnectedNetwork != nullptr) {
         *mCurrentlyConnectedNetwork = mPacketHandler.GetLockedSSID();
+        if(mHosting) {
+            // Send this over XLink Kai
+            mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString) + mPacketHandler.GetLockedSSID());
+        }
     }
 
     mPacketCount++;
@@ -246,4 +251,9 @@ void MonitorDevice::SetSourceMACToFilter(uint64_t aMac)
 void MonitorDevice::SetAcknowledgePackets(bool aAcknowledge)
 {
     mAcknowledgePackets = aAcknowledge;
+}
+
+void MonitorDevice::SetHosting(bool aHosting)
+{
+   mHosting = aHosting;
 }

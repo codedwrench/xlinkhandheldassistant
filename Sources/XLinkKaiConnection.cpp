@@ -145,9 +145,7 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
         std::size_t lFirstSeparator{lData.find(cSeparator)};
         std::string lCommand{lData.substr(0, lFirstSeparator + 1)};
 
-        if (lCommand == cEthernetDataFormat) {
-            Logger::GetInstance().Log("Received: " + PrettyHexString(lData), Logger::Level::TRACE);
-        } else {
+        if (lCommand != std::string(cEthernetDataFormat) + cSeparator.data()) {
             Logger::GetInstance().Log("Received: " + lCommand + lData, Logger::Level::TRACE);
         }
 
@@ -169,6 +167,8 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
                 // is e;e;
                 lCommand = lData.substr(0, cEthernetDataString.size());
 
+                Logger::GetInstance().Log("Received: " + PrettyHexString(lData.substr(cEthernetDataString.length())), Logger::Level::TRACE);
+
                 if (lCommand == cEthernetDataString) {
                     if (mIncomingConnection != nullptr) {
                         // Strip e;e;
@@ -188,6 +188,11 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
                         // Data from XLink Kai should never be caught in the receiver thread
                         mIncomingConnection->BlackList(mPacketHandler.GetSourceMAC());
                         mIncomingConnection->Send(mEthernetData);
+                    }
+                } else if (lCommand == cEthernetDataMetaString) {
+                    if(lData.substr(cEthernetDataMetaString.length()) == cSetESSIDFormat) {
+                        Logger::GetInstance().Log("XLink Kai gave us the following ESSID" + lData.substr(cSetESSIDString.length()), Logger::Level::DEBUG);
+                        // TODO: Send to Devices
                     }
                 }
             } else if (lCommand == std::string(cDisconnectedFormat) + cSeparator.data()) {

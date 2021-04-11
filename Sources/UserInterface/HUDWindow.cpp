@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "../../Includes/UserInterface/Button.h"
+#include "../../Includes/UserInterface/CheckBox.h"
 #include "../../Includes/UserInterface/DefaultElements.h"
 #include "../../Includes/UserInterface/TextField.h"
 
@@ -54,6 +55,11 @@ namespace
     Dimensions ScaleStartEngineButton(const int& aMaxHeight, const int& aMaxWidth)
     {
         return {(aMaxHeight - 2), (aMaxWidth - 2) - static_cast<int>(std::string("[ Start Engine ]").length()), 0, 0};
+    }
+
+    Dimensions ScaleHostingButton(const int& aMaxHeight, const int& aMaxWidth)
+    {
+        return {(aMaxHeight - 4), (aMaxWidth - 2) - static_cast<int>(std::string("[ ]  I'm Hosting!").length()), 0, 0};
     }
 
 }  // namespace
@@ -157,6 +163,13 @@ void HUDWindow::SetUp()
             }
             return true;
         })});
+
+    AddObject({std::make_shared<CheckBox>(
+        *this,
+        "I'm Hosting!",
+        [&] { return ScaleHostingButton(GetHeightReference(), GetWidthReference()); },
+        GetModel().mHosting
+        )});
 
     AddObject(CreateQuitText(*this, GetHeightReference()));
 }

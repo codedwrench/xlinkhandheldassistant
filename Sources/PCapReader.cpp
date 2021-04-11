@@ -309,3 +309,7 @@ void PCapReader::SetAcknowledgePackets(bool aAcknowledge)
 {
     mAcknowledgePackets = aAcknowledge;
 }
+
+void PCapReader::SetHosting(bool aHosting) {
+    mHosting = aHosting;
+}

@@ -64,6 +64,7 @@ public:
     bool Send(std::string_view aData) override;
     void SetAcknowledgePackets(bool aAcknowledge);
     void SetConnector(std::shared_ptr<IConnector> aDevice) override;
+    void SetHosting(bool aHosting) override;
     void SetSourceMACToFilter(uint64_t aMac);
     bool StartReceiverThread() override;
 
@@ -78,6 +79,7 @@ private:
     const unsigned char*         mData{nullptr};
     pcap_t*                      mHandler{nullptr};
     const pcap_pkthdr*           mHeader{nullptr};
+    bool                         mHosting{false};
     unsigned int                 mPacketCount{0};
     Handler80211                 mPacketHandler{PhysicalDeviceHeaderType::RadioTap};
     std::shared_ptr<std::thread> mReceiverThread{nullptr};

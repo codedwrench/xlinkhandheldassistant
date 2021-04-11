@@ -59,6 +59,7 @@ public:
     bool Send(std::string_view aData, bool aModifyData);
     bool Send(std::string_view aData) override;
     void SetConnector(std::shared_ptr<IConnector> aDevice) override;
+    void SetHosting(bool aHosting) override;
     bool StartReceiverThread() override;
 
 private:
@@ -70,6 +71,7 @@ private:
     std::shared_ptr<IConnector>     mConnector{nullptr};
     const unsigned char*            mData{nullptr};
     pcap_t*                         mHandler{nullptr};
+    bool                            mHosting{false};
     uint64_t                        mAdapterMACAddress{};
     bool                            mAutoConnect{};
     const pcap_pkthdr*              mHeader{nullptr};

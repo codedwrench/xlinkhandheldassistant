@@ -69,6 +69,7 @@ public:
     bool Send(std::string_view aData) override;
     void SetAcknowledgePackets(bool aAcknowledge);
     void SetConnector(std::shared_ptr<IConnector> aDevice) override;
+    void SetHosting(bool aHosting) override;
     void SetIncomingConnection(std::shared_ptr<IPCapDevice> aDevice) override;
 
     /**
@@ -98,6 +99,7 @@ private:
     std::shared_ptr<RadioTapReader::PhysicalDeviceParameters> mParameters{nullptr};
     pcap_t*                                                   mHandler{nullptr};
     pcap_pkthdr*                                              mHeader{nullptr};
+    bool                                                      mHosting{false};
     std::shared_ptr<IPCapDevice>                              mIncomingConnection{nullptr};
     bool                                                      mDoneReceiving{false};
     bool                                                      mMonitorCapture{false};

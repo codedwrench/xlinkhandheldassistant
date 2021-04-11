@@ -9,6 +9,7 @@
 #include <thread>
 
 #include "../Includes/NetConversionFunctions.h"
+#include "../Includes/XLinkKaiConnection.h"
 
 using namespace std::chrono;
 
@@ -210,6 +211,7 @@ const pcap_pkthdr* WirelessPSPPluginDevice::GetHeader()
     return mHeader;
 }
 
+// TODO: This is literally the same in all connection methods, put somewhere else
 std::string WirelessPSPPluginDevice::DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader)
 {
     // Convert from char* to string
@@ -279,6 +281,10 @@ bool WirelessPSPPluginDevice::ConnectToAdHoc()
                 lReturn = mWifiInterface->Connect(lNetwork);
                 if (mCurrentlyConnected != nullptr) {
                     *mCurrentlyConnected = lNetwork.ssid;
+                    if(mHosting) {
+                        // Send this over XLink Kai
+                        mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString) + lNetwork.ssid);
+                    }
                 }
             }
         }
@@ -343,4 +349,9 @@ bool WirelessPSPPluginDevice::StartReceiverThread()
     }
 
     return lReturn;
+}
+
+void WirelessPSPPluginDevice::SetHosting(bool aHosting)
+{
+    mHosting = aHosting;
 }

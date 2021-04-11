@@ -24,7 +24,9 @@ namespace XLinkKai_Constants
     static constexpr std::string_view     cConnectedFormat{"connected"};
     static constexpr std::string_view     cDisconnectFormat{"disconnect"};
     static constexpr std::string_view     cDisconnectedFormat{"disconnected"};
+    static constexpr std::string_view     cSetESSIDFormat{"setessid"};
     static constexpr std::string_view     cEthernetDataFormat{"e"};
+    static constexpr std::string_view     cEthernetDataMetaFormat{"d"};
     static constexpr std::string_view     cSettingFormat{"setting"};
     static constexpr std::string_view     cSettingDDSOnly{"ddsonly"};
     static constexpr std::string_view     cLocallyUniqueName{"XLHA_Device"};
@@ -50,8 +52,13 @@ namespace XLinkKai_Constants
     static const std::string cEthernetDataString{std::string(cEthernetDataFormat) + cSeparator.data() +
                                                  cEthernetDataFormat.data() + cSeparator.data()};
 
+    static const std::string cEthernetDataMetaString{std::string(cEthernetDataFormat) + cSeparator.data() +
+                                                 cEthernetDataMetaFormat.data() + cSeparator.data()};
+
     static const std::string cSettingDDSOnlyString{std::string(cSettingFormat) + cSeparator.data() +
                                                    cSettingDDSOnly.data() + cSeparator.data() + "true"};
+
+    static const std::string cSetESSIDString(std::string(cEthernetDataMetaString.data()) + cSeparator.data() + cSetESSIDFormat.data() + cSeparator.data());
 }  // namespace XLinkKai_Constants
 
 using namespace XLinkKai_Constants;
