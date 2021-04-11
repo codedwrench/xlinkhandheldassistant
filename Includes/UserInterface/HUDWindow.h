@@ -26,5 +26,6 @@ private:
     const std::string* mActivePicture{&mOffPicture};
     std::string        mOldConnected{""};
 
+    Dimensions ScaleHostingButton();
     Dimensions ScaleReConnectionButton();
 };

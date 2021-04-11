@@ -275,6 +275,7 @@ int main(int argc, char* argv[])
                             break;
                         case WindowModel_Constants::Command::SetHosting:
                             lDevice->SetHosting(mWindowModel.mHosting);
+                            break;
                         case WindowModel_Constants::Command::NoCommand:
                             break;
                     }

@@ -57,10 +57,6 @@ namespace
         return {(aMaxHeight - 2), (aMaxWidth - 2) - static_cast<int>(std::string("[ Start Engine ]").length()), 0, 0};
     }
 
-    Dimensions ScaleHostingButton(const int& aMaxHeight, const int& aMaxWidth)
-    {
-        return {(aMaxHeight - 4), (aMaxWidth - 2) - static_cast<int>(std::string("[ ]  Hosting").length()), 0, 0};
-    }
 
 }  // namespace
 
@@ -88,6 +84,11 @@ Dimensions HUDWindow::ScaleReConnectionButton()
             GetObjects().at(3)->GetXCoord() - static_cast<int>(std::string("[ Re-Connect ]").length()) - 2,
             0,
             0};
+}
+
+Dimensions HUDWindow::ScaleHostingButton()
+{
+    return {GetHeightReference() - 2, GetObjects().at(4)->GetXCoord() - 2 - static_cast<int>(std::string("[ ]  Hosting").length()), 0, 0};
 }
 
 HUDWindow::HUDWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation) :
@@ -167,7 +168,7 @@ void HUDWindow::SetUp()
     AddObject({std::make_shared<CheckBox>(
         *this,
         "Hosting",
-        [&] { return ScaleHostingButton(GetHeightReference(), GetWidthReference()); },
+        [&] { return ScaleHostingButton(); },
         GetModel().mHosting
         )});
 
