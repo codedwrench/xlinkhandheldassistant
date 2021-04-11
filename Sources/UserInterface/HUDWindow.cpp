@@ -59,7 +59,7 @@ namespace
 
     Dimensions ScaleHostingButton(const int& aMaxHeight, const int& aMaxWidth)
     {
-        return {(aMaxHeight - 4), (aMaxWidth - 2) - static_cast<int>(std::string("[ ]  I'm Hosting!").length()), 0, 0};
+        return {(aMaxHeight - 4), (aMaxWidth - 2) - static_cast<int>(std::string("[ ]  Hosting").length()), 0, 0};
     }
 
 }  // namespace
@@ -166,7 +166,7 @@ void HUDWindow::SetUp()
 
     AddObject({std::make_shared<CheckBox>(
         *this,
-        "I'm Hosting!",
+        "Hosting",
         [&] { return ScaleHostingButton(GetHeightReference(), GetWidthReference()); },
         GetModel().mHosting
         )});
