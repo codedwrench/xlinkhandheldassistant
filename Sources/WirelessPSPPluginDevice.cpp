@@ -282,8 +282,7 @@ bool WirelessPSPPluginDevice::ConnectToAdHoc()
                 if (mCurrentlyConnected != nullptr) {
                     *mCurrentlyConnected = lNetwork.ssid;
                     if(mHosting) {
-                        // Send this over XLink Kai
-                        mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString) + lNetwork.ssid);
+                       mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
                     }
                 }
             }

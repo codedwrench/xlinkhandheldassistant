@@ -206,6 +206,12 @@ void HUDWindow::Draw()
         GetObjects().at(1)->Scale();
     }
 
+    if(mOldHosting != GetModel().mHosting) {
+        mOldHosting = GetModel().mHosting;
+        // Tell the engine to start broadcasting ssids
+        GetModel().mCommand = WindowModel_Constants::Command::SetHosting;
+    }
+
     GetObjects().at(2)->SetName(std::string("Status: ") +
                                 std::string(WindowModel_Constants::cEngineStatusTexts.at(GetModel().mEngineStatus)));
 

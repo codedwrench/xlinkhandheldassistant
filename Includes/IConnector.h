@@ -43,6 +43,15 @@ public:
     virtual bool Send(std::string_view aData) = 0;
 
     /**
+     * Sends data over device/file if supported.
+     * Also accepts commands in case the device supports those.
+     * @param aCommand - Command to send.
+     * @param aData - Data to send.
+     * @return true if successful, false on failure or unsupported.
+     */
+    virtual bool Send(std::string_view aCommand, std::string_view aData) = 0;
+
+    /**
      * Allows sending over different device.
      * @param aDevice - Device to use.
      */

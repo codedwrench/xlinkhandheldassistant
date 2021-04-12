@@ -113,7 +113,7 @@ bool MonitorDevice::ReadCallback(const unsigned char* aData, const pcap_pkthdr* 
         *mCurrentlyConnectedNetwork = mPacketHandler.GetLockedSSID();
         if(mHosting) {
             // Send this over XLink Kai
-            mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString) + mPacketHandler.GetLockedSSID());
+            mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString), mPacketHandler.GetLockedSSID());
         }
     }
 

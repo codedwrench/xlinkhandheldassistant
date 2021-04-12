@@ -66,6 +66,7 @@ public:
     // PCapReader should still be able to manually read next data, way too useful to private.
     bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);
     bool ReadNextData() override;
+    bool Send(std::string_view aCommand, std::string_view aData) override;
     bool Send(std::string_view aData) override;
     void SetAcknowledgePackets(bool aAcknowledge);
     void SetConnector(std::shared_ptr<IConnector> aDevice) override;

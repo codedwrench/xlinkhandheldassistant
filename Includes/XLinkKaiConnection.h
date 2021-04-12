@@ -58,7 +58,7 @@ namespace XLinkKai_Constants
     static const std::string cSettingDDSOnlyString{std::string(cSettingFormat) + cSeparator.data() +
                                                    cSettingDDSOnly.data() + cSeparator.data() + "true"};
 
-    static const std::string cSetESSIDString(std::string(cEthernetDataMetaString.data()) + cSeparator.data() + cSetESSIDFormat.data() + cSeparator.data());
+    static const std::string cSetESSIDString(std::string(cEthernetDataMetaString.data()) + cSetESSIDFormat.data() + cSeparator.data());
 }  // namespace XLinkKai_Constants
 
 using namespace XLinkKai_Constants;
@@ -98,12 +98,6 @@ public:
 
     bool StartReceiverThread() override;
 
-    /**
-     * Sends a message to Xlink Kai.
-     * @param aCommand - Command that should be added to the XLink Kai message (for example connect).
-     * @param aData - Data to be sent to XLink Kai.
-     * @return True if successful.
-     */
     bool Send(std::string_view aCommand, std::string_view aData);
 
     bool Send(std::string_view aData) override;

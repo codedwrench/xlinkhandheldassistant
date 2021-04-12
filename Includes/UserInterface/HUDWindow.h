@@ -25,6 +25,7 @@ private:
     std::string        mOnPicture{"( ( O ) )"};
     const std::string* mActivePicture{&mOffPicture};
     std::string        mOldConnected{""};
+    bool               mOldHosting{false};
 
     Dimensions ScaleHostingButton();
     Dimensions ScaleReConnectionButton();

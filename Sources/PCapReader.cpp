@@ -208,6 +208,21 @@ bool PCapReader::ReadNextData()
     return lReturn;
 }
 
+bool PCapReader::Send(std::string_view aCommand, std::string_view aData)
+{
+    bool lReturn{false};
+    if (mHandler != nullptr) {
+        if (!aData.empty()) {
+            Logger::GetInstance().Log(std::string("Would have sent: ") + aCommand.data() + aData.data(), Logger::Level::TRACE);
+        }
+    } else {
+        Logger::GetInstance().Log("Cannot send packets on a device that has not been opened yet!",
+                                  Logger::Level::ERROR);
+    }
+
+    return lReturn;
+}
+
 bool PCapReader::Send(std::string_view aData)
 {
     bool lReturn{false};
