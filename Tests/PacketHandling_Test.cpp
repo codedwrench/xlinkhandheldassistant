@@ -9,23 +9,12 @@
 #include "../Includes/NetConversionFunctions.h"
 #include "../Includes/PCapReader.h"
 #include "../Includes/XLinkKaiConnection.h"
-
+#include "IConnectorMock.h"
 
 using ::testing::_;
 using ::testing::DoAll;
 using ::testing::Return;
 using ::testing::WithArg;
-class IConnectorMock : public IConnector
-{
-public:
-    MOCK_METHOD(bool, Open, (std::string_view aArgument));
-    MOCK_METHOD(void, Close, ());
-    MOCK_METHOD(std::string, LastDataToString, ());
-    MOCK_METHOD(bool, ReadNextData, ());
-    MOCK_METHOD(bool, Send, (std::string_view aData));
-    MOCK_METHOD(void, SetIncomingConnection, (std::shared_ptr<IPCapDevice> aDevice));
-    MOCK_METHOD(bool, StartReceiverThread, ());
-};
 
 class IPCapDeviceMock : public IPCapDevice
 {
@@ -38,6 +27,7 @@ public:
     MOCK_METHOD(const pcap_pkthdr*, GetHeader, ());
     MOCK_METHOD(bool, Send, (std::string_view aData));
     MOCK_METHOD(void, SetConnector, (std::shared_ptr<IConnector> aDevice));
+    MOCK_METHOD(void, SetHosting, (bool aHosting));
     MOCK_METHOD(bool, StartReceiverThread, ());
 };
 

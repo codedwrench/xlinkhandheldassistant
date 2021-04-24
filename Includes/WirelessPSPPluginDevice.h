@@ -56,6 +56,8 @@ public:
     const pcap_pkthdr*   GetHeader() override;
 
     bool Open(std::string_view aName, std::vector<std::string>& aSSIDFilter) override;
+    // Public for easier testing
+    bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);
     bool Send(std::string_view aData, bool aModifyData);
     bool Send(std::string_view aData) override;
     void SetConnector(std::shared_ptr<IConnector> aDevice) override;
@@ -63,7 +65,6 @@ public:
     bool StartReceiverThread() override;
 
 private:
-    bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);
     void ShowPacketStatistics(const pcap_pkthdr* aHeader) const;
 
     std::vector<uint64_t>           mBlackList{};

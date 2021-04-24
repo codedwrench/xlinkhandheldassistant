@@ -206,7 +206,9 @@ if (ENABLE_TESTS)
     find_package(GTest REQUIRED)
     include(GoogleTest)
     enable_testing()
-    add_executable(tests Tests/PacketHandling_Test.cpp
+    add_executable(tests Tests/IConnectorMock.h
+            Tests/PacketHandling_Test.cpp
+            Tests/PluginPacketHandling_Test.cpp
             Tests/WindowModel_Test.cpp
             Sources/Handler8023.cpp
             Sources/Handler80211.cpp
@@ -216,8 +218,10 @@ if (ENABLE_TESTS)
             Sources/PCapReader.cpp
             Sources/RadioTapReader.cpp
             Sources/WindowModel.cpp
+            Sources/WirelessPSPPluginDevice.cpp
+            Sources/WifiInterfaceLinuxBSD.cpp
             Sources/XLinkKaiConnection.cpp)
-    target_include_directories(tests PRIVATE ${PCAP_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
-    target_link_libraries(tests gtest gmock gtest_main Threads::Threads ${PCAP_LIBRARY} ${Boost_LIBRARIES})
+    target_include_directories(tests PRIVATE ${PCAP_INCLUDE_DIR} ${Boost_INCLUDE_DIRS} ${LibNL_INCLUDE_DIR})
+    target_link_libraries(tests gtest gmock gtest_main Threads::Threads ${PCAP_LIBRARY} ${Boost_LIBRARIES} ${LibNL_LIBRARIES})
     gtest_discover_tests(tests)
 endif(ENABLE_TESTS)
