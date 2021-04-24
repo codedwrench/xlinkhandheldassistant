@@ -275,7 +275,7 @@ int main(int argc, char* argv[])
                             mWindowModel.mCommand = WindowModel_Constants::Command::NoCommand;
                             break;
                         case WindowModel_Constants::Command::SetHosting:
-                            if(lDevice != nullptr) {
+                            if (lDevice != nullptr) {
                                 lDevice->SetHosting(mWindowModel.mHosting);
                             }
                             break;

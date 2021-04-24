@@ -167,7 +167,8 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
                 // is e;e;
                 lCommand = lData.substr(0, cEthernetDataString.size());
 
-                Logger::GetInstance().Log("Received: " + PrettyHexString(lData.substr(cEthernetDataString.length())), Logger::Level::TRACE);
+                Logger::GetInstance().Log("Received: " + PrettyHexString(lData.substr(cEthernetDataString.length())),
+                                          Logger::Level::TRACE);
 
                 if (lCommand == cEthernetDataString) {
                     if (mIncomingConnection != nullptr) {
@@ -190,8 +191,10 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
                         mIncomingConnection->Send(mEthernetData);
                     }
                 } else if (lCommand == cEthernetDataMetaString) {
-                    if(lData.substr(cEthernetDataMetaString.length()) == cSetESSIDFormat) {
-                        Logger::GetInstance().Log("XLink Kai gave us the following ESSID" + lData.substr(cSetESSIDString.length()), Logger::Level::DEBUG);
+                    if (lData.substr(cEthernetDataMetaString.length()) == cSetESSIDFormat) {
+                        Logger::GetInstance().Log(
+                            "XLink Kai gave us the following ESSID" + lData.substr(cSetESSIDString.length()),
+                            Logger::Level::DEBUG);
                         // TODO: Send to Devices
                     }
                 }

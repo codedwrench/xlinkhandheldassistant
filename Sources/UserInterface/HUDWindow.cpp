@@ -88,7 +88,10 @@ Dimensions HUDWindow::ScaleReConnectionButton()
 
 Dimensions HUDWindow::ScaleHostingButton()
 {
-    return {GetHeightReference() - 2, GetObjects().at(4)->GetXCoord() - 2 - static_cast<int>(std::string("[ ]  Hosting").length()), 0, 0};
+    return {GetHeightReference() - 2,
+            GetObjects().at(4)->GetXCoord() - 2 - static_cast<int>(std::string("[ ]  Hosting").length()),
+            0,
+            0};
 }
 
 HUDWindow::HUDWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation) :
@@ -166,11 +169,7 @@ void HUDWindow::SetUp()
         })});
 
     AddObject({std::make_shared<CheckBox>(
-        *this,
-        "Hosting",
-        [&] { return ScaleHostingButton(); },
-        GetModel().mHosting
-        )});
+        *this, "Hosting", [&] { return ScaleHostingButton(); }, GetModel().mHosting)});
 
     AddObject(CreateQuitText(*this, GetHeightReference()));
 }
@@ -206,7 +205,7 @@ void HUDWindow::Draw()
         GetObjects().at(1)->Scale();
     }
 
-    if(mOldHosting != GetModel().mHosting) {
+    if (mOldHosting != GetModel().mHosting) {
         mOldHosting = GetModel().mHosting;
         // Tell the engine to start broadcasting ssids
         GetModel().mCommand = WindowModel_Constants::Command::SetHosting;

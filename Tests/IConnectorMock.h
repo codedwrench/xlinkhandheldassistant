@@ -1,6 +1,8 @@
-/* Copyright (c) 2021 [Rick de Bondt] - PacketConverter_Test.cpp
+/* Copyright (c) 2021 [Rick de Bondt] - IConnectorMock.cpp
  * This file contains a mock for IConnector.
  **/
+
+#include "../Includes/IConnector.h"
 
 class IConnectorMock : public IConnector
 {

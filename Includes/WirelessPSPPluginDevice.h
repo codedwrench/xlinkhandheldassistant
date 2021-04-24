@@ -56,9 +56,21 @@ public:
     const pcap_pkthdr*   GetHeader() override;
 
     bool Open(std::string_view aName, std::vector<std::string>& aSSIDFilter) override;
+    /**
+     * Opens the device so it can be used for capture.
+     * @param aName - Name of the interface or file to use.
+     * @param aSSIDFilter - The SSIDS to listen to.
+     * @param aInterface - The WifiInterface to use for connection/finding out the MAC address.
+     * @return true if successful.
+     */
+    bool Open(std::string_view aName, std::vector<std::string>& aSSIDFilter, std::shared_ptr<IWifiInterface> aInterface);
+
     // Public for easier testing
     bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);
-    bool Send(std::string_view aData, bool aModifyData);
+
+    // Allow this to be overridden
+    virtual bool Send(std::string_view aData, bool aModifyData);
+
     bool Send(std::string_view aData) override;
     void SetConnector(std::shared_ptr<IConnector> aDevice) override;
     void SetHosting(bool aHosting) override;

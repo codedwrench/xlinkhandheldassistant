@@ -23,7 +23,7 @@ TEST_F(WindowModelTest, SaveModel)
     mWindowModel.mChannel                      = "6";
     mWindowModel.mConnectionMethod             = WindowModel_Constants::Monitor;
 
-ASSERT_TRUE(mWindowModel.SaveToFile("../Tests/Output/config.txt"));
+    ASSERT_TRUE(mWindowModel.SaveToFile("../Tests/Output/config.txt"));
     std::ifstream lOutputFile;
     std::ifstream lExpectedFile;
 

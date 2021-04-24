@@ -27,13 +27,22 @@ WirelessPSPPluginDevice::WirelessPSPPluginDevice(bool                 aAutoConne
 {}
 
 // Keeping the SSID filter in because of future autoconnect
-bool WirelessPSPPluginDevice::Open(std::string_view aName, std::vector<std::string>& aSSIDFilter)
+bool WirelessPSPPluginDevice::Open(std::string_view                aName,
+                                   std::vector<std::string>&       aSSIDFilter,
+                                   std::shared_ptr<IWifiInterface> aInterface)
 {
     bool lReturn{true};
 
-    mWifiInterface = std::make_shared<WifiInterface>(aName);
+    mWifiInterface = aInterface;
     mSSIDFilter    = aSSIDFilter;
-    ConnectToAdHoc();
+
+    if(mAutoConnect) {
+        ConnectToAdHoc();
+    }
+
+    mAdapterMACAddress = mWifiInterface->GetAdapterMACAddress();
+    // Do not try to negiotiate with localhost
+    BlackList(mAdapterMACAddress);
 
     std::array<char, PCAP_ERRBUF_SIZE> lErrorBuffer{};
 
@@ -45,12 +54,8 @@ bool WirelessPSPPluginDevice::Open(std::string_view aName, std::vector<std::stri
     // pcap_set_immediate_mode(mHandler, 1);
 
     int lStatus{pcap_activate(mHandler)};
-
     if (lStatus == 0) {
         mConnected         = true;
-        mAdapterMACAddress = mWifiInterface->GetAdapterMACAddress();
-        // Do not try to negiotiate with localhost
-        BlackList(mAdapterMACAddress);
     } else {
         lReturn = false;
         Logger::GetInstance().Log("pcap_activate failed, " + std::string(pcap_statustostr(lStatus)),
@@ -61,6 +66,11 @@ bool WirelessPSPPluginDevice::Open(std::string_view aName, std::vector<std::stri
     mReadWatchdog = std::chrono::system_clock::now();
 
     return lReturn;
+}
+
+bool WirelessPSPPluginDevice::Open(std::string_view aName, std::vector<std::string>& aSSIDFilter)
+{
+    return Open(aName, aSSIDFilter, std::make_shared<WifiInterface>(aName));
 }
 
 void WirelessPSPPluginDevice::Close()
@@ -281,8 +291,8 @@ bool WirelessPSPPluginDevice::ConnectToAdHoc()
                 lReturn = mWifiInterface->Connect(lNetwork);
                 if (mCurrentlyConnected != nullptr) {
                     *mCurrentlyConnected = lNetwork.ssid;
-                    if(mHosting) {
-                       mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
+                    if (mHosting) {
+                        mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
                     }
                 }
             }

@@ -50,9 +50,8 @@ void ThemeWindow::SetUp()
             }
         }
 
-        if(lThemeSelector != nullptr)
-        {
-          AddObject(lThemeSelector);
+        if (lThemeSelector != nullptr) {
+            AddObject(lThemeSelector);
         }
     } catch (std::filesystem::filesystem_error aException) {
         Logger::GetInstance().Log(std::string("Could not open themes directory: ") + aException.what(),

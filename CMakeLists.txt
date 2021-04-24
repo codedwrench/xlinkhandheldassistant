@@ -207,6 +207,7 @@ if (ENABLE_TESTS)
     include(GoogleTest)
     enable_testing()
     add_executable(tests Tests/IConnectorMock.h
+            Tests/IWifiInterfaceMock.h
             Tests/PacketHandling_Test.cpp
             Tests/PluginPacketHandling_Test.cpp
             Tests/WindowModel_Test.cpp
