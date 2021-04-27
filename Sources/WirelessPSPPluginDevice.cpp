@@ -146,8 +146,14 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
 
             memcpy(lPacket.data() + lIndex, &lAdapterMAC, Net_8023_Constants::cDestinationAddressLength);
 
+            // Log
+            Logger::GetInstance().Log("Sending: " + PrettyHexString(lData), Logger::Level::TRACE);
+
             Send(lPacket, false);
         } else if ((GetRawData<uint16_t>(lData, Net_8023_Constants::cEtherTypeIndex) == Net_Constants::cPSPEtherType)) {
+            // Log
+            Logger::GetInstance().Log("Received: " + PrettyHexString(lData), Logger::Level::TRACE);
+
             // Reset the timer so it will not time out
             mReadWatchdog = std::chrono::system_clock::now();
 

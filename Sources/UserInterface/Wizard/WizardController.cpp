@@ -115,7 +115,7 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
         for (pcap_if_t* lDevice = lDevices; lDevice != nullptr; lDevice = lDevice->next) {
             // Only show wifi adapters that are wireless and up
             int lMask = PCAP_IF_WIRELESS;
-            if ((lDevice->flags & lMask) == lMask) {
+            if (lMask == (lDevice->flags & lMask)) {
                 pcap_t* lHandle{pcap_create(lDevice->name, lErrorBuffer.data())};
                 if (lHandle != nullptr) {
                     // Device has to be 802.11 as well, so no bluetooth and the like
