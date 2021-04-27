@@ -147,7 +147,7 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
             memcpy(lPacket.data() + lIndex, &lAdapterMAC, Net_8023_Constants::cDestinationAddressLength);
 
             // Log
-            Logger::GetInstance().Log("Sending: " + PrettyHexString(lData), Logger::Level::TRACE);
+            Logger::GetInstance().Log("Sending: " + PrettyHexString(lPacket), Logger::Level::TRACE);
 
             Send(lPacket, false);
         } else if ((GetRawData<uint16_t>(lData, Net_8023_Constants::cEtherTypeIndex) == Net_Constants::cPSPEtherType)) {
