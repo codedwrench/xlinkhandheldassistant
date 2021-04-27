@@ -8,6 +8,7 @@
 
 #include "../Includes/NetConversionFunctions.h"
 #include "../Includes/PCapReader.h"
+#include "../Includes/PCapWrapper.h"
 #include "../Includes/WirelessPSPPluginDevice.h"
 #include "../Includes/XLinkKaiConnection.h"
 #include "IConnectorMock.h"
@@ -63,8 +64,9 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
     std::vector<std::string> lOutputPackets{};
     std::vector<timeval>     lTimeStamp{};
 
-    pcap_t*                     lHandler{pcap_open_dead(DLT_EN10MB, 65535)};
-    pcap_dumper_t*              lDumper{pcap_dump_open(lHandler, lOutputFileName.c_str())};
+    PCapWrapper lWrapper;
+    lWrapper.OpenDead(DLT_EN10MB, 65535);
+    pcap_dumper_t*              lDumper{lWrapper.DumpOpen(lOutputFileName.c_str())};
     std::shared_ptr<IConnector> lInputConnector{std::make_shared<IConnectorMock>()};
     std::shared_ptr<IConnector> lExpectedConnector{std::make_shared<IConnectorMock>()};
     PCapReaderDerived           lPCapInputReader{false, false};
@@ -88,24 +90,24 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
     EXPECT_CALL(*std::dynamic_pointer_cast<IConnectorMock>(lInputConnector), Send(_))
         .WillRepeatedly(DoAll(WithArg<0>([&](std::string_view aMessage) {
                                   lInputPackets.emplace_back(aMessage);
-                                lTimeStamp.push_back(lPCapInputReader.GetHeader()->ts);
+                                  lTimeStamp.push_back(lPCapInputReader.GetHeader()->ts);
                               }),
                               Return(true)));
 
     EXPECT_CALL(*std::dynamic_pointer_cast<IConnectorMock>(lOutputConnector), Send(_))
-        .WillRepeatedly(DoAll(
-            WithArg<0>([&](std::string_view aMessage) { lOutputPackets.emplace_back(std::string(aMessage)); }),
-            Return(true)));
+        .WillRepeatedly(
+            DoAll(WithArg<0>([&](std::string_view aMessage) { lOutputPackets.emplace_back(std::string(aMessage)); }),
+                  Return(true)));
 
     EXPECT_CALL(*std::dynamic_pointer_cast<IConnectorMock>(lExpectedConnector), Send(_))
-        .WillRepeatedly(DoAll(
-            WithArg<0>([&](std::string_view aMessage) { lExpectedPackets.emplace_back(std::string(aMessage)); }),
-            Return(true)));
+        .WillRepeatedly(
+            DoAll(WithArg<0>([&](std::string_view aMessage) { lExpectedPackets.emplace_back(std::string(aMessage)); }),
+                  Return(true)));
 
     lPCapInputReader.StartReceiverThread();
     lPCapExpectedReader.StartReceiverThread();
 
-    while(!lPCapInputReader.IsDoneReceiving() || !lPCapExpectedReader.IsDoneReceiving()) { }
+    while (!lPCapInputReader.IsDoneReceiving() || !lPCapExpectedReader.IsDoneReceiving()) {}
 
     // Test class set-up
     lPSPPluginDevice.SetConnector(lOutputConnector);
@@ -114,13 +116,14 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
     lPSPPluginDevice.BlackList(0x0018f8293fb0);
 
     // Receiving data
-    for(int lCount = 0; lCount < lInputPackets.size(); lCount++) {
+    for (int lCount = 0; lCount < lInputPackets.size(); lCount++) {
         pcap_pkthdr lHeader{};
         lHeader.caplen = lInputPackets.at(lCount).size();
         lHeader.len    = lInputPackets.at(lCount).size();
         lHeader.ts     = lTimeStamp.at(lCount);
 
-        lPSPPluginDevice.ReadCallback(reinterpret_cast<const unsigned char*>(lInputPackets.at(lCount).data()), &lHeader);
+        lPSPPluginDevice.ReadCallback(reinterpret_cast<const unsigned char*>(lInputPackets.at(lCount).data()),
+                                      &lHeader);
     }
 
     // Should have the same amount of packets
@@ -137,13 +140,14 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
         lHeader.len    = lMessage.size();
         lHeader.ts     = lTimeStamp.at(lCount);
 
-        pcap_dump(reinterpret_cast<u_char*>(lDumper), &lHeader, reinterpret_cast<const u_char*>(lMessage.c_str()));
+        lWrapper.Dump(
+            reinterpret_cast<unsigned char*>(lDumper), &lHeader, reinterpret_cast<unsigned char*>(lMessage.data()));
 
         lCount++;
     }
 
-    pcap_dump_close(lDumper);
-    pcap_close(lHandler);
+    lWrapper.DumpClose(lDumper);
+    lWrapper.Close();
 
     lPCapInputReader.Close();
     lPCapExpectedReader.Close();
@@ -165,8 +169,9 @@ TEST_F(PluginPacketHandlingTest, BroadcastMacToBeUsed)
     std::vector<std::string> lSendBuffer{};
     std::vector<timeval>     lTimeStamp{};
 
-    pcap_t*                     lHandler{pcap_open_dead(DLT_EN10MB, 65535)};
-    pcap_dumper_t*              lDumper{pcap_dump_open(lHandler, lOutputFileName.c_str())};
+    PCapWrapper lWrapper{};
+    lWrapper.OpenDead(DLT_EN10MB, 65535);
+    pcap_dumper_t*              lDumper{lWrapper.DumpOpen(lOutputFileName.c_str())};
     std::shared_ptr<IConnector> lExpectedConnector{std::make_shared<IConnectorMock>()};
     PCapReaderDerived           lPCapReader{true, false};
     PCapReaderDerived           lPCapExpectedReader{true, false};
@@ -221,13 +226,14 @@ TEST_F(PluginPacketHandlingTest, BroadcastMacToBeUsed)
         lHeader.len    = lMessage.size();
         lHeader.ts     = lTimeStamp.at(lCount);
 
-        pcap_dump(reinterpret_cast<u_char*>(lDumper), &lHeader, reinterpret_cast<const u_char*>(lMessage.c_str()));
+        lWrapper.Dump(
+            reinterpret_cast<unsigned char*>(lDumper), &lHeader, reinterpret_cast<unsigned char*>(lMessage.data()));
 
         lCount++;
     }
 
-    pcap_dump_close(lDumper);
-    pcap_close(lHandler);
+    lWrapper.DumpClose(lDumper);
+    lWrapper.Close();
 
     lPCapReader.Close();
     lPCapExpectedReader.Close();

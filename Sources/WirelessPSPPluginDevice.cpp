@@ -36,7 +36,7 @@ bool WirelessPSPPluginDevice::Open(std::string_view                aName,
     mWifiInterface = aInterface;
     mSSIDFilter    = aSSIDFilter;
 
-    if(mAutoConnect) {
+    if (mAutoConnect) {
         ConnectToAdHoc();
     }
 
@@ -51,11 +51,11 @@ bool WirelessPSPPluginDevice::Open(std::string_view                aName,
     pcap_set_timeout(mHandler, cPCAPTimeoutMs);
     pcap_setdirection(mHandler, PCAP_D_IN);
     // TODO: Test without immediate mode, see if it helps
-    // pcap_set_immediate_mode(mHandler, 1);
+    // pcap_set_immediate_mode(mPcapWrapper, 1);
 
     int lStatus{pcap_activate(mHandler)};
     if (lStatus == 0) {
-        mConnected         = true;
+        mConnected = true;
     } else {
         lReturn = false;
         Logger::GetInstance().Log("pcap_activate failed, " + std::string(pcap_statustostr(lStatus)),

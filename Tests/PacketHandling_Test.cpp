@@ -61,10 +61,10 @@ TEST_F(PacketHandlingTest, MonitorToPromiscuous)
     PCapReader                  lPCapReader{true, false};
     PCapReader                  lPCapExpectedReader{false, false};
 
-
-    pcap_t*           lHandler        = pcap_open_dead(DLT_EN10MB, 65535);
-    const std::string lOutputFileName = "../Tests/Output/MonitorToPromiscuousOutput.pcap";
-    pcap_dumper_t*    lDumper         = pcap_dump_open(lHandler, lOutputFileName.c_str());
+    PCapWrapper lWrapper;
+    lWrapper.OpenDead(DLT_EN10MB, 65535);
+    const std::string lOutputFileName{"../Tests/Output/MonitorToPromiscuousOutput.pcap"};
+    pcap_dumper_t*    lDumper{lWrapper.DumpOpen(lOutputFileName.c_str())};
 
     std::vector<std::string> lSSIDFilter{"T#STNET"};
     lPCapReader.Open("../Tests/Input/MonitorHelloWorld.pcapng", lSSIDFilter);
@@ -108,14 +108,15 @@ TEST_F(PacketHandlingTest, MonitorToPromiscuous)
         lHeader.ts     = lTimeStamp.at(lCount);
 
         // Output a file with the results as well so the results can be further inspected
-        pcap_dump(reinterpret_cast<u_char*>(lDumper), &lHeader, reinterpret_cast<const u_char*>(lMessage.c_str()));
+        lWrapper.Dump(
+            reinterpret_cast<unsigned char*>(lDumper), &lHeader, reinterpret_cast<unsigned char*>(lMessage.data()));
 
         ASSERT_EQ(lMessage, lSendExpectedBuffer.at(lCount));
         lCount++;
     }
 
-    pcap_dump_close(lDumper);
-    pcap_close(lHandler);
+    lWrapper.DumpClose(lDumper);
+    lWrapper.Close();
 
     lPCapReader.Close();
     lPCapExpectedReader.Close();
@@ -129,9 +130,10 @@ TEST_F(PacketHandlingTest, PromiscuousToMonitor)
     PCapReader                       lPCapExpectedReader{false, false};
 
 
-    pcap_t*           lHandler        = pcap_open_dead(DLT_IEEE802_11_RADIO, 65535);
+    PCapWrapper lWrapper{};
+    lWrapper.OpenDead(DLT_IEEE802_11_RADIO, 65535);
     const std::string lOutputFileName = "../Tests/Output/PromiscuousToMonitorOutput.pcap";
-    pcap_dumper_t*    lDumper         = pcap_dump_open(lHandler, lOutputFileName.c_str());
+    pcap_dumper_t*    lDumper         = lWrapper.DumpOpen(lOutputFileName.c_str());
 
     lConnector->Open("../Tests/Input/PromiscuousHelloWorld.pcapng");
 
@@ -198,14 +200,15 @@ TEST_F(PacketHandlingTest, PromiscuousToMonitor)
         lHeader.ts     = lTimeStamp.at(lCount);
 
         // Output a file with the results as well so the results can be further inspected
-        pcap_dump(reinterpret_cast<u_char*>(lDumper), &lHeader, reinterpret_cast<const u_char*>(lMessage.c_str()));
+        lWrapper.Dump(
+            reinterpret_cast<unsigned char*>(lDumper), &lHeader, reinterpret_cast<unsigned char*>(lMessage.data()));
 
         EXPECT_EQ(lMessage, lSendExpectedBuffer.at(lCount));
         lCount++;
     }
 
-    pcap_dump_close(lDumper);
-    pcap_close(lHandler);
+    lWrapper.DumpClose(lDumper);
+    lWrapper.Close();
 
     lConnector->Close();
     lPCapExpectedReader.Close();
@@ -219,9 +222,10 @@ TEST_F(PacketHandlingTest, ConstructAcknowledgementFrame)
 {
     std::shared_ptr<IConnector> lConnector{std::make_shared<IConnectorMock>()};
     std::shared_ptr<IConnector> lExpectedConnector{std::make_shared<IConnectorMock>()};
-    pcap_t*                     lHandler        = pcap_open_dead(DLT_IEEE802_11_RADIO, 65535);
-    const std::string           lOutputFileName = "../Tests/Output/ConstructAcknowledgementFrame.pcap";
-    pcap_dumper_t*              lDumper         = pcap_dump_open(lHandler, lOutputFileName.c_str());
+    PCapWrapper                 lWrapper{};
+    lWrapper.OpenDead(DLT_IEEE802_11_RADIO, 65535);
+    const std::string lOutputFileName = "../Tests/Output/ConstructAcknowledgementFrame.pcap";
+    pcap_dumper_t*    lDumper{lWrapper.DumpOpen(lOutputFileName.c_str())};
 
     PCapReaderDerived        lPCapReader{true, false};
     std::vector<std::string> lSSIDFilter{"SCE_NPWR05830_01"};
@@ -291,14 +295,15 @@ TEST_F(PacketHandlingTest, ConstructAcknowledgementFrame)
         lHeader.ts     = lTimeStamp.at(lCount);
 
         // Output a file with the results as well so the results can be further inspected
-        pcap_dump(reinterpret_cast<u_char*>(lDumper), &lHeader, reinterpret_cast<const u_char*>(lMessage.c_str()));
+        lWrapper.Dump(
+            reinterpret_cast<unsigned char*>(lDumper), &lHeader, reinterpret_cast<unsigned char*>(lMessage.data()));
 
         EXPECT_EQ(lMessage, lSendExpectedBuffer.at(lCount));
         lCount++;
     }
 
-    pcap_dump_close(lDumper);
-    pcap_close(lHandler);
+    lWrapper.DumpClose(lDumper);
+    lWrapper.Close();
 
     lPCapReader.Close();
     lPCapExpectedReader.Close();

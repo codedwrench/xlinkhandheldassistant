@@ -33,10 +33,12 @@ public:
      * @param aSourceMacToFilter - If a specific MAC needs to be filtered out.
      * @param aAcknowledgeDataFrames - If Data frames should be acknowledged.
      * @param aCurrentlyConnectedNetwork - For use in the user interface, shows SSID.
+     * @param aPcapWrapper - The libpcap wrapper to use, allows for mocks to be shoved in.
      */
-    MonitorDevice(uint64_t     aSourceMacToFilter         = std::uint64_t(0),
-                  bool         aAcknowledgeDataFrames     = false,
-                  std::string* aCurrentlyConnectedNetwork = nullptr);
+    MonitorDevice(uint64_t     aSourceMacToFilter            = std::uint64_t(0),
+                  bool         aAcknowledgeDataFrames        = false,
+                  std::string* aCurrentlyConnectedNetwork    = nullptr,
+                  std::shared_ptr<IPCapWrapper> aPcapWrapper = std::make_shared<PCapWrapper>());
 
     /**
      * Adds a MAC address to the blacklist.
@@ -77,7 +79,7 @@ private:
     std::shared_ptr<IConnector>  mConnector{nullptr};
     std::string*                 mCurrentlyConnectedNetwork{nullptr};
     const unsigned char*         mData{nullptr};
-    PCapWrapper                  mHandler;
+    std::shared_ptr<IPCapWrapper> mPcapWrapper;
     const pcap_pkthdr*           mHeader{nullptr};
     bool                         mHosting{false};
     unsigned int                 mPacketCount{0};

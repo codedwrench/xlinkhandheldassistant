@@ -14,6 +14,7 @@
 #include "Handler8023.h"
 #include "IConnector.h"
 #include "IPCapDevice.h"
+#include "PCapWrapper.h"
 
 /**
  * This class contains the necessary components to read a PCap file.
@@ -25,7 +26,7 @@ public:
      * Construct a new PCapReader object.
      * @param aMonitorCapture - Tells the PCapReader whether it's a monitor mode device or a promiscuous mode device.
      */
-    explicit PCapReader(bool aMonitorCapture, bool aTimeAccurate);
+    explicit PCapReader(bool aMonitorCapture, bool aTimeAccurate, std::shared_ptr<IPCapWrapper> aWrapper = std::make_shared<PCapWrapper>());
     ~PCapReader() = default;
 
     /**
@@ -98,7 +99,7 @@ private:
     std::shared_ptr<IConnector>                               mConnector{nullptr};
     const unsigned char*                                      mData{nullptr};
     std::shared_ptr<RadioTapReader::PhysicalDeviceParameters> mParameters{nullptr};
-    pcap_t*                                                   mHandler{nullptr};
+    std::shared_ptr<IPCapWrapper>                              mHandler{nullptr};
     pcap_pkthdr*                                              mHeader{nullptr};
     bool                                                      mHosting{false};
     std::shared_ptr<IPCapDevice>                              mIncomingConnection{nullptr};

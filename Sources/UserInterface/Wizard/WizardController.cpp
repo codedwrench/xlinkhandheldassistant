@@ -6,6 +6,7 @@
 #include <pcap.h>
 
 #include "../../../Includes/Logger.h"
+#include "../../../Includes/PCapWrapper.h"
 #include "../../../Includes/UserInterface/Wizard/MonitorDeviceStep.h"
 #include "../../../Includes/UserInterface/Wizard/PluginOptionsStep.h"
 #include "../../../Includes/UserInterface/Wizard/WizardSelectorStep.h"
@@ -105,24 +106,25 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
     lCurrentAddresses = nullptr;
 }
 #else
-static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& aWifiAdapterList)
+static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& aWifiAdapterList,
+                             std::shared_ptr<IPCapWrapper> aPcapWrapper = std::make_shared<PCapWrapper>())
 {
     pcap_if_t*                         lDevices{nullptr};
     std::array<char, PCAP_ERRBUF_SIZE> lErrorBuffer{};
 
-    if (pcap_findalldevs(&lDevices, lErrorBuffer.data()) != -1) {
+    if (aPcapWrapper->FindAllDevices(&lDevices, lErrorBuffer.data()) != -1) {
         aWifiAdapterList.clear();
         for (pcap_if_t* lDevice = lDevices; lDevice != nullptr; lDevice = lDevice->next) {
             // Only show wifi adapters that are wireless and up
             int lMask = PCAP_IF_WIRELESS;
             if (lMask == (lDevice->flags & lMask)) {
-                pcap_t* lHandle{pcap_create(lDevice->name, lErrorBuffer.data())};
-                if (lHandle != nullptr) {
+                aPcapWrapper->Create(lDevice->name, lErrorBuffer.data());
+                if (aPcapWrapper->IsActivated()) {
                     // Device has to be 802.11 as well, so no bluetooth and the like
-                    int lError    = pcap_activate(lHandle);
-                    int lLinkType = pcap_datalink(lHandle);
+                    char* lError    = aPcapWrapper->GetError();
+                    int   lLinkType = aPcapWrapper->GetDatalink();
                     // It seems to be EN10MB when the network is down on Linux :/
-                    if (lError == 0 && lLinkType == DLT_IEEE802_11 || lLinkType == DLT_EN10MB ||
+                    if (lError == NULL && lLinkType == DLT_IEEE802_11 || lLinkType == DLT_EN10MB ||
                         lLinkType == DLT_IEEE802_11_RADIO) {
                         std::pair<std::string, std::string> lWifiInformation{};
                         lWifiInformation.first = lDevice->name;
@@ -133,7 +135,7 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
                             lWifiInformation.second = lDevice->name;
                         }
                         aWifiAdapterList.push_back(lWifiInformation);
-                    } else if (lError == PCAP_ERROR_PERM_DENIED) {
+                    } else if (*lError == PCAP_ERROR_PERM_DENIED) {
                         // Lazy way to show an error, I know.
                         std::pair<std::string, std::string> lWifiInformation{};
                         lWifiInformation.first  = "wlan0";
@@ -142,11 +144,11 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
                         break;
                     }
 
-                    pcap_close(lHandle);
+                    aPcapWrapper->Close();
                 }
             }
         }
-        pcap_freealldevs(lDevices);
+        aPcapWrapper->FreeAllDevices(lDevices);
     }
 }
 
