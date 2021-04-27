@@ -36,6 +36,12 @@ public:
 class PluginPacketHandlingTest : public ::testing::Test
 {};
 
+// When a packet is received from XLink the source MAC address at the be moved to the back, and the adapter MAC should
+// Be put into the source field
+TEST_F(PluginPacketHandlingTest, NormalPacketHandlingXLinkSide)
+    // TODO: Find a way to mock sending to pcap
+}
+
 // When a packet is received from the PSP the MAC address at the end should be moved back to its proper place before
 // being sent to XLink Kai.
 TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
