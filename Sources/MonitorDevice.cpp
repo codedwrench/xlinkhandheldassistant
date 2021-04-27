@@ -31,13 +31,13 @@ bool MonitorDevice::Open(std::string_view aName, std::vector<std::string>& aSSID
 
     std::array<char, PCAP_ERRBUF_SIZE> lErrorBuffer{};
 
-    mHandler = pcap_create(aName.data(), lErrorBuffer.data());
-    pcap_set_snaplen(mHandler, cSnapshotLength);
-    pcap_set_timeout(mHandler, cTimeout);
+    mHandler.Create(aName.data(), lErrorBuffer.data());
+    mHandler.SetSnapLen(cSnapshotLength);
+    mHandler.SetTimeOut(cTimeout);
     // TODO: Test without immediate mode, see if it helps
     // pcap_set_immediate_mode(mHandler, 1);
 
-    int lStatus{pcap_activate(mHandler)};
+    int lStatus{mHandler.Activate()};
 
     if (lStatus == 0) {
         mConnected = true;
@@ -58,19 +58,14 @@ void MonitorDevice::Close()
 {
     mConnected = false;
 
-    if (mHandler != nullptr) {
-        pcap_breakloop(mHandler);
-    }
+    mHandler.BreakLoop();
 
     if (mReceiverThread != nullptr && mReceiverThread->joinable()) {
         mReceiverThread->join();
     }
 
-    if (mHandler != nullptr) {
-        pcap_close(mHandler);
-    }
+    mHandler.Close();
 
-    mHandler            = nullptr;
     mData               = nullptr;
     mHeader             = nullptr;
     mReceiverThread     = nullptr;
@@ -179,14 +174,14 @@ std::string MonitorDevice::DataToString(const unsigned char* aData, const pcap_p
 bool MonitorDevice::Send(std::string_view aData)
 {
     bool lReturn{false};
-    if (mHandler != nullptr) {
+    if (mHandler.IsActivated()) {
         if (!aData.empty()) {
             Logger::GetInstance().Log(std::string("Sent: ") + PrettyHexString(aData), Logger::Level::TRACE);
 
-            if (pcap_sendpacket(mHandler, reinterpret_cast<const unsigned char*>(aData.data()), aData.size()) == 0) {
+            if (mHandler.SendPacket(aData) == 0) {
                 lReturn = true;
             } else {
-                Logger::GetInstance().Log("pcap_sendpacket failed, " + std::string(pcap_geterr(mHandler)),
+                Logger::GetInstance().Log("pcap_sendpacket failed, " + std::string(mHandler.GetError()),
                                           Logger::Level::ERROR);
             }
         }
@@ -206,7 +201,7 @@ void MonitorDevice::SetConnector(std::shared_ptr<IConnector> aDevice)
 bool MonitorDevice::StartReceiverThread()
 {
     bool lReturn{true};
-    if (mHandler != nullptr) {
+    if (mHandler.IsActivated()) {
         // Run
         if (mReceiverThread == nullptr) {
             mReceiverThread = std::make_shared<std::thread>([&] {
@@ -220,12 +215,12 @@ bool MonitorDevice::StartReceiverThread()
                         lThis->ReadCallback(aPacket, aHeader);
                     };
 
-                while (mConnected && (mHandler != nullptr)) {
+                while (mConnected && (mHandler.IsActivated())) {
                     // Use pcap_dispatch instead of pcap_next_ex so that as many packets as possible will be processed
                     // in a single cycle.
-                    if (pcap_dispatch(mHandler, -1, lCallbackFunction, reinterpret_cast<u_char*>(this)) == -1) {
+                    if (mHandler.Dispatch(-1, lCallbackFunction, reinterpret_cast<u_char*>(this)) == -1) {
                         Logger::GetInstance().Log(
-                            "Error occurred while reading packet: " + std::string(pcap_geterr(mHandler)),
+                            "Error occurred while reading packet: " + std::string(mHandler.GetError()),
                             Logger::Level::DEBUG);
                     }
                 }

@@ -12,7 +12,7 @@
 #include "Handler80211.h"
 #include "IConnector.h"
 #include "IPCapDevice.h"
-
+#include "PCapWrapper.h"
 
 namespace WirelessMonitorDevice_Constants
 {
@@ -77,7 +77,7 @@ private:
     std::shared_ptr<IConnector>  mConnector{nullptr};
     std::string*                 mCurrentlyConnectedNetwork{nullptr};
     const unsigned char*         mData{nullptr};
-    pcap_t*                      mHandler{nullptr};
+    PCapWrapper                  mHandler;
     const pcap_pkthdr*           mHeader{nullptr};
     bool                         mHosting{false};
     unsigned int                 mPacketCount{0};

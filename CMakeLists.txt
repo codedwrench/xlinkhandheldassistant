@@ -107,13 +107,13 @@ add_executable(xlinkhandheldassistant main.cpp
         Sources/Handler80211.cpp
         Sources/Logger.cpp
         Sources/PCapReader.cpp
-        Sources/WindowModel.cpp
+        Sources/PCapWrapper.cpp
         Sources/MonitorDevice.cpp
         Sources/Parameter80211Reader.cpp
-        Sources/XLinkKaiConnection.cpp
         Sources/RadioTapReader.cpp
         Sources/WindowModel.cpp
         Sources/WirelessPSPPluginDevice.cpp
+        Sources/XLinkKaiConnection.cpp
         Sources/UserInterface/AboutWindow.cpp
         Sources/UserInterface/Button.cpp
         Sources/UserInterface/CheckBox.cpp
@@ -140,11 +140,13 @@ add_executable(xlinkhandheldassistant main.cpp
         Includes/IConnector.h
         Includes/IHandler.h
         Includes/IPCapDevice.h
+        Includes/IPCapWrapper.h
         Includes/IWifiInterface.h
         Includes/Logger.h
         Includes/NetworkingHeaders.h
         Includes/Parameter80211Reader.h
         Includes/PCapReader.h
+        Includes/PCapWrapper.h
         Includes/RadioTapReader.h
         Includes/MonitorDevice.h
         Includes/NetConversionFunctions.h
@@ -217,6 +219,7 @@ if (ENABLE_TESTS)
             Sources/MonitorDevice.cpp
             Sources/Parameter80211Reader.cpp
             Sources/PCapReader.cpp
+            Sources/PCapWrapper.cpp
             Sources/RadioTapReader.cpp
             Sources/WindowModel.cpp
             Sources/WirelessPSPPluginDevice.cpp
