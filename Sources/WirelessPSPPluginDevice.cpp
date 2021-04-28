@@ -249,7 +249,7 @@ bool WirelessPSPPluginDevice::Send(std::string_view aData)
 bool WirelessPSPPluginDevice::Send(std::string_view aData, bool aModifyData)
 {
     bool lReturn{false};
-    if (mWrapper != nullptr) {
+    if (mWrapper->IsActivated()) {
         if (!aData.empty()) {
             std::string lData{aData.data(), aData.size()};
 
@@ -314,7 +314,7 @@ bool WirelessPSPPluginDevice::StartReceiverThread()
 {
     bool lReturn{true};
 
-    if (mWrapper != nullptr) {
+    if (mWrapper->IsActivated()) {
         // Run
         if (mReceiverThread == nullptr) {
             if (mAutoConnect && mWifiTimeoutThread == nullptr && mReConnectionTimeOut.count() > 0) {
@@ -343,7 +343,7 @@ bool WirelessPSPPluginDevice::StartReceiverThread()
                         lThis->ReadCallback(aPacket, aHeader);
                     };
 
-                while (mConnected && (mWrapper != nullptr)) {
+                while (mConnected && (mWrapper->IsActivated())) {
                     // Use pcap_dispatch instead of pcap_next_ex so that as many packets as possible will be processed
                     // in a single cycle.
                     if (mWrapper->Dispatch(0, lCallbackFunction, reinterpret_cast<u_char*>(this)) == -1) {

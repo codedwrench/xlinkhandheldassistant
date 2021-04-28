@@ -132,7 +132,7 @@ bool PCapReader::Open(std::string_view aName, std::vector<std::string>& aSSIDFil
     bool                               lReturn{true};
     std::array<char, PCAP_ERRBUF_SIZE> lErrorBuffer{};
     mWrapper->OpenOffline(aName.data(), lErrorBuffer.data());
-    if (mWrapper != nullptr) {
+    if (mWrapper->IsActivated()) {
         // If we have a monitor device we want the 80211 handler.
         auto lHandler{std::dynamic_pointer_cast<Handler80211>(mPacketHandler)};
         lHandler->SetSSIDFilterList(aSSIDFilter);
@@ -279,7 +279,7 @@ void PCapReader::ShowPacketStatistics(const pcap_pkthdr* aHeader) const
 bool PCapReader::StartReceiverThread()
 {
     bool lReturn{true};
-    if (mWrapper != nullptr) {
+    if (mWrapper->IsActivated()) {
         // Run
         if (mReplayThread == nullptr) {
             mReplayThread = std::make_shared<std::thread>([&] {
