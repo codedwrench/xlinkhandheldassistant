@@ -11,7 +11,7 @@
 using namespace std::chrono;
 
 PCapReader::PCapReader(bool aMonitorCapture, bool aTimeAccurate, std::shared_ptr<IPCapWrapper> aPcapWrapper) :
-    mHandler(aPcapWrapper), mMonitorCapture(aMonitorCapture), mTimeAccurate(aTimeAccurate)
+    mWrapper(aPcapWrapper), mMonitorCapture(aMonitorCapture), mTimeAccurate(aTimeAccurate)
 {}
 
 void PCapReader::BlackList(uint64_t aMAC)
@@ -30,9 +30,9 @@ void PCapReader::Close()
         mReplayThread->join();
     }
 
-    mHandler->Close();
+    mWrapper->Close();
 
-    mHandler            = nullptr;
+    mWrapper            = nullptr;
     mData               = nullptr;
     mHeader             = nullptr;
     mReplayThread       = nullptr;
@@ -111,9 +111,9 @@ bool PCapReader::Open(std::string_view aArgument)
 
     bool                               lReturn{true};
     std::array<char, PCAP_ERRBUF_SIZE> lErrorBuffer{};
-    mHandler->OpenOffline(aArgument.data(), lErrorBuffer.data());
+    mWrapper->OpenOffline(aArgument.data(), lErrorBuffer.data());
 
-    if (mHandler == nullptr) {
+    if (mWrapper == nullptr) {
         lReturn = false;
         Logger::GetInstance().Log("pcap_open_offline failed, " + std::string(lErrorBuffer.data()),
                                   Logger::Level::ERROR);
@@ -131,8 +131,8 @@ bool PCapReader::Open(std::string_view aName, std::vector<std::string>& aSSIDFil
 
     bool                               lReturn{true};
     std::array<char, PCAP_ERRBUF_SIZE> lErrorBuffer{};
-    mHandler->OpenOffline(aName.data(), lErrorBuffer.data());
-    if (mHandler != nullptr) {
+    mWrapper->OpenOffline(aName.data(), lErrorBuffer.data());
+    if (mWrapper != nullptr) {
         // If we have a monitor device we want the 80211 handler.
         auto lHandler{std::dynamic_pointer_cast<Handler80211>(mPacketHandler)};
         lHandler->SetSSIDFilterList(aSSIDFilter);
@@ -197,8 +197,8 @@ bool PCapReader::ReadNextData()
 {
     bool lReturn = true;
 
-    if (mHandler->NextEx(&mHeader, &mData) < 0) {
-        Logger::GetInstance().Log("Reading offline capture failed: " + std::string(mHandler->GetError()),
+    if (mWrapper->NextEx(&mHeader, &mData) < 0) {
+        Logger::GetInstance().Log("Reading offline capture failed: " + std::string(mWrapper->GetError()),
                                   Logger::Level::ERROR);
         lReturn = false;
     }
@@ -209,7 +209,7 @@ bool PCapReader::ReadNextData()
 bool PCapReader::Send(std::string_view aCommand, std::string_view aData)
 {
     bool lReturn{false};
-    if (mHandler->IsActivated()) {
+    if (mWrapper->IsActivated()) {
         if (!aData.empty()) {
             Logger::GetInstance().Log(std::string("Would have sent: ") + aCommand.data() + aData.data(),
                                       Logger::Level::TRACE);
@@ -225,7 +225,7 @@ bool PCapReader::Send(std::string_view aCommand, std::string_view aData)
 bool PCapReader::Send(std::string_view aData)
 {
     bool lReturn{false};
-    if (mHandler->IsActivated()) {
+    if (mWrapper->IsActivated()) {
         if (!aData.empty()) {
             Logger::GetInstance().Log(std::string("Would have sent: ") + PrettyHexString(aData), Logger::Level::TRACE);
         }
@@ -279,7 +279,7 @@ void PCapReader::ShowPacketStatistics(const pcap_pkthdr* aHeader) const
 bool PCapReader::StartReceiverThread()
 {
     bool lReturn{true};
-    if (mHandler != nullptr) {
+    if (mWrapper != nullptr) {
         // Run
         if (mReplayThread == nullptr) {
             mReplayThread = std::make_shared<std::thread>([&] {

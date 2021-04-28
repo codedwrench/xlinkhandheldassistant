@@ -95,6 +95,11 @@ int PCapWrapper::SendPacket(std::string_view buffer)
     return pcap_sendpacket(mHandler, reinterpret_cast<const unsigned char*>(buffer.data()), buffer.size());
 }
 
+int PCapWrapper::SetDirection(pcap_direction_t direction)
+{
+    return pcap_setdirection(mHandler, direction);
+}
+
 int PCapWrapper::SetSnapLen(int snaplen)
 {
     return pcap_set_snaplen(mHandler, snaplen);

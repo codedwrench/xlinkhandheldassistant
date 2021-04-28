@@ -3,7 +3,6 @@
 #include <iostream>
 #define PDC_WIDE
 #include <curses.h>
-#include <pcap.h>
 
 #include "../../../Includes/Logger.h"
 #include "../../../Includes/PCapWrapper.h"

@@ -18,12 +18,14 @@ using namespace std::chrono;
  * @param aAutoConnect - Whether or not to connect to networks automatically.
  * @param aReconnectionTimeOut - How long to wait when the connection is stale to reconnect.
  * @param aCurrentlyConnected - Reference to string where the currently connected SSID is stored.
+ * @param aPCapWrapper - Shared pointer to the wrapper with pcap functions.
  */
-WirelessPSPPluginDevice::WirelessPSPPluginDevice(bool                 aAutoConnect,
-                                                 std::chrono::seconds aReconnectionTimeOut,
-                                                 std::string*         aCurrentlyConnected) :
+WirelessPSPPluginDevice::WirelessPSPPluginDevice(bool                          aAutoConnect,
+                                                 std::chrono::seconds          aReconnectionTimeOut,
+                                                 std::string*                  aCurrentlyConnected,
+                                                 std::shared_ptr<IPCapWrapper> aPcapWrapper) :
     mAutoConnect(aAutoConnect),
-    mReConnectionTimeOut(aReconnectionTimeOut), mCurrentlyConnected(aCurrentlyConnected)
+    mWrapper(aPcapWrapper), mReConnectionTimeOut(aReconnectionTimeOut), mCurrentlyConnected(aCurrentlyConnected)
 {}
 
 // Keeping the SSID filter in because of future autoconnect
@@ -46,14 +48,14 @@ bool WirelessPSPPluginDevice::Open(std::string_view                aName,
 
     std::array<char, PCAP_ERRBUF_SIZE> lErrorBuffer{};
 
-    mHandler = pcap_create(aName.data(), lErrorBuffer.data());
-    pcap_set_snaplen(mHandler, cSnapshotLength);
-    pcap_set_timeout(mHandler, cPCAPTimeoutMs);
-    pcap_setdirection(mHandler, PCAP_D_IN);
+    mWrapper->Create(aName.data(), lErrorBuffer.data());
+    mWrapper->SetSnapLen(cSnapshotLength);
+    mWrapper->SetTimeOut(cPCAPTimeoutMs);
+    mWrapper->SetDirection(PCAP_D_IN);
     // TODO: Test without immediate mode, see if it helps
     // pcap_set_immediate_mode(mPcapWrapper, 1);
 
-    int lStatus{pcap_activate(mHandler)};
+    int lStatus{mWrapper->Activate()};
     if (lStatus == 0) {
         mConnected = true;
     } else {
@@ -77,9 +79,7 @@ void WirelessPSPPluginDevice::Close()
 {
     mConnected = false;
 
-    if (mHandler != nullptr) {
-        pcap_breakloop(mHandler);
-    }
+    mWrapper->BreakLoop();
 
     if (mReceiverThread != nullptr) {
         while (!mReceiverThread->joinable()) {
@@ -97,11 +97,9 @@ void WirelessPSPPluginDevice::Close()
         mWifiTimeoutThread->join();
     }
 
-    if (mHandler != nullptr) {
-        pcap_close(mHandler);
-    }
+    mWrapper->Close();
 
-    mHandler        = nullptr;
+    mWrapper        = nullptr;
     mData           = nullptr;
     mHeader         = nullptr;
     mReceiverThread = nullptr;
@@ -251,7 +249,7 @@ bool WirelessPSPPluginDevice::Send(std::string_view aData)
 bool WirelessPSPPluginDevice::Send(std::string_view aData, bool aModifyData)
 {
     bool lReturn{false};
-    if (mHandler != nullptr) {
+    if (mWrapper != nullptr) {
         if (!aData.empty()) {
             std::string lData{aData.data(), aData.size()};
 
@@ -270,10 +268,10 @@ bool WirelessPSPPluginDevice::Send(std::string_view aData, bool aModifyData)
 
             Logger::GetInstance().Log(std::string("Sent: ") + PrettyHexString(lData), Logger::Level::TRACE);
 
-            if (pcap_sendpacket(mHandler, reinterpret_cast<const unsigned char*>(lData.data()), lData.size()) == 0) {
+            if (mWrapper->SendPacket(lData) == 0) {
                 lReturn = true;
             } else {
-                Logger::GetInstance().Log("pcap_sendpacket failed, " + std::string(pcap_geterr(mHandler)),
+                Logger::GetInstance().Log("pcap_sendpacket failed, " + std::string(mWrapper->GetError()),
                                           Logger::Level::ERROR);
             }
         }
@@ -316,7 +314,7 @@ bool WirelessPSPPluginDevice::StartReceiverThread()
 {
     bool lReturn{true};
 
-    if (mHandler != nullptr) {
+    if (mWrapper != nullptr) {
         // Run
         if (mReceiverThread == nullptr) {
             if (mAutoConnect && mWifiTimeoutThread == nullptr && mReConnectionTimeOut.count() > 0) {
@@ -345,12 +343,12 @@ bool WirelessPSPPluginDevice::StartReceiverThread()
                         lThis->ReadCallback(aPacket, aHeader);
                     };
 
-                while (mConnected && (mHandler != nullptr)) {
+                while (mConnected && (mWrapper != nullptr)) {
                     // Use pcap_dispatch instead of pcap_next_ex so that as many packets as possible will be processed
                     // in a single cycle.
-                    if (pcap_dispatch(mHandler, 0, lCallbackFunction, reinterpret_cast<u_char*>(this)) == -1) {
+                    if (mWrapper->Dispatch(0, lCallbackFunction, reinterpret_cast<u_char*>(this)) == -1) {
                         Logger::GetInstance().Log(
-                            "Error occurred while reading packet: " + std::string(pcap_geterr(mHandler)),
+                            "Error occurred while reading packet: " + std::string(mWrapper->GetError()),
                             Logger::Level::DEBUG);
                     }
                 }

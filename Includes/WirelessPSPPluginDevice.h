@@ -13,6 +13,7 @@
 #include "Handler80211.h"
 #include "IConnector.h"
 #include "IPCapDevice.h"
+#include "PCapWrapper.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #include "WifiInterfaceWindows.h"
@@ -38,7 +39,8 @@ public:
     WirelessPSPPluginDevice(
         bool                 aAutoConnect         = false,
         std::chrono::seconds aReConnectionTimeOut = WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
-        std::string*         aCurrentlyConnected  = nullptr);
+        std::string*         aCurrentlyConnected  = nullptr,
+        std::shared_ptr<IPCapWrapper> aPcapWrapper = std::make_shared<PCapWrapper>());
     void               BlackList(uint64_t aMAC) override;
     void               ClearMACBlackList();
     [[nodiscard]] bool IsMACBlackListed(uint64_t aMAC) const;
@@ -83,7 +85,7 @@ private:
     bool                            mConnected{false};
     std::shared_ptr<IConnector>     mConnector{nullptr};
     const unsigned char*            mData{nullptr};
-    pcap_t*                         mHandler{nullptr};
+    std::shared_ptr<IPCapWrapper>   mWrapper{nullptr};
     bool                            mHosting{false};
     uint64_t                        mAdapterMACAddress{};
     bool                            mAutoConnect{};

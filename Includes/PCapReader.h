@@ -99,7 +99,7 @@ private:
     std::shared_ptr<IConnector>                               mConnector{nullptr};
     const unsigned char*                                      mData{nullptr};
     std::shared_ptr<RadioTapReader::PhysicalDeviceParameters> mParameters{nullptr};
-    std::shared_ptr<IPCapWrapper>                              mHandler{nullptr};
+    std::shared_ptr<IPCapWrapper>                             mWrapper{nullptr};
     pcap_pkthdr*                                              mHeader{nullptr};
     bool                                                      mHosting{false};
     std::shared_ptr<IPCapDevice>                              mIncomingConnection{nullptr};

@@ -10,8 +10,6 @@
 #include <string>
 #include <vector>
 
-#include <pcap/pcap.h>
-
 #include "NetworkingHeaders.h"
 
 namespace IPCapDevice_Constants
@@ -26,6 +24,7 @@ namespace IPCapDevice_Constants
 }  // namespace IPCapDevice_Constants
 
 class IConnector;
+class pcap_pkthdr;
 
 /**
  * Interface for pcap devices, either file based or device based.

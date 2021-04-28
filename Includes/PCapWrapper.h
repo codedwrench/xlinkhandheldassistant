@@ -31,6 +31,7 @@ public:
    pcap_t* OpenOffline(const char* fname, char *errbuf) override;
    int NextEx(pcap_pkthdr** header, const unsigned char **pkt_data) override;
    int SendPacket(std::string_view buffer) override;
+   int SetDirection(pcap_direction_t direction) override;
    int SetSnapLen(int snaplen) override;
    int SetTimeOut(int timeout) override;
 private:
