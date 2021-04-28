@@ -8,31 +8,15 @@
 
 #include "../Includes/NetConversionFunctions.h"
 #include "../Includes/PCapReader.h"
-#include "../Includes/PCapWrapper.h"
 #include "../Includes/WirelessPSPPluginDevice.h"
-#include "../Includes/XLinkKaiConnection.h"
 #include "IConnectorMock.h"
+#include "IPCapWrapperMock.h"
 #include "IWifiInterfaceMock.h"
 
 using ::testing::_;
 using ::testing::DoAll;
 using ::testing::Return;
 using ::testing::WithArg;
-
-class PCapReaderDerived : public PCapReader
-{
-public:
-    using PCapReader::PCapReader;
-    MOCK_METHOD(bool, Send, (std::string_view aData));
-};
-
-class WirelessPSPPluginDeviceDerived : public WirelessPSPPluginDevice
-{
-public:
-    using WirelessPSPPluginDevice::WirelessPSPPluginDevice;
-    MOCK_METHOD(bool, Send, (std::string_view aData));
-    MOCK_METHOD(bool, Send, (std::string_view aData, bool aModifyData));
-};
 
 class PluginPacketHandlingTest : public ::testing::Test
 {};
@@ -41,7 +25,14 @@ class PluginPacketHandlingTest : public ::testing::Test
 // Be put into the source field
 TEST_F(PluginPacketHandlingTest, NormalPacketHandlingXLinkSide)
 {
-    // TODO: Find a way to mock sending to pcap
+    std::shared_ptr<IPCapWrapperMock> lPCapReaderWrapperMock{std::make_shared<IPCapWrapperMock>()};
+    PCapReader               lPCapReader{true, false};
+    std::shared_ptr<IWifiInterface> lWifiInterface{std::make_shared<IWifiInterfaceMock>()};
+    std::shared_ptr<IConnector>     lConnector{std::make_shared<IConnectorMock>()};
+    std::vector<std::string>        lSSIDFilter{""};
+    std::shared_ptr<IPCapWrapperMock> lPCapWrapperMock{std::make_shared<IPCapWrapperMock>()};
+    WirelessPSPPluginDevice  lPSPPluginDevice{false, WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+                                                     nullptr, std::static_pointer_cast<IPCapWrapper>(lPCapWrapperMock)};
 }
 
 // When a packet is received from the PSP the MAC address at the end should be moved back to its proper place before
@@ -52,7 +43,9 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
     std::shared_ptr<IWifiInterface> lWifiInterface{std::make_shared<IWifiInterfaceMock>()};
     std::shared_ptr<IConnector>     lOutputConnector{std::make_shared<IConnectorMock>()};
     std::vector<std::string>        lSSIDFilter{""};
-    WirelessPSPPluginDeviceDerived  lPSPPluginDevice{};
+    auto lPCapWrapperMock{std::make_shared<::testing::NiceMock<IPCapWrapperMock>>()};
+    WirelessPSPPluginDevice  lPSPPluginDevice{false, WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+                                              nullptr, std::static_pointer_cast<IPCapWrapper>(lPCapWrapperMock)};
 
     // Expectation classes (PCapReader and the like)
     const std::string        lOutputFileName{"../Tests/Output/PluginPSPTestOutput.pcap"};
@@ -65,20 +58,22 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
     std::vector<timeval>     lTimeStamp{};
 
     PCapWrapper lWrapper;
+    PCapWrapper lPCapReaderWrapper;
     lWrapper.OpenDead(DLT_EN10MB, 65535);
     pcap_dumper_t*              lDumper{lWrapper.DumpOpen(lOutputFileName.c_str())};
     std::shared_ptr<IConnector> lInputConnector{std::make_shared<IConnectorMock>()};
     std::shared_ptr<IConnector> lExpectedConnector{std::make_shared<IConnectorMock>()};
-    PCapReaderDerived           lPCapInputReader{false, false};
-    PCapReaderDerived           lPCapExpectedReader{false, false};
+    PCapReader           lPCapInputReader{false, false};
+    PCapReader           lPCapExpectedReader{false, false};
 
     // Expectations
     // The WiFi Mac address obviously needs to stay the same during testing so return a fake one
-    EXPECT_CALL(*std::dynamic_pointer_cast<IWifiInterfaceMock>(lWifiInterface), GetAdapterMACAddress)
+    EXPECT_CALL(*std::static_pointer_cast<IWifiInterfaceMock>(lWifiInterface), GetAdapterMACAddress)
         .WillOnce(Return(0xb03f29f81800));
 
     // This will catch our MAC broadcast, more extensive testing done in later test.
-    EXPECT_CALL(lPSPPluginDevice, Send(_, false)).WillOnce(Return(true));
+    ON_CALL(*lPCapWrapperMock, IsActivated()).WillByDefault(Return(true));
+    EXPECT_CALL(*lPCapWrapperMock, SendPacket(_)).WillOnce(Return(0));
 
     // PCAP set-up
     lPCapInputReader.Open("../Tests/Input/PluginFromPSPTest.pcapng");
@@ -87,19 +82,19 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
     lPCapExpectedReader.Open("../Tests/Input/PluginFromPSPTest_Expected.pcap");
     lPCapExpectedReader.SetConnector(lExpectedConnector);
 
-    EXPECT_CALL(*std::dynamic_pointer_cast<IConnectorMock>(lInputConnector), Send(_))
+    EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lInputConnector), Send(_))
         .WillRepeatedly(DoAll(WithArg<0>([&](std::string_view aMessage) {
                                   lInputPackets.emplace_back(aMessage);
                                   lTimeStamp.push_back(lPCapInputReader.GetHeader()->ts);
                               }),
                               Return(true)));
 
-    EXPECT_CALL(*std::dynamic_pointer_cast<IConnectorMock>(lOutputConnector), Send(_))
+    EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lOutputConnector), Send(_))
         .WillRepeatedly(
             DoAll(WithArg<0>([&](std::string_view aMessage) { lOutputPackets.emplace_back(std::string(aMessage)); }),
                   Return(true)));
 
-    EXPECT_CALL(*std::dynamic_pointer_cast<IConnectorMock>(lExpectedConnector), Send(_))
+    EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lExpectedConnector), Send(_))
         .WillRepeatedly(
             DoAll(WithArg<0>([&](std::string_view aMessage) { lExpectedPackets.emplace_back(std::string(aMessage)); }),
                   Return(true)));
@@ -162,7 +157,9 @@ TEST_F(PluginPacketHandlingTest, BroadcastMacToBeUsed)
     std::shared_ptr<IWifiInterface> lWifiInterface{std::make_shared<IWifiInterfaceMock>()};
     std::shared_ptr<IConnector>     lConnector{std::make_shared<IConnectorMock>()};
     std::vector<std::string>        lSSIDFilter{""};
-    WirelessPSPPluginDeviceDerived  lPSPPluginDevice{};
+    auto lPCapWrapperMock{std::make_shared<::testing::NiceMock<IPCapWrapperMock>>()};
+    WirelessPSPPluginDevice  lPSPPluginDevice{false, WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+                                              nullptr, std::static_pointer_cast<IPCapWrapper>(lPCapWrapperMock)};
 
     // Expectation classes (PCapReader and the like)
     const std::string        lOutputFileName{"../Tests/Output/BroadcastMacOutput.pcap"};
@@ -173,16 +170,17 @@ TEST_F(PluginPacketHandlingTest, BroadcastMacToBeUsed)
     lWrapper.OpenDead(DLT_EN10MB, 65535);
     pcap_dumper_t*              lDumper{lWrapper.DumpOpen(lOutputFileName.c_str())};
     std::shared_ptr<IConnector> lExpectedConnector{std::make_shared<IConnectorMock>()};
-    PCapReaderDerived           lPCapReader{true, false};
-    PCapReaderDerived           lPCapExpectedReader{true, false};
+    PCapReader           lPCapReader{true, false};
+    PCapReader           lPCapExpectedReader{true, false};
 
     // Expectations
     // The WiFi Mac address obviously needs to stay the same during testing so return a fake one
-    EXPECT_CALL(*std::dynamic_pointer_cast<IWifiInterfaceMock>(lWifiInterface), GetAdapterMACAddress)
+    EXPECT_CALL(*std::static_pointer_cast<IWifiInterfaceMock>(lWifiInterface), GetAdapterMACAddress)
         .WillOnce(Return(0xb03f29f81800));
 
     // This will catch our MAC broadcast
-    EXPECT_CALL(lPSPPluginDevice, Send(_, false))
+    ON_CALL(*lPCapWrapperMock, IsActivated()).WillByDefault(Return(true));
+    EXPECT_CALL(*lPCapWrapperMock, SendPacket(_))
         .WillRepeatedly(DoAll(WithArg<0>([&](std::string_view aMessage) {
                                   lSendBuffer.emplace_back(std::string(aMessage));
                                   timeval lTv;
@@ -191,7 +189,7 @@ TEST_F(PluginPacketHandlingTest, BroadcastMacToBeUsed)
                                       lTimeStamp.back().tv_usec + 1000;  // Pretend that we sent this 1000 USec later
                                   lTimeStamp.emplace_back(lTv);
                               }),
-                              Return(true)));
+                              Return(0)));
 
     // PCAP set-up
     lPCapReader.Open("../Tests/Input/BroadcastMacTest.pcapng", lSSIDFilter);
@@ -244,20 +242,21 @@ TEST_F(PluginPacketHandlingTest, BroadcastMacToBeUsed)
 // Because that would mean the PSP is already sending directly to the PC
 TEST_F(PluginPacketHandlingTest, NoBroadcastMacToBeUsedWhenNormalPacket)
 {
-    PCapReaderDerived               lPCapReader{true, false};
+    PCapReader               lPCapReader{true, false};
     std::shared_ptr<IWifiInterface> lWifiInterface{std::make_shared<IWifiInterfaceMock>()};
     std::shared_ptr<IConnector>     lConnector{std::make_shared<IConnectorMock>()};
     std::vector<std::string>        lSSIDFilter{""};
-    WirelessPSPPluginDeviceDerived  lPSPPluginDevice{};
+    auto lPCapWrapperMock{std::make_shared<::testing::NiceMock<IPCapWrapperMock>>()};
+    WirelessPSPPluginDevice  lPSPPluginDevice{false, WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+                                              nullptr, std::static_pointer_cast<IPCapWrapper>(lPCapWrapperMock)};
 
     // The WiFi Mac address obviously needs to stay the same during testing so return a fake one
-    EXPECT_CALL(*std::dynamic_pointer_cast<IWifiInterfaceMock>(lWifiInterface), GetAdapterMACAddress)
+    EXPECT_CALL(*std::static_pointer_cast<IWifiInterfaceMock>(lWifiInterface), GetAdapterMACAddress)
         .WillOnce(Return(0xb03f29f81800));
 
     // Never expect a call on the device itself (Broadcast), but do expect it to forward the packet to XLink Kai
-    EXPECT_CALL(lPSPPluginDevice, Send(_, _)).Times(0);
-    EXPECT_CALL(lPSPPluginDevice, Send(_)).Times(0);
-    EXPECT_CALL(*std::dynamic_pointer_cast<IConnectorMock>(lConnector), Send(_)).WillOnce(Return(true));
+    EXPECT_CALL(*lPCapWrapperMock, SendPacket(_)).Times(0);
+    EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lConnector), Send(_)).WillOnce(Return(true));
 
     // PCAP set-up
     lPCapReader.Open("../Tests/Input/NoBroadcastMacTest.pcapng", lSSIDFilter);

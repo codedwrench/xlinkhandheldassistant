@@ -70,8 +70,7 @@ public:
     // Public for easier testing
     bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);
 
-    // Allow this to be overridden
-    virtual bool Send(std::string_view aData, bool aModifyData);
+    bool Send(std::string_view aData, bool aModifyData);
 
     bool Send(std::string_view aData) override;
     void SetConnector(std::shared_ptr<IConnector> aDevice) override;
