@@ -10,8 +10,12 @@
 
 using namespace std::chrono;
 
-PCapReader::PCapReader(bool aMonitorCapture, bool aTimeAccurate, std::shared_ptr<IPCapWrapper> aPcapWrapper) :
-    mWrapper(aPcapWrapper), mMonitorCapture(aMonitorCapture), mTimeAccurate(aTimeAccurate)
+PCapReader::PCapReader(bool                          aMonitorCapture,
+                       bool                          aMonitorOutput,
+                       bool                          aTimeAccurate,
+                       std::shared_ptr<IPCapWrapper> aPcapWrapper) :
+    mWrapper(aPcapWrapper),
+    mMonitorCapture(aMonitorCapture), mMonitorOutput(aMonitorOutput), mTimeAccurate(aTimeAccurate)
 {}
 
 void PCapReader::BlackList(uint64_t aMAC)
@@ -180,9 +184,13 @@ bool PCapReader::ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHe
     } else {
         // Pretending to be XLink Kai or other outgoing connector
         if (mIncomingConnection != nullptr) {
-            auto lHandler = std::dynamic_pointer_cast<Handler8023>(mPacketHandler);
-            if (lHandler != nullptr) {
-                mIncomingConnection->Send(lHandler->ConvertPacket(mBSSID, *mParameters));
+            if (mMonitorOutput) {
+                auto lHandler = std::dynamic_pointer_cast<Handler8023>(mPacketHandler);
+                if (lHandler != nullptr) {
+                    mIncomingConnection->Send(lHandler->ConvertPacket(mBSSID, *mParameters));
+                }
+            } else {
+                mIncomingConnection->Send(lData);
             }
         } else {
             mConnector->Send(lData);

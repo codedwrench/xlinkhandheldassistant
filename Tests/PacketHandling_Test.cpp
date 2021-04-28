@@ -58,8 +58,8 @@ TEST_F(PacketHandlingTest, MonitorToPromiscuous)
 {
     std::shared_ptr<IConnector> lConnector{std::make_shared<IConnectorMock>()};
     std::shared_ptr<IConnector> lExpectedConnector{std::make_shared<IConnectorMock>()};
-    PCapReader                  lPCapReader{true, false};
-    PCapReader                  lPCapExpectedReader{false, false};
+    PCapReader                  lPCapReader{true, false, false};
+    PCapReader                  lPCapExpectedReader{false, false, false};
 
     PCapWrapper lWrapper;
     lWrapper.OpenDead(DLT_EN10MB, 65535);
@@ -124,10 +124,10 @@ TEST_F(PacketHandlingTest, MonitorToPromiscuous)
 
 TEST_F(PacketHandlingTest, PromiscuousToMonitor)
 {
-    std::shared_ptr<PCapReader>      lConnector{std::make_shared<PCapReader>(true, false)};
+    std::shared_ptr<PCapReader>      lConnector{std::make_shared<PCapReader>(true, true, false)};
     std::shared_ptr<IPCapDeviceMock> lIncomingConnection{std::make_shared<IPCapDeviceMock>()};
     std::shared_ptr<IConnector>      lExpectedConnector{std::make_shared<IConnectorMock>()};
-    PCapReader                       lPCapExpectedReader{false, false};
+    PCapReader                       lPCapExpectedReader{false, true, false};
 
 
     PCapWrapper lWrapper{};
@@ -227,12 +227,12 @@ TEST_F(PacketHandlingTest, ConstructAcknowledgementFrame)
     const std::string lOutputFileName = "../Tests/Output/ConstructAcknowledgementFrame.pcap";
     pcap_dumper_t*    lDumper{lWrapper.DumpOpen(lOutputFileName.c_str())};
 
-    PCapReaderDerived        lPCapReader{true, false};
+    PCapReaderDerived        lPCapReader{true, true, false};
     std::vector<std::string> lSSIDFilter{"SCE_NPWR05830_01"};
     lPCapReader.Open("../Tests/Input/AcknowledgeTest.pcapng", lSSIDFilter);
 
     // Pretend to be a promiscuous capture so no conversion is done
-    PCapReader lPCapExpectedReader{false, false};
+    PCapReader lPCapExpectedReader{false, false, false};
     lPCapExpectedReader.Open("../Tests/Input/ConstructAcknowledgementFrame_Expected.pcap");
 
     lPCapReader.SetConnector(lConnector);

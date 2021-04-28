@@ -25,8 +25,10 @@ public:
     /**
      * Construct a new PCapReader object.
      * @param aMonitorCapture - Tells the PCapReader whether it's a monitor mode device or a promiscuous mode device.
+     * @param aMonitorOutput - Tells the PCapReader whether the output should be 802.11 or 802.3.
+     * @param aWrapper - Wrapper for the PCap functions
      */
-    explicit PCapReader(bool aMonitorCapture, bool aTimeAccurate, std::shared_ptr<IPCapWrapper> aWrapper = std::make_shared<PCapWrapper>());
+    explicit PCapReader(bool aMonitorCapture, bool aMonitorOutput, bool aTimeAccurate, std::shared_ptr<IPCapWrapper> aWrapper = std::make_shared<PCapWrapper>());
     ~PCapReader() = default;
 
     /**
@@ -105,6 +107,7 @@ private:
     std::shared_ptr<IPCapDevice>                              mIncomingConnection{nullptr};
     bool                                                      mDoneReceiving{false};
     bool                                                      mMonitorCapture{false};
+    bool                                                      mMonitorOutput{false};
     bool                                                      mTimeAccurate{false};
     std::shared_ptr<IHandler>                                 mPacketHandler{nullptr};
     std::shared_ptr<std::thread>                              mReplayThread{nullptr};
