@@ -120,10 +120,10 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
                 aPcapWrapper->Create(lDevice->name, lErrorBuffer.data());
                 if (aPcapWrapper->IsActivated()) {
                     // Device has to be 802.11 as well, so no bluetooth and the like
-                    char* lError    = aPcapWrapper->GetError();
+                    int   lError    = aPcapWrapper->Activate();
                     int   lLinkType = aPcapWrapper->GetDatalink();
                     // It seems to be EN10MB when the network is down on Linux :/
-                    if (lError == NULL && lLinkType == DLT_IEEE802_11 || lLinkType == DLT_EN10MB ||
+                    if (lError == 0 && lLinkType == DLT_IEEE802_11 || lLinkType == DLT_EN10MB ||
                         lLinkType == DLT_IEEE802_11_RADIO) {
                         std::pair<std::string, std::string> lWifiInformation{};
                         lWifiInformation.first = lDevice->name;
@@ -134,7 +134,7 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
                             lWifiInformation.second = lDevice->name;
                         }
                         aWifiAdapterList.push_back(lWifiInformation);
-                    } else if (*lError == PCAP_ERROR_PERM_DENIED) {
+                    } else if (lError == PCAP_ERROR_PERM_DENIED) {
                         // Lazy way to show an error, I know.
                         std::pair<std::string, std::string> lWifiInformation{};
                         lWifiInformation.first  = "wlan0";
