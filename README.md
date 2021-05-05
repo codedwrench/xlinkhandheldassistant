@@ -1,15 +1,17 @@
 # XLHA - XLink Handheld Assistant
-Emulates a promiscuous mode wifi card using monitor mode and packet injection and sends the data over XLink Kai.
+Helps handheld devices connect to XLink Kai using a variety of methods.
 
-As of right now it is a working proof of concept where you can receive and send PSP traffic succesfully through XLink Kai.
+At this point receive and send PSP traffic succesfully through XLink Kai using the following methods:
+- Monitor mode
+- Plugin mode
 
-## Wifi cards this has been tested and found working on (Linux, kernel 5.x):
+## Wifi cards this has been tested and found working on Monitor Mode (Linux, kernel 5.x):
+
 ### Atheros
 - Azurewave AR5BHB92 (Atheros 9280 (ath9k))
 - TP-Link TL-WDN4800 (Atheros AR93xx (ath9k))
 - NetGear, Inc. WNA1100 Wireless-N 150 (Atheros 9271 (ath9k_htc))
 - TP-Link TL-WN821N v3 (Atheros 9287 (ath9k_htc))
-
 
 ### Broadcom
 - Dell Wireless 1390 (Broadcom BCM4311 (b43)) with the following patch: https://gist.github.com/codedwrench/8d7916d63993574e1dd089a62dd523a9
@@ -36,12 +38,32 @@ This program has only been tested on Debian Testing and above.
 It requires the following packages to be installed:
 - cmake
 - gcc-10
+- g++-10
 - libboost-dev (version 1.71 or above)
+- libboost-atomic-dev
+- libboost-chrono-dev
+- libboost-date-time-dev
+- libboost-system-dev
 - libboost-thread-dev
 - libboost-program-options-dev
+- libboost-regex-dev
 - libncurses5-dev
 - libpcap-dev
 - libpthread-stubs0-dev
+- libnl-3-dev
+- libnl-genl-3-dev
+- libnl-nf-3-dev
+
+## Arch Linux
+- libnl
+- cmake
+- boost
+- boost-libs
+- libpcap
+- ncurses
+- ncurses5-compat-libs
+- gcc
+- libpthread-stubs
 
 If those packages are installed, you can compile the program using the following command (from the project's root):
 ```bash
@@ -51,7 +73,7 @@ mkdir build && cd build && cmake .. && cmake --build . -- -j`nproc`
 ## Windows
 This program occasionally gets compiled for Windows 10 using Visual Studio 2019. MINGW64 with a GCC version of atleast 10 works as well.
 
-**Note:** Even though this program occasionally does compile for Windows, the program will be useless until npcap supports packet injection, see: https://github.com/nmap/npcap/issues/85 . Or this program supports a second adapter to do the injection. Also for the Monitor mode part to work at all you need the 0.9982 version of npcap due to the following bug: https://github.com/nmap/npcap/issues/159 .
+**Note:** Monitor mode is not available on Windows. NPcap does not support packet injection, see: https://github.com/nmap/npcap/issues/85 . Monitor mode itself also has the following bug, https://github.com/nmap/npcap/issues/159.
 
 The following programs are needed:
 - Visual Studio 2019 or MINGW64 with a GCC version of atleast 10
