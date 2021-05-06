@@ -67,6 +67,7 @@ Follow one of the following guides depending on your chosen method and operating
    && ./xlinkhandheldassistant
    ```
    If you get an error about terminal size at this point, make sure your terminal is atleast of size 80x24.
+   Example: Terminal size too small: 46x18, make sure the terminal is at least 80x24
    
 8. In the wizard select "Plugin Device" and then use the arrow keys to move down to the "Next" button and press enter.
 9. Press space on "Automatically connect to PSP networks".
