@@ -84,6 +84,7 @@ For a general description of all the functions in XLink Handheld Assistant, chec
 18. Enjoy the game!
 19. To stop XLHA, simply press 'q' on the Dashboard.
 20. Run the following to restore your WiFi-card to the normal situation:
+
     ```bash
     sudo chmod 775 ./linux_scripts/restore_managed.sh \
     && ./linux_scripts/restore_managed.sh "Name of Wifi adapter"
