@@ -80,7 +80,7 @@ Follow one of the following guides depending on your chosen method and operating
 16. On the PSP side go into the multiplayer menu start hosting/joining a game.
 17. In the top right-corner of the Dashboard "Connected to PSP_GameID_...." should appear after 5-30 seconds.
 18. Enjoy the game!
-19. To stop XLHA, simply press 'q' in the Dashboard.
+19. To stop XLHA, simply press 'q' on the Dashboard.
 20. Run the following to restore your WiFi-card to the normal situation:
     ```bash
     sudo chmod 775 ./linux_scripts/restore_managed.sh \
