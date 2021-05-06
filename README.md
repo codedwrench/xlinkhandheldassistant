@@ -131,16 +131,8 @@ After compiling, the program needs the following DLLs to be copied over to the b
 After that the program should be able to run.
 
 
-## How to run (Linux, probably also MacOS?)
-To put a card in monitor mode, which is needed for this program to work, I'd recommend installing aircrack-ng and setting your capture device to monitor mode as follows (frequency 2412 is the same as channel 1):
-```bash
-sudo airmon-ng start wificard 2412
-``` 
-
-After the program has been built succesfully it can be ran as follows:
-```bash
-sudo ./xlinkhandheldassistant
-``` 
+## How to run 
+See: [Guide](Docs/README.md)
 
 ## Known issues
 - Packet injection on Windows does not work.
