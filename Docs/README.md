@@ -22,6 +22,8 @@ Follow one of the following guides depending on your chosen method and operating
 
 - [Linux - Plugin Mode][]
 
+For a general description of all the functions in XLink Handheld Assistant, check [General Overview][].
+
 \newpage
 ## Linux - Plugin Mode
 1. Copy [AdHocRedirectorWiFi.prx](./Plugin/AdHocRedirectorWiFi.prx) to /SEPLUGINS on the PSP.
@@ -89,3 +91,98 @@ Follow one of the following guides depending on your chosen method and operating
 
 \
 If you want to redo these steps or choose another connection method, go into "Options" -> "Reconfigure the application"
+
+\newpage
+## General Overview
+
+### Wizard
+
+![Setup Wizard](screenshots/Wizard.PNG)
+
+This is the first step of the wizard and contains the following items:
+
+- Monitor Device: Allows you to use the Monitor mode method (Only on Linux).
+- Plugin Device: Allows you to use the Plugin method.
+- Next: Allows you to go to the next step of the wizard.
+
+\newpage
+### Monitor device settings
+
+![Monitor device settings](screenshots/Monitor.PNG)
+
+This has all the options for monitor mode, there are quite a few things here:
+
+- Automatically connect to PSP/Vita networks: When checked will look for PSP_ and SCE_ networks and uses those for forwarding data to XLink Kai.
+- Acknowledge data packets: Tries to lower the latency by having the WiFi card send out acknowledgements, if this causes any issues, disable it.
+- Only allow packets from the following MAC-address: If you type a MAC address into this field, it will only forward packets from that MAC address, making it possible to only listen to one Playstation Vita/PSP device.
+- The channel to use: Put the channel that is set into the Playstation Vita/PSP device in here.
+- Use the following adapter: Check the WiFi adapter that is in Monitor mode and can be used for forwarding data.
+- Next: Go to the next step in the wizard.
+
+\newpage
+### Plugin device settings
+
+![Plugin device settings](screenshots/Plugin.PNG)
+
+This has all the options for plugin mode:
+
+- Automatically connect to PSP networks: When checked will look for PSP_ networks and uses those for forwarding data to XLink Kai.
+- Reconnect after network has been inactive for (seconds): When automatically connect is checked this will allow you to finetune how long it will wait when there is no traffic, it is set to 15 seconds by default, if it is set to '0' it will only initially automatically connect to a PSP network after the engine is started but not after that. This can be useful for some games that do not send anything for a long time or rely on a connection to already be there.
+- Use the following adapter: Check the WiFi adapter that can be used for forwarding data.
+- Next: Go to the next step in the wizard.
+
+\newpage
+### XLink Kai options
+
+![XLink Kai options](screenshots/KaiOptions.PNG)
+
+Has settings related to the connection to XLink Kai:
+
+- XLink IP address: The IP-address of the PC that XLink Kai is running on (leave 127.0.0.1 if on the same PC) 
+- XLink Port: The port to use for the XLink Kai connection (Default: 34523)
+
+\newpage
+### Dashboard
+
+![Dashboard](screenshots/Dashboard.PNG)
+
+This is the main Dashboard/HUD of the application, it allows you to start/stop the engine and see some general information:
+
+- Picture in the middle: Shows the status of the engine, in the picture above the engine is turned off.
+- Hosting: Enable this when hosting a game, this will broadcast any potential SSID switches to other players, do not enable when joining a game!
+- Re-Connect: When the engine is started, this button can be used to reconnect to the PSP, for example if the timeout was set to 0 and now the PSP has changed its SSID.
+- Options: Brings you to the options screen.
+- Start Engine: Allows you to start the engine.
+- Status: Shows whether the engine is in a 'Running', 'Idle' or 'Error' state.
+
+\newpage
+![Dashboard with running engine](screenshots/Dashboard_On.PNG)
+
+When the engine is running some things have changed:
+
+- Picture in the middle: The picture in the middle has changed to reflect the running state.
+- Connected to: Shows the network the PSP is sending out to XLHA, if nothing is shown, the PC has not connected to a network yet or autoconnect was disabled.
+
+\newpage
+### Options
+
+![Options](screenshots/Options.PNG)
+
+In the options screen a few things can be done:
+
+- Reconfigure the application: Allows you to return to the wizard to edit the configuration.
+- About the application: Shows version information and the name of the program.
+- Select a theme: Allows you to change the engine status image on the dashboard, several themes are provided.
+- Configure log level: Allows you to let the engine give you more logging information, useful for debugging, leave on 'Info' otherwise.
+- Return to the HUD: Use this button to return to the dashboard.
+- Exit the application: Does the same thing 'q' would have done and quits the applicaton.
+
+\newpage
+### Theme
+
+![Theme selection](screenshots/Themes.PNG)
+
+This screen allows you to select a theme from the Themes folder.
+
+- Select Theme: Select the theme you want to use.
+- Save selection: Saves the selection.
