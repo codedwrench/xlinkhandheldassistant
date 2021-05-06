@@ -92,7 +92,7 @@ mkdir build && cd build && cmake .. && cmake --build . -- -j`nproc`
 ## Windows
 This program occasionally gets compiled for Windows 10 using Visual Studio 2019. MINGW64 with a GCC version of atleast 10 works as well.
 
-**Note:** Monitor mode is not available on Windows. NPcap does not support packet injection, see: https://github.com/nmap/npcap/issues/85 . Monitor mode itself also has the following bug, https://github.com/nmap/npcap/issues/159.
+**Note:** Monitor mode is not available on Windows. NPcap does not support packet injection, see: https://github.com/nmap/npcap/issues/85 .
 
 The following programs are needed:
 - Visual Studio 2019 or MINGW64 with a GCC version of atleast 10
@@ -132,7 +132,7 @@ After that the program should be able to run.
 
 
 ## How to run 
-See: [Guide](Docs/README.md)
+See [Guide](Docs/README.md)
 
 ## Known issues
 - Packet injection on Windows does not work.
