@@ -5,7 +5,7 @@ At this point receive and send PSP traffic succesfully through XLink Kai using t
 - Monitor mode
 - Plugin mode
 
-## Wifi cards this has been tested and found working on Monitor Mode (Linux, kernel 5.x):
+## Wifi cards that have been tested and found working on Monitor Mode (Linux, kernel 5.x):
 
 ### Atheros
 - Azurewave AR5BHB92 (Atheros 9280 (ath9k))
@@ -30,6 +30,25 @@ At this point receive and send PSP traffic succesfully through XLink Kai using t
 ### Realtek
 - Hercules Guillemot HWGUm-54 (rtl8192su (codedwrench/rtl8192su))
 - TP-Link TL-WN823N V2 (Realtek rtl8192eu (kimocoder/rtl8192eu))
+
+## Wifi cards that have been tested and found working on Plugin Mode (Linux, kernel 5.x / Windows 10):
+### Atheros
+- TP-Link TL-WDN4800 (Atheros AR93xx (ath9k)) 
+  (On Windows 10 some people are seeing some problems, this issue is not there on Linux) (Needs Windows 7 drivers on Windows 10)
+- NetGear, Inc. WNA1100 Wireless-N 150 (Atheros 9271 (ath9k_htc))
+  (On Windows 10 some people are seeing some problems, this issue is not there on Linux) (Needs Windows 7 drivers on Windows 10)
+
+### Intel
+- Intel Pro Wireless 5100 AGN (iwlwifi)
+  (Needs Windows 7 drivers on Windows 10)
+  
+### Ralink
+- WTXUP Ralink RT3070 (Ralink rt2800usb)
+
+### Realtek
+- Asus USB-N13 rev b. (Realtek rtl8192cu)
+- Hercules Guillemot HWGUm-54 (Realtek rtl8192su (linux: codedwrench/rtl8192su))
+- TP-Link TL-WN823N V2 (Realtek rtl8192eu (linux: kimocoder/rtl8192eu))
 
 ## How to compile
 
