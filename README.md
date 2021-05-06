@@ -135,8 +135,8 @@ After that the program should be able to run.
 See [Guide](Docs/README.md)
 
 ## Known issues
-- Packet injection on Windows does not work.
-- Resizing the window in Windows causes the window to corrupt due to Windows not providing the right size hints.
+- Monitor mode on Windows does not work.
+- Plugin mode fails to work on some Atheros cards without a custom plugin on Windows 10.
 - Packet injection fails when the packet is at an MTU of 1500 (max size), solved by setting a higher MTU in the WiFi card.
 
 ## Contributing
