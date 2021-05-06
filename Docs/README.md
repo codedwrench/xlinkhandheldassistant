@@ -68,13 +68,13 @@ Follow one of the following guides depending on your chosen method and operating
    ```
    If you get an error about terminal size at this point, make sure your terminal is atleast of size 80x24.
    
-8. In the wizard select "Plugin Device" and then use the arrow keys to move down to the "Next" button and press Enter.
+8. In the wizard select "Plugin Device" and then use the arrow keys to move down to the "Next" button and press enter.
 9. Press space on "Automatically connect to PSP networks".
 10. Move down to the right network adapter with the arrow keys and press space on the WiFi adapter to be used for XLHA.
 11. Move to "Next" button and press enter.
 12. Press enter on the "Next" button again.
 13. In the Dashboard if you're hosting press space on "Hosting", else just move to the next step.
-14. Press space on "Start Engine".
+14. Press enter on "Start Engine".
 15. Enter the arena on XLink Kai you want to play on [WebUI](http://127.0.0.1:34522/)
 16. On the PSP side go into the multiplayer menu start hosting/joining a game.
 17. In the top right-corner of the Dashboard "Connected to PSP_GameID_...." should appear after 5-30 seconds.
