@@ -20,14 +20,77 @@ These modes have their own upsides and downsides which will be explained below.
 \
 Follow one of the following guides depending on your chosen method and operating system:
 
+- [Linux - Monitor Mode][]
 - [Linux - Plugin Mode][]
+- [Windows - Plugin Mode][]
 
 For a general description of all the functions in XLink Handheld Assistant, check [General Overview][].
 
 \newpage
+## Linux - Monitor Mode
+1. Set the PSP to channel 1, by going to: \
+   Settings -> Network Settings -> Ad Hoc Mode -> Ch 1.
+2. Start a game on the PSP.
+3. Run the following to set the WiFi interface to monitor mode. \
+\
+**NOTE:** This does disable NetworkManager, if another WiFi connection is used to connect to the internet, it might be better to make NetworkManager ignore the WiFi adapter used for XLHA and edit the "set_interface_monitor" script to not disable NetworkManager. \
+
+    ```bash
+    sudo chmod 775 ./linux_scripts/set_interface_monitor.sh \
+    && ./linux_scripts/set_interface_monitor.sh "Name of Wifi adapter"
+    ```
+
+4. Start [XLink Kai](http://teamxlink.co.uk/) on the PC
+    1. Follow steps on [XLink Kai Debian Guide](https://repo.teamxlink.co.uk/) or download the binary from the [download page](https://www.teamxlink.co.uk/go?c=download), after downloading (only when not using the Debian guide): 
+    
+       ```bash
+       tar xvf kaiEngine-*.tar.gz \
+       && cd "$(ls -f | grep kaiEngine | grep -v *.tar.gz)" \
+       && sudo chmod 755 ./kaiengine \
+       && sudo setcap cap_net_admin,cap_net_raw=eip ./kaiengine \
+       && ./kaiengine
+       ```
+5. Start XLink Handheld Assistant 
+   ```bash
+   sudo chmod 755 ./xlinkhandheldassistant \
+   && sudo ./xlinkhandheldassistant
+   ```
+   
+   Apologies about the sudo rights on monitor mode, but it is impossible to do this not as root user as far as I have found.
+   
+   If you get an error about terminal size at this point, make sure your terminal is atleast of size 80x24.
+   Example: Terminal size too small: 46x18, make sure the terminal is at least 80x24
+   
+6. In the wizard select "Monitor Device" and then use the arrow keys to move down to the "Next" button and press enter.
+7. Press space on "Automatically connect to PSP/Vita networks".
+8. Move down to "Acknowledge data packets" try enabling this option first, but disable it if you have any issues! If you have an Intel WiFi-Chip, definitely leave this option disabled.
+9. Move down to the right network adapter with the arrow keys and press space on the WiFi adapter to be used for XLHA.
+10. Move to "Next" button and press enter.
+11. Press enter on the "Next" button again.
+12. In the Dashboard if you're hosting press space on "Hosting", else just move to the next step.
+13. Press enter on "Start Engine".
+14. Enter the arena on XLink Kai you want to play on [WebUI](http://127.0.0.1:34522/)
+15. On the PSP side go into the multiplayer menu start hosting/joining a game.
+16. In the top right-corner of the Dashboard "Connected to PSP_GameID_...." should appear after 5-30 seconds.
+17. In XLink Kai click on metrics and scroll down, you should see the following:
+![](screenshots/XLinkMetrics.PNG){ width=100% }
+(There is an XLHA device in Connected Applications, the PSP shows up in Found Consoles, and you see Broadcast Traffic out).
+18. Enjoy the game!
+19. To stop XLHA, simply press 'q' on the Dashboard.
+20. Run the following to restore your WiFi-card to the normal situation:
+
+    ```bash
+    sudo chmod 775 ./linux_scripts/restore_managed.sh \
+    && ./linux_scripts/restore_managed.sh "Name of Wifi adapter"
+    ```
+
+\
+If you want to redo these steps or choose another connection method, go into "Options" -> "Reconfigure the application"
+
+\newpage
 ## Linux - Plugin Mode
 1. Copy [AdHocRedirectorWiFi.prx](./Plugin/AdHocRedirectorWiFi.prx) to /SEPLUGINS on the PSP.
-2. Create or open /SEPLUGINS/GAME.
+2. Create or open /SEPLUGINS/GAME.TXT.
 3. Add 
 
    ```ms0:/seplugins/AdHocRedirectorWiFi.prx 1``` (for PSP 1000/2000/3000) 
@@ -53,7 +116,7 @@ For a general description of all the functions in XLink Handheld Assistant, chec
     ```
 
 6. Start [XLink Kai](http://teamxlink.co.uk/) on the PC
-    1. Follow steps on [XLink Kai Debian Guide](https://repo.teamxlink.co.uk/) or download the binary from the [download page](https://www.teamxlink.co.uk/go?c=download), after downloading: 
+    1. Follow steps on [XLink Kai Debian Guide](https://repo.teamxlink.co.uk/) or download the binary from the [download page](https://www.teamxlink.co.uk/go?c=download), after downloading (only when not using the Debian guide): 
     
        ```bash
        tar xvf kaiEngine-*.tar.gz \
@@ -81,14 +144,58 @@ For a general description of all the functions in XLink Handheld Assistant, chec
 15. Enter the arena on XLink Kai you want to play on [WebUI](http://127.0.0.1:34522/)
 16. On the PSP side go into the multiplayer menu start hosting/joining a game.
 17. In the top right-corner of the Dashboard "Connected to PSP_GameID_...." should appear after 5-30 seconds.
-18. Enjoy the game!
-19. To stop XLHA, simply press 'q' on the Dashboard.
-20. Run the following to restore your WiFi-card to the normal situation:
+18. In XLink Kai click on metrics and scroll down, you should see the following:
+![](screenshots/XLinkMetrics.PNG){ width=100% }
+(There is an XLHA device in Connected Applications, the PSP shows up in Found Consoles, and you see Broadcast Traffic out).
+19. Enjoy the game!
+20. To stop XLHA, simply press 'q' on the Dashboard.
+21. Run the following to restore your WiFi-card to the normal situation:
 
     ```bash
     sudo chmod 775 ./linux_scripts/restore_managed.sh \
     && ./linux_scripts/restore_managed.sh "Name of Wifi adapter"
     ```
+
+\
+If you want to redo these steps or choose another connection method, go into "Options" -> "Reconfigure the application"
+
+\newpage
+## Windows - Plugin Mode
+**Note:** On Windows 10 there are quite a few WiFi cards that will only work with Windows 7 or older drivers, if the program will not connect to networks after following these steps, try to downgrade the driver to a Windows 7 driver! You may also want to check if the WiFi card supports Ad-Hoc mode at all! \
+
+1. Copy [AdHocRedirectorWiFi.prx](./Plugin/AdHocRedirectorWiFi.prx) to /SEPLUGINS on the PSP.
+
+2. Create or open /SEPLUGINS/GAME.TXT.
+
+3. Add 
+
+   ```ms0:/seplugins/AdHocRedirectorWiFi.prx 1``` (for PSP 1000/2000/3000) 
+
+   or 
+
+   ``` ef0:/seplugins/AdHocRedirectorWiFi.prx 1``` (for PSP GO)
+   
+4. Start a game on the PSP.
+5. Start [XLink Kai](http://teamxlink.co.uk/) on the PC
+    1. Download [here](https://www.teamxlink.co.uk/go?c=download)
+    2. Install XLink Kai by running the downloaded exe
+    3. Run XLink Kai, by hitting Start and searching for 'Start XLink Kai'
+7. Start XLink Handheld Assistant; If you get an error about terminal size at this point, make sure your command prompt is atleast of size 80x24. Example: Terminal size too small: 46x18, make sure the terminal is at least 80x24
+8. In the wizard select "Plugin Device" and then use the arrow keys to move down to the "Next" button and press enter.
+9. Press space on "Automatically connect to PSP networks".
+10. Move down to the right network adapter with the arrow keys and press space on the WiFi adapter to be used for XLHA.
+11. Move to "Next" button and press enter.
+12. Press enter on the "Next" button again.
+13. In the Dashboard if you're hosting press space on "Hosting", else just move to the next step.
+14. Press enter on "Start Engine".
+15. Enter the arena on XLink Kai you want to play on [WebUI](http://127.0.0.1:34522/)
+16. On the PSP side go into the multiplayer menu start hosting/joining a game.
+17. In the top right-corner of the Dashboard "Connected to PSP_GameID_...." should appear after 5-30 seconds.
+18. In XLink Kai click on metrics and scroll down, you should see the following:
+![](screenshots/XLinkMetrics.PNG){ width=100% }
+(There is an XLHA device in Connected Applications, the PSP shows up in Found Consoles, and you see Broadcast Traffic out).
+19. Enjoy the game!
+20. To stop XLHA, simply press 'q' on the Dashboard.
 
 \
 If you want to redo these steps or choose another connection method, go into "Options" -> "Reconfigure the application"
