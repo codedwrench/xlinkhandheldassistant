@@ -120,8 +120,8 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
                 aPcapWrapper->Create(lDevice->name, lErrorBuffer.data());
                 if (aPcapWrapper->IsActivated()) {
                     // Device has to be 802.11 as well, so no bluetooth and the like
-                    int   lError    = aPcapWrapper->Activate();
-                    int   lLinkType = aPcapWrapper->GetDatalink();
+                    int lError    = aPcapWrapper->Activate();
+                    int lLinkType = aPcapWrapper->GetDatalink();
                     // It seems to be EN10MB when the network is down on Linux :/
                     if (lError == 0 && lLinkType == DLT_IEEE802_11 || lLinkType == DLT_EN10MB ||
                         lLinkType == DLT_IEEE802_11_RADIO) {

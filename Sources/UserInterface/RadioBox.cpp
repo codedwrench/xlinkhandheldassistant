@@ -28,7 +28,7 @@ bool RadioBox::HandleKey(unsigned int aKeyCode)
 {
     bool lReturn{false};
 
-    if (aKeyCode == ' ') {
+    if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r') {
         mChecked = !mChecked;
         lReturn  = true;
     }

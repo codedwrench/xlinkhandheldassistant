@@ -27,8 +27,7 @@ void CheckBox::Draw()
 bool CheckBox::HandleKey(unsigned int aKeyCode)
 {
     bool lReturn{false};
-
-    if (aKeyCode == ' ') {
+    if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r') {
         mModelCheckBox = !mModelCheckBox;
         lReturn        = true;
     }
