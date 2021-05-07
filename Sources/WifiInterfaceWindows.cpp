@@ -195,7 +195,6 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
                                                             &lWlanBSSList)};
                         if (lResult == ERROR_SUCCESS && lWlanBSSList->dwNumberOfItems > 0) {
                             memcpy(lWifiInformation.bssid.data(), lWlanBSSList->wlanBssEntries, 6);
-                            lWifiInformation.frequency = lWlanBSSList->ulChCenterFrequency;
                         }
 
                         mLastReceivedScanInformation.emplace_back(lWifiInformation);
