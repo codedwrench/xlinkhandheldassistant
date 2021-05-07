@@ -13,6 +13,7 @@
 #include "Handler80211.h"
 #include "IConnector.h"
 #include "IPCapDevice.h"
+#include "IWifiInterface.h"
 #include "PCapWrapper.h"
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -36,11 +37,12 @@ using namespace WirelessPSPPluginDevice_Constants;
 class WirelessPSPPluginDevice : public IPCapDevice
 {
 public:
-    WirelessPSPPluginDevice(
+    explicit WirelessPSPPluginDevice(
         bool                 aAutoConnect         = false,
         std::chrono::seconds aReConnectionTimeOut = WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
         std::string*         aCurrentlyConnected  = nullptr,
         std::shared_ptr<IPCapWrapper> aPcapWrapper = std::make_shared<PCapWrapper>());
+
     void               BlackList(uint64_t aMAC) override;
     void               ClearMACBlackList();
     [[nodiscard]] bool IsMACBlackListed(uint64_t aMAC) const;
@@ -51,7 +53,7 @@ public:
      * Connects to PSP AdHoc network.
      * @return true if successful.
      */
-    bool ConnectToAdHoc();
+    bool Connect(std::string_view aESSID = "") override;
 
     std::string          DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
     const unsigned char* GetData() override;
@@ -82,6 +84,7 @@ private:
 
     std::vector<uint64_t>           mBlackList{};
     bool                            mConnected{false};
+    bool                            mSSIDFromHost{false};
     std::shared_ptr<IConnector>     mConnector{nullptr};
     const unsigned char*            mData{nullptr};
     std::shared_ptr<IPCapWrapper>   mWrapper{nullptr};
@@ -90,7 +93,9 @@ private:
     bool                            mAutoConnect{};
     const pcap_pkthdr*              mHeader{nullptr};
     std::string*                    mCurrentlyConnected{nullptr};
+    IWifiInterface::WifiInformation mCurrentlyConnectedInfo{};
     unsigned int                    mPacketCount{0};
+    bool                            mPausedAutoConnect{false};
     std::shared_ptr<std::thread>    mReceiverThread{nullptr};
     bool                            mSendReceivedData{false};
     std::vector<std::string>        mSSIDFilter{};

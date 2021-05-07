@@ -40,12 +40,9 @@ public:
                   std::string* aCurrentlyConnectedNetwork    = nullptr,
                   std::shared_ptr<IPCapWrapper> aPcapWrapper = std::make_shared<PCapWrapper>());
 
-    /**
-     * Adds a MAC address to the blacklist.
-     * @param aMAC - MAC address to blacklist.
-     */
     void                 BlackList(uint64_t aMAC) override;
     void                 Close() override;
+    bool                 Connect(std::string_view aESSID) override;
     std::string          DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
     const unsigned char* GetData() override;
     const pcap_pkthdr*   GetHeader() override;

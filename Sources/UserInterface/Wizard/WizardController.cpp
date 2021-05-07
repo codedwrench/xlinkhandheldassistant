@@ -1,10 +1,5 @@
 #include "../../../Includes/UserInterface/Wizard/WizardController.h"
 
-#include <iostream>
-#define PDC_WIDE
-#include <curses.h>
-
-#include "../../../Includes/Logger.h"
 #include "../../../Includes/PCapWrapper.h"
 #include "../../../Includes/UserInterface/Wizard/MonitorDeviceStep.h"
 #include "../../../Includes/UserInterface/Wizard/PluginOptionsStep.h"
@@ -106,7 +101,7 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
 }
 #else
 static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& aWifiAdapterList,
-                             std::shared_ptr<IPCapWrapper> aPcapWrapper = std::make_shared<PCapWrapper>())
+                             const std::shared_ptr<IPCapWrapper>& aPcapWrapper = std::make_shared<PCapWrapper>())
 {
     pcap_if_t*                         lDevices{nullptr};
     std::array<char, PCAP_ERRBUF_SIZE> lErrorBuffer{};
@@ -116,7 +111,7 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
         for (pcap_if_t* lDevice = lDevices; lDevice != nullptr; lDevice = lDevice->next) {
             // Only show wifi adapters that are wireless and up
             int lMask = PCAP_IF_WIRELESS;
-            if (lMask == (lDevice->flags & lMask)) {
+            if (lMask == (static_cast<unsigned int>(lDevice->flags) & lMask)) {
                 aPcapWrapper->Create(lDevice->name, lErrorBuffer.data());
                 if (aPcapWrapper->IsActivated()) {
                     // Device has to be 802.11 as well, so no bluetooth and the like
@@ -127,7 +122,7 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
                         lLinkType == DLT_IEEE802_11_RADIO) {
                         std::pair<std::string, std::string> lWifiInformation{};
                         lWifiInformation.first = lDevice->name;
-                        if (lDevice->description) {
+                        if (lDevice->description != nullptr) {
                             lWifiInformation.second = lDevice->description;
                         } else {
                             // We have no better information than this
@@ -240,14 +235,11 @@ bool WizardController::Process()
                 });
                 break;
             case SimulationOptions:
-                break;
             case USBOptions:
                 break;
             case XLinkKaiOptions:
                 // Done processing
                 lReturn = false;
-                break;
-            default:
                 break;
         }
     }

@@ -43,6 +43,12 @@ void PCapReader::Close()
     mAcknowledgePackets = false;
 }
 
+bool PCapReader::Connect(std::string_view /*aESSID*/)
+{
+    // Unused in the simulator for now
+    return false;
+}
+
 std::string PCapReader::DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader)
 {
     // Convert from char* to string

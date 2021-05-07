@@ -172,6 +172,8 @@ int WifiInterface::GetMulticastId()
         // Get the command
         genlmsg_put(lMessage, 0, 0, lControlId, 0, 0, CTRL_CMD_GETFAMILY, 0);
         if (nla_put_string(lMessage, CTRL_ATTR_FAMILY_NAME, cDriverName.data()) >= 0) {
+            // From this point no other functions should do WiFi stuff
+            mLocked.lock();
             lReturn = nl_send_auto_complete(mSocket, lMessage);
             if (lReturn >= 0) {
                 // Set handlers
@@ -188,6 +190,7 @@ int WifiInterface::GetMulticastId()
                     lReturn = lGroup.id;
                 }
             }
+            mLocked.unlock();
         }
     } else {
         lReturn = -ENOMEM;
@@ -256,7 +259,7 @@ static int CallbackTrigger(nl_msg* aMessage, void* aArgument)
 }
 
 /**
- * Prints out the results and add adhocnetworks to vector.
+ * Prints out the results and add AdHoc networks to vector.
  * @param aMessage - The message that came from the kernel where we can figure out what data there is.
  * @param aArgument - a void* BSS service info and with an array of adhocnetworks, format needs to be
  * DumpResultArgument.
@@ -411,6 +414,8 @@ bool WifiInterface::ScanTrigger()
                 // Send NL80211_CMD_TRIGGER_SCAN to start the scan. The kernel may reply with
                 // NL80211_CMD_NEW_SCAN_RESULTS on success or NL80211_CMD_SCAN_ABORTED if another scan was started
                 // by another process.
+                // From this point no other functions should do WiFi stuff
+                mLocked.lock();
                 lSuccess = nl_send_auto(mSocket, lMessage);  // Send the message.
                 Logger::GetInstance().Log("Waiting for scan to complete...", Logger::Level::DEBUG);
                 std::chrono::time_point<std::chrono::system_clock> lTimerStart{std::chrono::system_clock::now()};
@@ -429,9 +434,11 @@ bool WifiInterface::ScanTrigger()
                     }
 
                     lSuccess = lError;
+                    mLocked.unlock();
                 } else if (lTimedOut) {
                     Logger::GetInstance().Log("Timeout waiting for acknowledge!", Logger::Level::ERROR);
                     lSuccess = -1;
+                    mLocked.unlock();
                 }
 
                 if (lSuccess >= 0) {
@@ -466,6 +473,7 @@ bool WifiInterface::ScanTrigger()
                                               Logger::Level::ERROR);
                 }
 
+                mLocked.unlock();
                 nl_cb_put(lCallback);
             } else {
                 Logger::GetInstance().Log("Failed to allocate netlink callbacks", Logger::Level::ERROR);
@@ -509,6 +517,8 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
         nl_socket_modify_cb(mSocket, NL_CB_VALID, NL_CB_CUSTOM, DumpResults, &lArgument);
 
         // Send the message
+        // From this point no other functions should do WiFi stuff
+        mLocked.lock();
         int lError{nl_send_auto(mSocket, lMessage)};
         if (lError >= 0) {
             // Retrieve the kernel's answer. DumpResults() prints SSIDs.
@@ -520,6 +530,8 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
         } else {
             Logger::GetInstance().Log("Failed to send message " + std::to_string(lError), Logger::Level::ERROR);
         }
+
+        mLocked.unlock();
 
         if (lMessage != nullptr) {
             nlmsg_free(lMessage);
@@ -548,14 +560,20 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
         nla_put_u32(
             lMessage, NL80211_ATTR_IFINDEX, mNetworkAdapterIndex);  // Add message attribute, which interface to use.
         nla_put(lMessage, NL80211_ATTR_SSID, aConnection.ssid.length(), aConnection.ssid.data());
+        nla_put_flag(lMessage, NL80211_ATTR_FREQ_FIXED);
         nla_put_u32(lMessage,
                     NL80211_ATTR_WIPHY_FREQ,
                     aConnection.frequency);  // Add message attribute, which frequency to use.
-        nla_put(lMessage, NL80211_ATTR_MAC, 6, aConnection.bssid.data());
+
+        if (aConnection.bssid.at(0) != 0 || aConnection.bssid.at(1) != 0) {
+            nla_put(lMessage, NL80211_ATTR_MAC, 6, aConnection.bssid.data());
+        }
         Logger::GetInstance().Log("Connecting to:" + aConnection.ssid, Logger::Level::DEBUG);
 
         int lError{1};
         // Send the message.
+        // From this point no other functions should do WiFi stuff
+        mLocked.lock();
         lError = nl_send_auto_complete(mSocket, lMessage);
         Logger::GetInstance().Log("Leaving AdHoc network", Logger::Level::TRACE);
 
@@ -572,6 +590,7 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
             Logger::GetInstance().Log(std::string("Failed to nl_send_auto_complete ") + nl_geterror(-lError),
                                       Logger::Level::ERROR);
         }
+        mLocked.unlock();
     } else {
         Logger::GetInstance().Log("Failed to allocate netlink message for message", Logger::Level::ERROR);
     }
@@ -601,6 +620,8 @@ bool WifiInterface::LeaveIBSS()
 
         int lError{1};
         // Send the message.
+        // From this point no other functions should do WiFi stuff
+        mLocked.lock();
         lError = nl_send_auto_complete(mSocket, lMessage);
         Logger::GetInstance().Log("Leaving AdHoc network", Logger::Level::TRACE);
 
@@ -618,6 +639,7 @@ bool WifiInterface::LeaveIBSS()
             Logger::GetInstance().Log(std::string("Failed to nl_send_auto_complete ") + nl_geterror(-lError),
                                       Logger::Level::ERROR);
         }
+        mLocked.unlock();
     } else {
         Logger::GetInstance().Log("Failed to allocate netlink message for message", Logger::Level::ERROR);
     }

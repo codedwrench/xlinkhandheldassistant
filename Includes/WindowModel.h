@@ -57,6 +57,7 @@ namespace WindowModel_Constants
     static constexpr std::string_view cSaveOnlyAcceptFromMac{"OnlyAcceptFromMac"};
     static constexpr std::string_view cSaveReConnectionTimeOutS{"ReConnectionTimeOutS"};
     static constexpr std::string_view cSaveTheme{"Theme"};
+    static constexpr std::string_view cSaveUseSSIDFromHost{"UseSSIDFromHost"};
     static constexpr std::string_view cSaveUseSSIDFromXLinkKai{"UseSSIDFromXLinkKai"};
     static constexpr std::string_view cSaveUseXLinkKaiHints{"UseXLinkKaiHints"};
     static constexpr std::string_view cSaveWifiAdapter{"WifiAdapter"};
@@ -70,9 +71,10 @@ namespace WindowModel_Constants
     static constexpr std::string_view cDefaultChannel{"1"};
     static constexpr ConnectionMethod cDefaultConnectionMethod{ConnectionMethod::Plugin};
     static constexpr Logger::Level    cDefaultLogLevel{Logger::Level::ERROR};
-    static constexpr std::string_view cDefaultOnlyAcceptFromMac{""};
+    static constexpr std::string_view cDefaultOnlyAcceptFromMac;
     static constexpr std::string_view cDefaultReConnectionTimeOutS{"15"};
     static constexpr std::string_view cDefaultTheme{"Default"};
+    static constexpr bool             cDefaultUseSSIDFromHost{false};
     static constexpr bool             cDefaultUseSSIDFromXLinkKai{false};
     static constexpr bool             cDefaultUseXLinkKaiHints{false};
     static constexpr std::string_view cDefaultWifiAdapter{""};
@@ -93,6 +95,7 @@ public:
     std::string                             mOnlyAcceptFromMac{WindowModel_Constants::cDefaultOnlyAcceptFromMac};
     std::string                             mReConnectionTimeOutS{WindowModel_Constants::cDefaultReConnectionTimeOutS};
     std::string                             mTheme{WindowModel_Constants::cDefaultTheme};
+    bool                                    mUseSSIDFromHost{WindowModel_Constants::cDefaultUseSSIDFromHost};
     bool                                    mUseSSIDFromXLinkKai{WindowModel_Constants::cDefaultUseSSIDFromXLinkKai};
     bool                                    mUseXLinkKaiHints{WindowModel_Constants::cDefaultUseXLinkKaiHints};
     std::string                             mWifiAdapter{WindowModel_Constants::cDefaultWifiAdapter};

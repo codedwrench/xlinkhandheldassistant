@@ -38,6 +38,7 @@ public:
     void BlackList(uint64_t aMAC);
 
     void        Close() override;
+    bool        Connect(std::string_view aESSID) override;
     std::string DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
 
     /**

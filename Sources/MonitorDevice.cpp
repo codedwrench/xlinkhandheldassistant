@@ -24,6 +24,16 @@ MonitorDevice::MonitorDevice(uint64_t                      aSourceMacToFilter,
     }
 }
 
+bool MonitorDevice::Connect(std::string_view aESSID)
+{
+    if (!aESSID.empty()) {
+        // Just zoom in on this SSID when using monitor mode
+        std::vector<std::string> lList{std::string(aESSID)};
+        mPacketHandler.SetSSIDFilterList(lList);
+    }
+    return true;
+}
+
 bool MonitorDevice::Open(std::string_view aName, std::vector<std::string>& aSSIDFilter)
 {
     bool lReturn{true};

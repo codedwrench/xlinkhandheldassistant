@@ -195,7 +195,10 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
                         Logger::GetInstance().Log(
                             "XLink Kai gave us the following ESSID" + lData.substr(cSetESSIDString.length()),
                             Logger::Level::DEBUG);
-                        // TODO: Send to Devices
+
+                        if (!mHosting && mUseHostSSID) {
+                            mIncomingConnection->Connect(lData.substr(cSetESSIDString.length()));
+                        }
                     }
                 }
             } else if (lCommand == std::string(cDisconnectedFormat) + cSeparator.data()) {
@@ -295,6 +298,16 @@ void XLinkKaiConnection::Close(bool aKillThread)
     } catch (...) {
         std::cout << "Failed to disconnect :( " + boost::current_exception_diagnostic_information() << std::endl;
     }
+}
+
+void XLinkKaiConnection::SetHosting(bool aHosting)
+{
+    mHosting = aHosting;
+}
+
+void XLinkKaiConnection::SetUseHostSSID(bool aUseHostSSID)
+{
+    mUseHostSSID = aUseHostSSID;
 }
 
 void XLinkKaiConnection::SetPort(unsigned int aPort)

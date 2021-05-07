@@ -17,6 +17,7 @@ namespace
     Dimensions ScaleAutoConnectCheckBox() { return {2, 4, 0, 0}; }
     Dimensions ScaleReConnectionTimeOutTextField() { return {3, 4, 0, 0}; }
     Dimensions ScaleXLinkSSIDCheckBox() { return {4, 4, 0, 0}; }
+    Dimensions ScaleHostSSIDCheckBox() { return {4, 4, 0, 0}; }
     Dimensions ScaleUseWifiAdapterRadioBoxGroup() { return {5, 4, 0, 0}; }
 
 }  // namespace
@@ -42,6 +43,9 @@ void PluginOptionsStep::SetUp()
     // TODO: Add
     // AddObject({std::make_shared<CheckBox>(
     //    *this, "Use SSID from XLink Kai for connection", ScaleXLinkSSIDCheckBox, GetModel().mUseSSIDFromXLinkKai)});
+
+    AddObject({std::make_shared<CheckBox>(
+        *this, "Use SSID from host broadcast", ScaleHostSSIDCheckBox, GetModel().mUseSSIDFromHost)});
 
     AddObject({std::make_shared<TextField>(*this,
                                            "Reconnect after network has been inactive for (seconds)",
@@ -70,7 +74,7 @@ void PluginOptionsStep::Draw()
 {
     // If autoconnect checkbox is checked, then show these sub-options
     GetObjects().at(1)->SetVisible(std::dynamic_pointer_cast<CheckBox>(GetObjects().at(0))->IsChecked());
-    // GetObjects().at(2)->SetVisible(std::dynamic_pointer_cast<CheckBox>(GetObjects().at(0))->IsChecked());
+    GetObjects().at(2)->SetVisible(std::dynamic_pointer_cast<CheckBox>(GetObjects().at(0))->IsChecked());
 
     Window::Draw();
 }

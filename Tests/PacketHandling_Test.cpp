@@ -21,6 +21,7 @@ class IPCapDeviceMock : public IPCapDevice
 public:
     MOCK_METHOD(void, BlackList, (uint64_t aMac));
     MOCK_METHOD(void, Close, ());
+    MOCK_METHOD(bool, Connect, (std::string_view aESSID));
     MOCK_METHOD(bool, Open, (std::string_view aName, std::vector<std::string>& aSSIDFilter));
     MOCK_METHOD(std::string, DataToString, (const unsigned char* aData, const pcap_pkthdr* aHeader));
     MOCK_METHOD(const unsigned char*, GetData, ());

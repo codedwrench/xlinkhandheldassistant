@@ -195,6 +195,7 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
                                                             &lWlanBSSList)};
                         if (lResult == ERROR_SUCCESS && lWlanBSSList->dwNumberOfItems > 0) {
                             memcpy(lWifiInformation.bssid.data(), lWlanBSSList->wlanBssEntries, 6);
+                            lWifiInformation.frequency = lWlanBSSList->ulChCenterFrequency;
                         }
 
                         mLastReceivedScanInformation.emplace_back(lWifiInformation);
@@ -257,8 +258,12 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
     mParameters.pDesiredBssidList  = nullptr;
     mParameters.pDot11Ssid         = &lSSID;
     mParameters.wlanConnectionMode = wlan_connection_mode_discovery_unsecure;
-    mParameters.dwFlags            = WLAN_CONNECTION_ADHOC_JOIN_ONLY;
-    mParameters.strProfile         = nullptr;
+    if (aConnection.bssid.at(0) != 0 || aConnection.bssid.at(1) != 0) {
+        mParameters.dwFlags = WLAN_CONNECTION_ADHOC_JOIN_ONLY;
+    }
+    mParameters.strProfile = nullptr;
+
+    // Can't set a channel on windows ???!
 
     lReturn = WlanConnect(mWifiHandle, &mGUID, &mParameters, nullptr);
     return lReturn == ERROR_SUCCESS;

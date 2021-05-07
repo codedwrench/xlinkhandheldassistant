@@ -44,6 +44,11 @@ public:
     virtual void Close() = 0;
 
     /**
+     * Connects to a network in whatever method is appropriate for the connection.
+     */
+    virtual bool Connect(std::string_view aESSID) = 0;
+
+    /**
      * Opens the PCAP device so it can be used for capture.
      * @param aName - Name of the interface or file to use.
      * @todo SSIDFilter is monitor mode specific. Do not add here.

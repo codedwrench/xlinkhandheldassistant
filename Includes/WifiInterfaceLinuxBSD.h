@@ -10,6 +10,7 @@
 
 #include <array>
 #include <chrono>
+#include <mutex>
 #include <string_view>
 #include <utility>
 
@@ -70,6 +71,7 @@ private:
 
     std::string                                  mAdapterName{};
     std::array<nla_policy, NL80211_BSS_MAX + 1>  mBSSPolicy{};
+    std::mutex                                   mLocked{};
     nl_sock*                                     mSocket{nullptr};
     int                                          mDriverId{0};
     unsigned int                                 mNetworkAdapterIndex{0};

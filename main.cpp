@@ -22,8 +22,6 @@
 namespace
 {
     constexpr std::string_view cLogFileName{"log.txt"};
-    constexpr std::string_view cPSPSSIDFilterName{"PSP_"};
-    constexpr std::string_view cVitaSSIDFilterName{"SCE_"};
     constexpr bool             cLogToDisk{true};
     constexpr std::string_view cConfigFileName{"config.txt"};
 
@@ -96,7 +94,7 @@ int main(int argc, char* argv[])
     po::variables_map lVariableMap;
     po::store(po::command_line_parser(argc, argv).options(lDescription).run(), lVariableMap);
 
-    if (lVariableMap.count("help") || lVariableMap.count("h")) {
+    if ((lVariableMap.count("help") != 0u) || lVariableMap.count("h")) {
         std::cout << lDescription << std::endl;
     } else {
         po::notify(lVariableMap);
@@ -124,7 +122,7 @@ int main(int argc, char* argv[])
 
         Logger::GetInstance().Init(mWindowModel.mLogLevel, cLogToDisk, lProgramPath + cLogFileName.data());
 
-        if (lVariableMap.count("verbose") || lVariableMap.count("v")) {
+        if ((lVariableMap.count("verbose") != 0u) || lVariableMap.count("v")) {
             Logger::GetInstance().SetLogToScreen(true);
             if (lSkipWizard) {
                 // Start the engine immediately
@@ -189,13 +187,15 @@ int main(int argc, char* argv[])
                                 }
                             }
                             lXLinkKaiConnection->SetIncomingConnection(lDevice);
+                            lXLinkKaiConnection->SetUseHostSSID(mWindowModel.mUseSSIDFromHost);
+
                             lDevice->SetConnector(lXLinkKaiConnection);
                             lDevice->SetHosting(mWindowModel.mHosting);
 
                             // If we are auto discovering PSP/VITA networks add those to the filter list
                             if (mWindowModel.mAutoDiscoverPSPVitaNetworks) {
-                                lSSIDFilters.emplace_back(cPSPSSIDFilterName.data());
-                                lSSIDFilters.emplace_back(cVitaSSIDFilterName.data());
+                                lSSIDFilters.emplace_back(Net_Constants::cPSPSSIDFilterName.data());
+                                lSSIDFilters.emplace_back(Net_Constants::cVitaSSIDFilterName.data());
                             }
 
                             // Set the XLink Kai connection up, if we are autodiscovering we don't need to provide an IP
@@ -268,8 +268,8 @@ int main(int argc, char* argv[])
                             // TODO: implement.
                             break;
                         case WindowModel_Constants::Command::ReConnect:
-                            if (std::dynamic_pointer_cast<WirelessPSPPluginDevice>(lDevice) != nullptr) {
-                                std::dynamic_pointer_cast<WirelessPSPPluginDevice>(lDevice)->ConnectToAdHoc();
+                            if (lDevice != nullptr) {
+                                lDevice->Connect("");
                             }
 
                             mWindowModel.mCommand = WindowModel_Constants::Command::NoCommand;
@@ -277,6 +277,9 @@ int main(int argc, char* argv[])
                         case WindowModel_Constants::Command::SetHosting:
                             if (lDevice != nullptr) {
                                 lDevice->SetHosting(mWindowModel.mHosting);
+                            }
+                            if (lXLinkKaiConnection != nullptr) {
+                                lXLinkKaiConnection->SetHosting(mWindowModel.mHosting);
                             }
                             break;
                         case WindowModel_Constants::Command::NoCommand:

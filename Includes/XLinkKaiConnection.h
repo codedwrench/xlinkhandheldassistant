@@ -110,6 +110,18 @@ public:
     void Close(bool aKillThread);
 
     /**
+     * Whether we are hosting a game or not.
+     * @param aHosting - Set to true if hosting.
+     */
+    void SetHosting(bool aHosting);
+
+    /**
+     * Whether or not the SSID from the host should be used in the rest of the program.
+     * @param aUseHostSSID - Set to true if host SSID should be used.
+     */
+    void SetUseHostSSID(bool aUseHostSSID);
+
+    /**
      * Sets port to XLink Kai interface.
      * @param aPort - Port to connect to.
      */
@@ -143,6 +155,8 @@ private:
     boost::asio::io_service        mIoService{};
     Handler8023                    mPacketHandler{};
     unsigned int                   mPort{cPort};
+    bool                           mHosting{};
+    bool                           mUseHostSSID{};
     std::shared_ptr<std::thread>   mReceiverThread{nullptr};
     boost::asio::ip::udp::endpoint mRemote{};
     boost::asio::ip::udp::socket   mSocket{mIoService};
