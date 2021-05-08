@@ -191,7 +191,7 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
                         mIncomingConnection->Send(mEthernetData);
                     }
                 } else if (lCommand == cEthernetDataMetaString) {
-                    if (lData.substr(cEthernetDataMetaString.length()) == cSetESSIDFormat) {
+                    if (lData.substr(cEthernetDataMetaString.length(), cSetESSIDFormat.length()) == cSetESSIDFormat) {
                         Logger::GetInstance().Log(
                             "XLink Kai gave us the following ESSID" + lData.substr(cSetESSIDString.length()),
                             Logger::Level::DEBUG);
@@ -199,6 +199,8 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
                         if (!mHosting && mUseHostSSID) {
                             mIncomingConnection->Connect(lData.substr(cSetESSIDString.length()));
                         }
+                    } else {
+                        Logger::GetInstance().Log(std::string("Unrecognized e;d message from XLink Kai: ") + lData, Logger::Level::DEBUG);
                     }
                 }
             } else if (lCommand == std::string(cDisconnectedFormat) + cSeparator.data()) {
