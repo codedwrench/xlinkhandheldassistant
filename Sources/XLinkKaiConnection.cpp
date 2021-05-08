@@ -193,7 +193,7 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
                 } else if (lCommand == cEthernetDataMetaString) {
                     if (lData.substr(cEthernetDataMetaString.length(), cSetESSIDFormat.length()) == cSetESSIDFormat) {
                         Logger::GetInstance().Log(
-                            "XLink Kai gave us the following ESSID" + lData.substr(cSetESSIDString.length()),
+                            "XLink Kai gave us the following ESSID: " + lData.substr(cSetESSIDString.length()),
                             Logger::Level::DEBUG);
 
                         if (!mHosting && mUseHostSSID) {
