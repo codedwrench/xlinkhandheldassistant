@@ -1,5 +1,9 @@
 #include "../Includes/WifiInterfaceWindows.h"
 
+#include <codecvt>
+#include <locale>
+#include <string>
+
 #include <Winsock2.h>
 #include <iphlpapi.h>
 #include <objbase.h>
@@ -68,6 +72,35 @@ WifiInterface::~WifiInterface()
     if (mWifiHandle != nullptr) {
         WlanCloseHandle(mWifiHandle, nullptr);
     }
+}
+
+static std::wstring GenerateXML(const std::wstring& aSSID)
+{
+    std::wstring lFirst{L"<?xml version=\"1.0\"?>"
+                        "<WLANProfile xmlns=\"http://www.microsoft.com/networking/WLAN/profile/v1\">"
+                        "<name>PSPAdhocNetwork</name>"
+                        "<SSIDConfig>"
+                        "<SSID>"
+                        "<name>"};
+
+    std::wstring lSecond{L"</name>"
+                         "</SSID>"
+                         "<nonBroadcast>false</nonBroadcast>"
+                         "</SSIDConfig>"
+                         "<connectionType>IBSS</connectionType>"
+                         "<connectionMode>manual</connectionMode>"
+                         "<MSM>"
+                         "<security>"
+                         "<authEncryption>"
+                         "<authentication>open</authentication>"
+                         "<encryption>none</encryption>"
+                         "<useOneX>false</useOneX>"
+                         "</authEncryption>"
+                         "</security>"
+                         "</MSM>"
+                         "</WLANProfile>"};
+
+    return lFirst + aSSID + lSecond;
 }
 
 static void WlanCallback(WLAN_NOTIFICATION_DATA* aScanNotificationData, PVOID aContext)
@@ -247,24 +280,34 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
     Logger::GetInstance().Log("Connecting to: " + aConnection.ssid, Logger::Level::TRACE);
     DWORD lReturn{};
 
+    WLAN_CONNECTION_PARAMETERS mParameters{};
+
+    if (aConnection.bssid.at(0) == 0 && aConnection.bssid.at(1) == 0) {
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> lConverter;
+        std::wstring lProf = GenerateXML(lConverter.from_bytes(aConnection.ssid));
+        Logger::GetInstance().Log(lConverter.to_bytes(lProf), Logger::Level::TRACE);
+        WLAN_REASON_CODE lReason;
+        mParameters.wlanConnectionMode = wlan_connection_mode_temporary_profile;
+        mParameters.strProfile         = lProf.c_str();
+
+    } else {
+        mParameters.strProfile         = nullptr;
+        mParameters.wlanConnectionMode = wlan_connection_mode_discovery_unsecure;
+        mParameters.dwFlags            = WLAN_CONNECTION_ADHOC_JOIN_ONLY;
+    }
     // Setup SSID
     DOT11_SSID lSSID{};
     memcpy(lSSID.ucSSID, aConnection.ssid.data(), aConnection.ssid.size());
     lSSID.uSSIDLength = aConnection.ssid.size();
 
-    WLAN_CONNECTION_PARAMETERS mParameters{};
-    mParameters.dot11BssType       = dot11_BSS_type_independent;
-    mParameters.pDesiredBssidList  = nullptr;
-    mParameters.pDot11Ssid         = &lSSID;
-    mParameters.wlanConnectionMode = wlan_connection_mode_discovery_unsecure;
-    if (aConnection.bssid.at(0) != 0 || aConnection.bssid.at(1) != 0) {
-        mParameters.dwFlags = WLAN_CONNECTION_ADHOC_JOIN_ONLY;
-    }
-    mParameters.strProfile = nullptr;
+    mParameters.dot11BssType      = dot11_BSS_type_independent;
+    mParameters.pDesiredBssidList = nullptr;
+    mParameters.pDot11Ssid        = &lSSID;
 
     // Can't set a channel on windows ???!
 
     lReturn = WlanConnect(mWifiHandle, &mGUID, &mParameters, nullptr);
+    Logger::GetInstance().Log(std::to_string(lReturn), Logger::Level::ERROR);
     return lReturn == ERROR_SUCCESS;
 }
 
