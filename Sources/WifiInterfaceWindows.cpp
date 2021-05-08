@@ -285,7 +285,7 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
     if (aConnection.bssid.at(0) == 0 && aConnection.bssid.at(1) == 0) {
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> lConverter;
         std::wstring lProf = GenerateXML(lConverter.from_bytes(aConnection.ssid));
-        Logger::GetInstance().Log(lConverter.to_bytes(lProf), Logger::Level::TRACE);
+        Logger::GetInstance().Log("Generated XML: " + lConverter.to_bytes(lProf), Logger::Level::TRACE);
         WLAN_REASON_CODE lReason;
         mParameters.wlanConnectionMode = wlan_connection_mode_temporary_profile;
         mParameters.strProfile         = lProf.c_str();
@@ -307,7 +307,6 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
     // Can't set a channel on windows ???!
 
     lReturn = WlanConnect(mWifiHandle, &mGUID, &mParameters, nullptr);
-    Logger::GetInstance().Log(std::to_string(lReturn), Logger::Level::ERROR);
     return lReturn == ERROR_SUCCESS;
 }
 
