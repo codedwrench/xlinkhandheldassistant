@@ -236,6 +236,7 @@ This has all the options for plugin mode:
 
 - Automatically connect to PSP networks: When checked will look for PSP_ networks and uses those for forwarding data to XLink Kai.
 - Reconnect after network has been inactive for (seconds): When automatically connect is checked this will allow you to finetune how long it will wait when there is no traffic, it is set to 15 seconds by default, if it is set to '0' it will only initially automatically connect to a PSP network after the engine is started but not after that. This can be useful for some games that do not send anything for a long time or rely on a connection to already be there.
+- Use SSID from host broadcast: If checked, will listen to other XLink Handheld Assistants for networks to connect to.
 - Use the following adapter: Check the WiFi adapter that can be used for forwarding data.
 - Next: Go to the next step in the wizard.
 
