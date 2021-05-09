@@ -32,6 +32,9 @@ At this point receive and send PSP traffic succesfully through XLink Kai using t
 - TP-Link TL-WN823N V2 (Realtek rtl8192eu (kimocoder/rtl8192eu))
 
 ## Wifi cards that have been tested and found working on Plugin Mode (Linux, kernel 5.x / Windows 10):
+### Note:
+On Windows it has been found that some drivers will not allow for selecting a channel when forming an adhoc network, this is only an issue with SSID swapping games when "Use SSID from host broadcast" is used.
+
 ### Atheros
 - TP-Link TL-WDN4800 (Atheros AR93xx (ath9k)) 
   (On Windows 10 some people are seeing some problems, this issue is not there on Linux) (Needs Windows 7 drivers on Windows 10)
@@ -59,13 +62,7 @@ It requires the following packages to be installed:
 - gcc-10
 - g++-10
 - libboost-dev (version 1.71 or above)
-- libboost-atomic-dev
-- libboost-chrono-dev
-- libboost-date-time-dev
-- libboost-system-dev
-- libboost-thread-dev
 - libboost-program-options-dev
-- libboost-regex-dev
 - libncurses5-dev
 - libpcap-dev
 - libpthread-stubs0-dev
@@ -124,7 +121,6 @@ mingw32-make
 
 After compiling, the program needs the following DLLs to be copied over to the binary directory:
 - boost_program_options-(compiler)-(architecture)-(version).dll
-- boost_thread-(compiler)-(architecture)-(version).dll
 - Packet.dll (found in: c:\windows\system32\npcap\)
 - wpcap.dll (found in: c:\windows\system32\npcap\)
 
