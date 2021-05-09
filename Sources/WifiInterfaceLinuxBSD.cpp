@@ -283,10 +283,10 @@ static int DumpResults(nl_msg* aMessage, void* aArgument)
     if (lIndices.at(NL80211_ATTR_BSS) != nullptr) {
         if (nla_parse_nested(
                 lBSS.data(), NL80211_BSS_MAX, lIndices.at(NL80211_ATTR_BSS), lArgument->bssserviceinfo.data()) == 0) {
-            if (lBSS.at(NL80211_BSS_BSSID) != nullptr && lBSS.at(NL80211_BSS_BEACON_IES) != nullptr) {
+            if (lBSS.at(NL80211_BSS_BSSID) != nullptr && lBSS.at(NL80211_BSS_INFORMATION_ELEMENTS) != nullptr) {
                 // Grab the SSID and print it
-                std::string lSSID{GetSSIDFromIE(reinterpret_cast<unsigned char*>(lBSS.at(NL80211_BSS_BEACON_IES)),
-                                                nla_len(lBSS.at(NL80211_BSS_BEACON_IES)))};
+                std::string lSSID{GetSSIDFromIE(reinterpret_cast<unsigned char*>(lBSS.at(NL80211_BSS_INFORMATION_ELEMENTS)),
+                                                nla_len(lBSS.at(NL80211_BSS_INFORMATION_ELEMENTS)))};
 
                 // I'm also filtering the hidden SSIDs, (" ")
                 if (!lSSID.empty() && lSSID != " ") {
