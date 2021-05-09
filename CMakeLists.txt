@@ -198,11 +198,29 @@ if (BUILD_STATIC)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ ${CMAKE_EXE_LINKER_FLAGS}")
 endif ()
 
+# Copying files to release dir
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sources/UserInterface/Themes
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Plugin
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+if(UNIX)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/linux_scripts
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endif()
+
+if(BUILD_DOC)
+    add_custom_target(build_setupguide ALL
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Docs
+        COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/Docs/generate_pdf.sh"
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/Docs/README.pdf ${CMAKE_CURRENT_BINARY_DIR}
+        VERBATIM)
+endif()
+
 target_include_directories(xlinkhandheldassistant PRIVATE ${PCAP_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${CURSES_INCLUDE_DIRS} ${LibNL_INCLUDE_DIR})
 target_link_libraries(xlinkhandheldassistant Threads::Threads ${PCAP_LIBRARY} ${Boost_LIBRARIES} ${CURSES_LIBRARIES} ${PLATFORM_SPECIFIC_LIBRARIES} ${LibNL_LIBRARIES})
+
 
 if (ENABLE_TESTS)
     find_package(GTest REQUIRED)
