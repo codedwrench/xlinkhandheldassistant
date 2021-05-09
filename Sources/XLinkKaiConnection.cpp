@@ -200,7 +200,8 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
                             mIncomingConnection->Connect(lData.substr(cSetESSIDString.length()));
                         }
                     } else {
-                        Logger::GetInstance().Log(std::string("Unrecognized e;d message from XLink Kai: ") + lData, Logger::Level::DEBUG);
+                        Logger::GetInstance().Log(std::string("Unrecognized e;d message from XLink Kai: ") + lData,
+                                                  Logger::Level::DEBUG);
                     }
                 }
             } else if (lCommand == std::string(cDisconnectedFormat) + cSeparator.data()) {

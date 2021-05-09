@@ -109,9 +109,9 @@ bool WindowModel::LoadFromFile(std::string_view aPath)
                         } else if (lOption == cSaveTheme) {
                             mTheme = lResult.substr(1, lResult.size() - 2);
                         } else if (lOption == cSaveUseSSIDFromHost) {
-                            mUseSSIDFromHost = StringToBool(lResult.substr(1, lResult.size() - 2));
+                            mUseSSIDFromHost = StringToBool(lResult);
                         } else if (lOption == cSaveUseSSIDFromXLinkKai) {
-                            mUseSSIDFromXLinkKai = StringToBool(lResult.substr(1, lResult.size() - 2));
+                            mUseSSIDFromXLinkKai = StringToBool(lResult);
                         } else if (lOption == cSaveUseXLinkKaiHints) {
                             mUseXLinkKaiHints = StringToBool(lResult);
                         } else if (lOption == cSaveWifiAdapter) {
