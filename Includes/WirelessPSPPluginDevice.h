@@ -53,7 +53,9 @@ public:
      * Connects to PSP AdHoc network.
      * @return true if successful.
      */
-    bool Connect(std::string_view aESSID = "") override;
+    bool Connect();
+
+    bool Connect(std::string_view aESSID) override;
 
     std::string          DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
     const unsigned char* GetData() override;

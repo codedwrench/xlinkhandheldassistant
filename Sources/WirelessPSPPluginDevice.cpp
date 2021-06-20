@@ -283,6 +283,11 @@ bool WirelessPSPPluginDevice::Send(std::string_view aData, bool aModifyData)
     return lReturn;
 }
 
+bool WirelessPSPPluginDevice::Connect()
+{
+    return Connect("");
+}
+
 bool WirelessPSPPluginDevice::Connect(std::string_view aESSID)
 {
     mPausedAutoConnect = true;
@@ -302,24 +307,28 @@ bool WirelessPSPPluginDevice::Connect(std::string_view aESSID)
         // Send leave IBSS command just in case
         mWifiInterface->LeaveIBSS();
 
-        std::vector<IWifiInterface::WifiInformation>& lNetworks = mWifiInterface->GetAdhocNetworks();
-        bool                                          lDidConnect{};
-        int                                           lCount{0};
-        for (const auto& lNetwork : lNetworks) {
-            for (const auto& lFilter : mSSIDFilter) {
-                if (lNetwork.ssid.find(lFilter) != std::string::npos && lNetwork.isadhoc && !lNetwork.isconnected) {
-                    lReturn = mWifiInterface->Connect(lNetwork);
-                    if (mCurrentlyConnected != nullptr) {
-                        *mCurrentlyConnected    = lNetwork.ssid;
-                        mCurrentlyConnectedInfo = lNetwork;
-                        lDidConnect             = true;
-                        if (mHosting) {
-                            mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
+        bool lDidConnect{};
+        int  lCount{0};
+
+        // If we are getting the SSID from the host, scanning is too slow, so rather than doing that, connect directly.
+        if (!mSSIDFromHost) {
+            std::vector<IWifiInterface::WifiInformation>& lNetworks = mWifiInterface->GetAdhocNetworks();
+            for (const auto& lNetwork : lNetworks) {
+                for (const auto& lFilter : mSSIDFilter) {
+                    if (lNetwork.ssid.find(lFilter) != std::string::npos && lNetwork.isadhoc && !lNetwork.isconnected) {
+                        lReturn = mWifiInterface->Connect(lNetwork);
+                        if (mCurrentlyConnected != nullptr) {
+                            *mCurrentlyConnected    = lNetwork.ssid;
+                            mCurrentlyConnectedInfo = lNetwork;
+                            lDidConnect             = true;
+                            if (mHosting) {
+                                mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
+                            }
                         }
                     }
                 }
+                lCount++;
             }
-            lCount++;
         }
 
         // Connect anyway, even if the PSP is not hosting the network

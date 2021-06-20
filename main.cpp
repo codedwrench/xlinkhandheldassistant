@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
     po::variables_map lVariableMap;
     po::store(po::command_line_parser(argc, argv).options(lDescription).run(), lVariableMap);
 
-    if ((lVariableMap.count("help") != 0u) || lVariableMap.count("h")) {
+    if ((lVariableMap.count("help") != 0U) || (lVariableMap.count("h") != 0U)) {
         std::cout << lDescription << std::endl;
     } else {
         po::notify(lVariableMap);
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 
         Logger::GetInstance().Init(mWindowModel.mLogLevel, cLogToDisk, lProgramPath + cLogFileName.data());
 
-        if ((lVariableMap.count("verbose") != 0u) || lVariableMap.count("v")) {
+        if ((lVariableMap.count("verbose") != 0U) || (lVariableMap.count("v") != 0U)) {
             Logger::GetInstance().SetLogToScreen(true);
             if (lSkipWizard) {
                 // Start the engine immediately
@@ -262,8 +262,6 @@ int main(int argc, char* argv[])
                             mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
                             break;
                         case WindowModel_Constants::Command::StartSearchNetworks:
-                            // TODO: implement.
-                            break;
                         case WindowModel_Constants::Command::StopSearchNetworks:
                             // TODO: implement.
                             break;
