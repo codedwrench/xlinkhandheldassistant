@@ -7,7 +7,20 @@
  **/
 
 static constexpr unsigned int cKeyTab{9};
-static constexpr unsigned int cKeypadUp{72};
-static constexpr unsigned int cKeypadDown{80};
-static constexpr unsigned int cKeypadLeft{75};
-static constexpr unsigned int cKeypadRight{77};
+
+// This starts the keypad scancode thing
+static constexpr unsigned int cKeyEsc{27};
+static constexpr unsigned int cKeypadArrowCombo{79};
+static constexpr unsigned int cKeypadCenterCombo{91};
+
+static constexpr unsigned int cKeypadDown{114};
+static constexpr unsigned int cKeypadLeft{116};
+static constexpr unsigned int cKeypadRight{118};
+static constexpr unsigned int cKeypadUp{120};
+static constexpr unsigned int cKeypadCenter{69};
+
+static constexpr unsigned int cCombinedKeypadUp{9990};
+static constexpr unsigned int cCombinedKeypadDown{9991};
+static constexpr unsigned int cCombinedKeypadLeft{9992};
+static constexpr unsigned int cCombinedKeypadRight{9993};
+static constexpr unsigned int cCombinedKeypadCenter{9994};

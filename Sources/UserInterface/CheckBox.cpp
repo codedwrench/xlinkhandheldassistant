@@ -3,6 +3,8 @@
 #include <string>
 #include <utility>
 
+#include "../../Includes/UserInterface/NCursesKeys.h"
+
 /* Copyright (c) 2020 [Rick de Bondt] - CheckBox.cpp */
 
 CheckBox::CheckBox(IWindow&                    aWindow,
@@ -27,7 +29,7 @@ void CheckBox::Draw()
 bool CheckBox::HandleKey(unsigned int aKeyCode)
 {
     bool lReturn{false};
-    if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r') {
+    if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r' || aKeyCode == cCombinedKeypadCenter) {
         mModelCheckBox = !mModelCheckBox;
         lReturn        = true;
     }

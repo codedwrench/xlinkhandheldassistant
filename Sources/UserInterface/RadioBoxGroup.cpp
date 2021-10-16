@@ -5,6 +5,8 @@
 #include <string>
 #include <utility>
 
+#include "../../Includes/UserInterface/NCursesKeys.h"
+
 /* Copyright (c) 2020 [Rick de Bondt] - RadioBoxGroup.cpp */
 
 RadioBoxGroup::RadioBoxGroup(IWindow&                    aWindow,
@@ -65,7 +67,7 @@ bool RadioBoxGroup::HandleKey(unsigned int aKeyCode)
     bool lReturn{false};
 
     if (!mRadioBoxes.empty()) {
-        if (aKeyCode == KEY_UP) {
+        if (aKeyCode == KEY_UP || aKeyCode == cCombinedKeypadUp) {
             if (mSelectionIndex > 0) {
                 mRadioBoxes.at(mSelectionIndex).SetSelected(false);
                 mSelectionIndex--;
@@ -80,7 +82,7 @@ bool RadioBoxGroup::HandleKey(unsigned int aKeyCode)
                     SetHasUpAction(false);
                 }
             }
-        } else if (aKeyCode == KEY_DOWN) {
+        } else if (aKeyCode == KEY_DOWN || aKeyCode == cCombinedKeypadDown) {
             if (mSelectionIndex < static_cast<int>(mRadioBoxes.size() - 1)) {
                 // When first entered, this index is set to -1
                 if (mSelectionIndex >= 0) {
@@ -98,7 +100,7 @@ bool RadioBoxGroup::HandleKey(unsigned int aKeyCode)
                     SetHasDownAction(false);
                 }
             }
-        } else if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r') {
+        } else if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r' || aKeyCode == cCombinedKeypadCenter) {
             if (mSelectionIndex >= 0 && !mRadioBoxes.at(mSelectionIndex).IsChecked()) {
                 for (auto& lRadioBox : mRadioBoxes) {
                     lRadioBox.SetChecked(false);

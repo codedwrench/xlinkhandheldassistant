@@ -4,6 +4,8 @@
 #include <string>
 #include <utility>
 
+#include "../../Includes/UserInterface/NCursesKeys.h"
+
 /* Copyright (c) 2020 [Rick de Bondt] - RadioBox.cpp */
 
 RadioBox::RadioBox(IWindow&                    aWindow,
@@ -28,7 +30,7 @@ bool RadioBox::HandleKey(unsigned int aKeyCode)
 {
     bool lReturn{false};
 
-    if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r') {
+    if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r' || aKeyCode == cCombinedKeypadCenter) {
         mChecked = !mChecked;
         lReturn  = true;
     }

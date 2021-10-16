@@ -5,6 +5,7 @@
 #include <locale>
 
 #include "../../Includes/Logger.h"
+#include "../../Includes/UserInterface/NCursesKeys.h"
 
 /* Copyright (c) 2020 [Rick de Bondt] - Window.cpp */
 
@@ -33,15 +34,19 @@ bool Window::HandleKey(unsigned int aKeyCode)
     bool lReturn{false};
 
     switch (aKeyCode) {
+        case cCombinedKeypadUp:
         case KEY_UP:
             lReturn = RecedeSelectionVertical();
             break;
+        case cCombinedKeypadDown: 
         case KEY_DOWN:
             lReturn = AdvanceSelectionVertical();
             break;
+        case cCombinedKeypadLeft:
         case KEY_LEFT:
             lReturn = RecedeSelectionHorizontal();
             break;
+        case cCombinedKeypadRight:
         case KEY_RIGHT:
             lReturn = AdvanceSelectionHorizontal();
             break;

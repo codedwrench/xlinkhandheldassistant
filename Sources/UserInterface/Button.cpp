@@ -3,6 +3,8 @@
 #include <string>
 #include <utility>
 
+#include "../Includes/UserInterface/NCursesKeys.h"
+
 /* Copyright (c) 2020 [Rick de Bondt] - Button.cpp */
 
 Button::Button(IWindow&                    aWindow,
@@ -29,7 +31,7 @@ bool Button::HandleKey(unsigned int aKeyCode)
 {
     bool lReturn{false};
 
-    if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r') {
+    if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r' || aKeyCode == cCombinedKeypadCenter) {
         lReturn = mAction();
     }
     return lReturn;
