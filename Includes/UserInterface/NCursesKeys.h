@@ -7,3 +7,7 @@
  **/
 
 static constexpr unsigned int cKeyTab{9};
+static constexpr unsigned int cKeypadUp{72};
+static constexpr unsigned int cKeypadDown{80};
+static constexpr unsigned int cKeypadLeft{75};
+static constexpr unsigned int cKeypadRight{77};
