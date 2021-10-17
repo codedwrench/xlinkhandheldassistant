@@ -19,8 +19,9 @@ static constexpr unsigned int cKeypadRight{118};
 static constexpr unsigned int cKeypadUp{120};
 static constexpr unsigned int cKeypadCenter{69};
 
-static constexpr unsigned int cCombinedKeypadUp{9990};
-static constexpr unsigned int cCombinedKeypadDown{9991};
-static constexpr unsigned int cCombinedKeypadLeft{9992};
-static constexpr unsigned int cCombinedKeypadRight{9993};
-static constexpr unsigned int cCombinedKeypadCenter{9994};
+// These keycodes match Windows keycodes so that works as well
+static constexpr unsigned int cCombinedKeypadUp{450};
+static constexpr unsigned int cCombinedKeypadDown{456};
+static constexpr unsigned int cCombinedKeypadLeft{452};
+static constexpr unsigned int cCombinedKeypadRight{454};
+static constexpr unsigned int cCombinedKeypadCenter{453};
