@@ -12,6 +12,7 @@ At this point receive and send PSP traffic succesfully through XLink Kai using t
 - TP-Link TL-WDN4800 (Atheros AR93xx (ath9k))
 - NetGear, Inc. WNA1100 Wireless-N 150 (Atheros 9271 (ath9k_htc))
 - TP-Link TL-WN821N v3 (Atheros 9287 (ath9k_htc))
+- Qualcomm Atheros QCA6164 802.11ac Wireless Network Adapter (ath9k_pci)
 
 ### Broadcom
 - Dell Wireless 1390 (Broadcom BCM4311 (b43)) with the following patch: https://gist.github.com/codedwrench/8d7916d63993574e1dd089a62dd523a9
