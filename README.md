@@ -20,12 +20,14 @@ At this point receive and send PSP traffic succesfully through XLink Kai using t
 - Intel Centrino Wireless-N 1000 (iwlwifi)
 - Intel Centrino Advanced-N 6205 (iwlwifi)
 - Intel Pro Wireless 5100 AGN (iwlwifi)
+- Intel® Wi-Fi 6E AX210 (Gig +) (iwlwifi)
 
 ### Ralink
 - TP-Link TL-WN727N v1 (Ralink rt3070 (rt2800usb))
 - WTXUP Ralink RT3070 (rt2800usb)
 - TOOGOO®/SODIAL® Mini 150Mbps USB WiFi Wireless LAN 802.11 n/g/b Netzwerk Adapter Ralink RT5370 (rt2800usb)
 - Planex GW-US54Mini2 (Ralink rt2501usb (rt73))
+- Linksys WUSB600N v1 Dual-Band Wireless-N Network Adapter Ralink RT2870 (rt2800usb)
 
 ### Realtek
 - Hercules Guillemot HWGUm-54 (rtl8192su (codedwrench/rtl8192su))
