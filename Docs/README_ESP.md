@@ -1,5 +1,5 @@
 ---
-author: Rick de Bondt
+author: Seb (translator); Rick de Bondt
 fontfamily: dejavu
 fontsize: 8pt
 geometry: margin=3cm
