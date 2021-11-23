@@ -41,19 +41,14 @@ public:
      */
     void BlackList(uint64_t aMAC);
 
-    void        Close() override;
-    bool        Connect(std::string_view aESSID) override;
-    std::string DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
+    void Close() override;
+    bool Connect(std::string_view aESSID) override;
 
     /**
      * Obtains BSSID, from monitor capture or previously given.
      * @return uint64_t with the BSSID obtained.
      */
     [[nodiscard]] uint64_t GetBSSID() const;
-
-    const unsigned char* GetData() override;
-
-    const pcap_pkthdr* GetHeader() override;
 
     /**
      * Obtains 80211 data packet parameters, from monitor capture or previously given .
@@ -77,8 +72,6 @@ public:
     bool Send(std::string_view aCommand, std::string_view aData) override;
     bool Send(std::string_view aData) override;
     void SetAcknowledgePackets(bool aAcknowledge);
-    void SetConnector(std::shared_ptr<IConnector> aDevice) override;
-    void SetHosting(bool aHosting) override;
     void SetIncomingConnection(std::shared_ptr<IPCapDevice> aDevice) override;
 
     /**
@@ -98,8 +91,6 @@ public:
     bool StartReceiverThread() override;
 
 private:
-    void ShowPacketStatistics(const pcap_pkthdr* aHeader) const;
-
     bool                                                      mAcknowledgePackets{false};
     uint64_t                                                  mBSSID{0};
     bool                                                      mConnected{false};

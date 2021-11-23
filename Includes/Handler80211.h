@@ -139,15 +139,16 @@ private:
     Data80211PacketType       mDataPacketType{Data80211PacketType::None};
     Management80211PacketType mManagementPacketType{Management80211PacketType::None};
 
-    bool        mAckable{false};
-    uint64_t    mBSSID{0};
-    uint64_t    mDestinationMac{0};
-    uint64_t    mLockedBSSID{0};
-    std::string mLockedSSID{};
-    bool        mRetry{false};
-    bool        mShouldSend{false};
-    uint64_t    mSourceMac{0};
-    bool        mIsDropped{false};
+    bool         mAckable{false};
+    MACBlackList mBlackList{};
+    uint64_t     mBSSID{0};
+    uint64_t     mDestinationMac{0};
+    uint64_t     mLockedBSSID{0};
+    std::string  mLockedSSID{};
+    bool         mRetry{false};
+    bool         mShouldSend{false};
+    uint64_t     mSourceMac{0};
+    bool         mIsDropped{false};
 
     std::shared_ptr<Parameter80211Reader> mParameter80211Reader{nullptr};
     std::shared_ptr<RadioTapReader>       mPhysicalDeviceHeaderReader{nullptr};

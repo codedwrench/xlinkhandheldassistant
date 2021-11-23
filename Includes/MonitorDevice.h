@@ -59,7 +59,6 @@ public:
     bool Open(std::string_view aName, std::vector<std::string>& aSSIDFilter) override;
     bool Send(std::string_view aData) override;
     void SetAcknowledgePackets(bool aAcknowledge);
-    void SetHosting(bool aHosting) override;
     void SetSourceMACToFilter(uint64_t aMac);
     bool StartReceiverThread() override;
 

@@ -59,6 +59,11 @@ std::string Handler8023::ConvertPacket(uint64_t aBSSID, RadioTapReader::Physical
     return lReturn;
 }
 
+MACBlackList& Handler8023::GetBlackList()
+{
+    return mBlackList;
+}
+
 uint64_t Handler8023::GetDestinationMAC() const
 {
     return mDestinationMAC;

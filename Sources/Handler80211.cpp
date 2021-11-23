@@ -77,6 +77,11 @@ std::string Handler80211::ConvertPacket()
     return lConvertedPacket;
 }
 
+MACBlackList& Handler80211::GetBlackList()
+{
+    return mBlackList;
+}
+
 const RadioTapReader::PhysicalDeviceParameters& Handler80211::GetControlPacketParameters()
 {
     return mPhysicalDeviceParametersControl;

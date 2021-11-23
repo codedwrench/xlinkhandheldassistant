@@ -231,6 +231,7 @@ if (ENABLE_TESTS)
     include(GoogleTest)
     enable_testing()
     add_executable(tests Tests/IConnectorMock.h
+            Tests/IPCapDeviceMock.h
             Tests/IPCapWrapperMock.h
             Tests/IWifiInterfaceMock.h
             Tests/PacketHandling_Test.cpp
@@ -239,8 +240,10 @@ if (ENABLE_TESTS)
             Sources/Handler8023.cpp
             Sources/Handler80211.cpp
             Sources/Logger.cpp
+            Sources/MACBlackList.cpp
             Sources/MonitorDevice.cpp
             Sources/Parameter80211Reader.cpp
+            Sources/PCapDeviceBase.cpp
             Sources/PCapReader.cpp
             Sources/PCapWrapper.cpp
             Sources/RadioTapReader.cpp

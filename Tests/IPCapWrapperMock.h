@@ -1,5 +1,5 @@
-/* Copyright (c) 2021 [Rick de Bondt] - IPCapWrapperMock.cpp
- * This file contains a mock for IConnector.
+/* Copyright (c) 2021 [Rick de Bondt] - IPCapWrapperMock.h
+ * This file contains a mock for IPCapWrapper.
  **/
 
 #include "../Includes/IPCapWrapper.h"
@@ -25,6 +25,7 @@ public:
     MOCK_METHOD(int, NextEx, (pcap_pkthdr * *header, const unsigned char** pkt_data));
     MOCK_METHOD(int, SendPacket, (std::string_view buffer));
     MOCK_METHOD(int, SetDirection, (pcap_direction_t direction));
+    MOCK_METHOD(int, SetImmediateMode, (int mode));
     MOCK_METHOD(int, SetSnapLen, (int snaplen));
     MOCK_METHOD(int, SetTimeOut, (int timeout));
 };

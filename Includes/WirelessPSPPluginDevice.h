@@ -43,9 +43,7 @@ public:
         std::string*                  aCurrentlyConnected  = nullptr,
         std::shared_ptr<IPCapWrapper> aPcapWrapper         = std::make_shared<PCapWrapper>());
 
-    void               BlackList(uint64_t aMAC) override;
-    void               ClearMACBlackList();
-    [[nodiscard]] bool IsMACBlackListed(uint64_t aMAC) const;
+    void BlackList(uint64_t aMAC) override;
 
     void Close() override;
 
@@ -56,10 +54,6 @@ public:
     bool Connect();
 
     bool Connect(std::string_view aESSID) override;
-
-    std::string          DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
-    const unsigned char* GetData() override;
-    const pcap_pkthdr*   GetHeader() override;
 
     bool Open(std::string_view aName, std::vector<std::string>& aSSIDFilter) override;
     /**
@@ -79,7 +73,6 @@ public:
     bool Send(std::string_view aData, bool aModifyData);
 
     bool Send(std::string_view aData) override;
-    void SetConnector(std::shared_ptr<IConnector> aDevice) override;
     bool StartReceiverThread() override;
 
 private:

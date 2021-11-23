@@ -114,7 +114,7 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
     uint64_t    lSourceMac{
         (GetRawData<uint64_t>(lData, Net_8023_Constants::cSourceAddressIndex) & Net_Constants::cBroadcastMac)};
 
-    if (!IsMACBlackListed(lSourceMac)) {
+    if (!mBlackList.IsMACBlackListed(lSourceMac)) {
         if (((GetRawData<uint64_t>(lData, Net_8023_Constants::cDestinationAddressIndex) &
               Net_Constants::cBroadcastMac) == Net_Constants::cBroadcastMac) &&
             (GetRawData<uint16_t>(lData, Net_8023_Constants::cEtherTypeIndex) == Net_Constants::cPSPEtherType)) {
