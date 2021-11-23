@@ -3,7 +3,7 @@
 /* Copyright (c) 2021 [Rick de Bondt] - KeyboardController.cpp */
 
 #include <chrono>
-#include <iostream> 
+#include <iostream>
 #include <thread>
 #include <utility>
 #include <vector>
@@ -40,7 +40,7 @@ void KeyboardController::StartThread()
             if (lKey == cKeyEsc) {
                 lNumCyclesSinceComboKeyPressed++;
                 lComboKeyPressed = true;
-            // I should probably differentiate between these two, but whatever
+                // I should probably differentiate between these two, but whatever
             } else if (lComboKeyPressed && (lKey == cKeypadArrowCombo) ||
                        lComboKeyPressed && (lKey == cKeypadCenterCombo)) {
                 lNumCyclesSinceComboKeyPressed++;

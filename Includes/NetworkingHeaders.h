@@ -148,9 +148,9 @@ PACK(struct RadioTapHeader {
 namespace Net_Constants
 {
     // Own packet type used to tell PSP what mac to use
-    static constexpr uint16_t cSetMacType{0x636d};
-    static constexpr uint16_t cPSPEtherType{0xc888};
-    static constexpr uint64_t cBroadcastMac{0xFFFFFFFFFFFF};
+    static constexpr uint16_t         cSetMacType{0x636d};
+    static constexpr uint16_t         cPSPEtherType{0xc888};
+    static constexpr uint64_t         cBroadcastMac{0xFFFFFFFFFFFF};
     static constexpr std::string_view cPSPSSIDFilterName{"PSP_"};
     static constexpr std::string_view cVitaSSIDFilterName{"SCE_"};
 }  // namespace Net_Constants

@@ -98,7 +98,7 @@ void WirelessPSPPluginDevice::Close()
 
     mWrapper->Close();
 
-    mWrapper        = nullptr;
+    mWrapper = nullptr;
     SetData(nullptr);
     SetHeader(nullptr);
     mReceiverThread = nullptr;

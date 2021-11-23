@@ -41,9 +41,10 @@ public:
      * @param aPacket - Packet to use for loading data.
      */
     void Update(std::string_view aPacket) override;
+
 private:
     MACBlackList mBlackList{};
-    std::string mLastReceivedData{};
-    uint64_t    mSourceMAC{0};
-    uint64_t    mDestinationMAC{0};
+    std::string  mLastReceivedData{};
+    uint64_t     mSourceMAC{0};
+    uint64_t     mDestinationMAC{0};
 };

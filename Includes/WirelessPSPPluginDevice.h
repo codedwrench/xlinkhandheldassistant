@@ -38,10 +38,10 @@ class WirelessPSPPluginDevice : public PCapDeviceBase
 {
 public:
     explicit WirelessPSPPluginDevice(
-        bool                 aAutoConnect         = false,
-        std::chrono::seconds aReConnectionTimeOut = WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
-        std::string*         aCurrentlyConnected  = nullptr,
-        std::shared_ptr<IPCapWrapper> aPcapWrapper = std::make_shared<PCapWrapper>());
+        bool                          aAutoConnect         = false,
+        std::chrono::seconds          aReConnectionTimeOut = WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+        std::string*                  aCurrentlyConnected  = nullptr,
+        std::shared_ptr<IPCapWrapper> aPcapWrapper         = std::make_shared<PCapWrapper>());
 
     void               BlackList(uint64_t aMAC) override;
     void               ClearMACBlackList();
@@ -69,7 +69,9 @@ public:
      * @param aInterface - The WifiInterface to use for connection/finding out the MAC address.
      * @return true if successful.
      */
-    bool Open(std::string_view aName, std::vector<std::string>& aSSIDFilter, std::shared_ptr<IWifiInterface> aInterface);
+    bool Open(std::string_view                aName,
+              std::vector<std::string>&       aSSIDFilter,
+              std::shared_ptr<IWifiInterface> aInterface);
 
     // Public for easier testing
     bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);

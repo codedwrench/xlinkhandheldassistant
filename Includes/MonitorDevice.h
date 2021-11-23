@@ -35,14 +35,14 @@ public:
      * @param aCurrentlyConnectedNetwork - For use in the user interface, shows SSID.
      * @param aPcapWrapper - The libpcap wrapper to use, allows for mocks to be shoved in.
      */
-    MonitorDevice(uint64_t     aSourceMacToFilter            = std::uint64_t(0),
-                  bool         aAcknowledgeDataFrames        = false,
-                  std::string* aCurrentlyConnectedNetwork    = nullptr,
-                  std::shared_ptr<IPCapWrapper> aPcapWrapper = std::make_shared<PCapWrapper>());
+    MonitorDevice(uint64_t                      aSourceMacToFilter         = std::uint64_t(0),
+                  bool                          aAcknowledgeDataFrames     = false,
+                  std::string*                  aCurrentlyConnectedNetwork = nullptr,
+                  std::shared_ptr<IPCapWrapper> aPcapWrapper               = std::make_shared<PCapWrapper>());
 
-    void                 BlackList(uint64_t aMAC) override;
-    void                 Close() override;
-    bool                 Connect(std::string_view aESSID) override;
+    void BlackList(uint64_t aMAC) override;
+    void Close() override;
+    bool Connect(std::string_view aESSID) override;
 
     /**
      * Gets parameters for a data packet type, for example used for conversion to an 80211 packet.
@@ -66,11 +66,11 @@ public:
 private:
     bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);
 
-    bool                         mAcknowledgePackets{false};
-    bool                         mConnected{false};
-    std::string*                 mCurrentlyConnectedNetwork{nullptr};
+    bool                          mAcknowledgePackets{false};
+    bool                          mConnected{false};
+    std::string*                  mCurrentlyConnectedNetwork{nullptr};
     std::shared_ptr<IPCapWrapper> mPcapWrapper;
-    Handler80211                 mPacketHandler{PhysicalDeviceHeaderType::RadioTap};
-    std::shared_ptr<std::thread> mReceiverThread{nullptr};
-    bool                         mSendReceivedData{false};
+    Handler80211                  mPacketHandler{PhysicalDeviceHeaderType::RadioTap};
+    std::shared_ptr<std::thread>  mReceiverThread{nullptr};
+    bool                          mSendReceivedData{false};
 };

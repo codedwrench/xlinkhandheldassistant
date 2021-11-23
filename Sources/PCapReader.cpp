@@ -34,7 +34,7 @@ void PCapReader::Close()
 
     mWrapper->Close();
 
-    mWrapper            = nullptr;
+    mWrapper = nullptr;
     SetData(nullptr);
     SetHeader(nullptr);
     mReplayThread       = nullptr;
@@ -184,8 +184,8 @@ bool PCapReader::ReadNextData()
 {
     bool lReturn = true;
 
-    pcap_pkthdr* lHeader = nullptr;
-    const unsigned char* lData = nullptr;
+    pcap_pkthdr*         lHeader = nullptr;
+    const unsigned char* lData   = nullptr;
     if (mWrapper->NextEx(&lHeader, &lData) < 0) {
         Logger::GetInstance().Log("Reading offline capture failed: " + std::string(mWrapper->GetError()),
                                   Logger::Level::ERROR);
@@ -258,7 +258,8 @@ bool PCapReader::StartReceiverThread()
 
                     while (ReadNextData()) {
                         // Get time offset.
-                        microseconds lSleepFor{GetHeader()->ts.tv_sec * 1000000 + GetHeader()->ts.tv_usec - lTimeStamp.count()};
+                        microseconds lSleepFor{GetHeader()->ts.tv_sec * 1000000 + GetHeader()->ts.tv_usec -
+                                               lTimeStamp.count()};
                         lTimeStamp = microseconds(GetHeader()->ts.tv_sec * 1000000 + GetHeader()->ts.tv_usec);
 
                         if (mTimeAccurate) {

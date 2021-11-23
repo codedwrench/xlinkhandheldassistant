@@ -38,7 +38,7 @@ bool Window::HandleKey(unsigned int aKeyCode)
         case KEY_UP:
             lReturn = RecedeSelectionVertical();
             break;
-        case cCombinedKeypadDown: 
+        case cCombinedKeypadDown:
         case KEY_DOWN:
             lReturn = AdvanceSelectionVertical();
             break;
