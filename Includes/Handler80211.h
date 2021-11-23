@@ -29,17 +29,14 @@ public:
      */
     explicit Handler80211(PhysicalDeviceHeaderType aType = PhysicalDeviceHeaderType::RadioTap);
 
-    void AddToMACBlackList(uint64_t aMAC) override;
-    void AddToMACWhiteList(uint64_t aMAC) override;
-    void ClearMACBlackList() override;
-    void ClearMACWhiteList() override;
-
     /**
      * This function converts a monitor mode packet to a promiscuous mode packet, stripping the radiotap and
      * 802.11 header and adding an 802.3 header. Only converts data packets!
      * @return converted packet data, empty string if failed.
      */
     std::string ConvertPacket();
+
+    MACBlackList& GetBlackList() override;
 
     /**
      * Gets parameters for a control packet type, for example used for constructing acknowledgement frames.
@@ -89,8 +86,6 @@ public:
      */
     [[nodiscard]] bool IsBSSIDAllowed(uint64_t aBSSID) const;
 
-    [[nodiscard]] bool IsMACBlackListed(uint64_t aMAC) const override;
-
     /**
      * Sets a BSSID to listen to in case no beacon frames were sent out.
      * @param aBSSID - BSSID to listen to.
@@ -102,8 +97,6 @@ public:
      * @return true if should be sent.
      */
     [[nodiscard]] bool ShouldSend() const;
-
-    bool IsMACAllowed(uint64_t aMAC) override;
 
     /**
      * Checks if this SSID is whitelisted.
@@ -117,16 +110,6 @@ public:
      *  @param aParameters - reference to struct containing those parameters.
      */
     void SavePhysicalDeviceParameters(RadioTapReader::PhysicalDeviceParameters& aParameters);
-
-    /**
-     * Sets the source MAC addresses blacklist.
-     */
-    void SetMACBlackList(std::vector<uint64_t>& aBlackList);
-
-    /**
-     * Sets the source MAC addresses whitelist.
-     */
-    void SetMACWhiteList(std::vector<uint64_t>& aWhiteList);
 
     /**
      * Sets the SSID to filter on.
@@ -149,9 +132,7 @@ private:
     // Save last data in this class
     std::string mLastReceivedData{};
 
-    std::vector<uint64_t>    mBlackList{};
     std::vector<std::string> mSSIDList{};
-    std::vector<uint64_t>    mWhiteList{};
 
     Main80211PacketType       mMainPacketType{Main80211PacketType::None};
     Control80211PacketType    mControlPacketType{Control80211PacketType::None};

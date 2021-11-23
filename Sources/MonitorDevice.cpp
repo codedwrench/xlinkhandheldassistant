@@ -20,7 +20,7 @@ MonitorDevice::MonitorDevice(uint64_t                      aSourceMacToFilter,
     mCurrentlyConnectedNetwork(aCurrentlyConnectedNetwork), mPcapWrapper(aPcapWrapper)
 {
     if (aSourceMacToFilter != 0) {
-        mPacketHandler.AddToMACWhiteList(aSourceMacToFilter);
+        mPacketHandler.GetBlackList().AddToMACWhiteList(aSourceMacToFilter);
     }
 }
 
@@ -45,8 +45,7 @@ bool MonitorDevice::Open(std::string_view aName, std::vector<std::string>& aSSID
     mPcapWrapper->Create(aName.data(), lErrorBuffer.data());
     mPcapWrapper->SetSnapLen(cSnapshotLength);
     mPcapWrapper->SetTimeOut(cTimeout);
-    // TODO: Test without immediate mode, see if it helps
-    // pcap_set_immediate_mode(mPcapWrapper, 1);
+    mPcapWrapper->SetImmediateMode(1);
 
     int lStatus{mPcapWrapper->Activate()};
 
@@ -62,7 +61,7 @@ bool MonitorDevice::Open(std::string_view aName, std::vector<std::string>& aSSID
 
 void MonitorDevice::BlackList(uint64_t aMAC)
 {
-    mPacketHandler.AddToMACBlackList(aMAC);
+    mPacketHandler.GetBlackList().AddToMACBlackList(aMAC);
 }
 
 void MonitorDevice::Close()
@@ -77,8 +76,8 @@ void MonitorDevice::Close()
 
     mPcapWrapper->Close();
 
-    mData               = nullptr;
-    mHeader             = nullptr;
+    SetData(nullptr);
+    SetHeader(nullptr);
     mReceiverThread     = nullptr;
     mAcknowledgePackets = false;
 }
@@ -108,48 +107,24 @@ bool MonitorDevice::ReadCallback(const unsigned char* aData, const pcap_pkthdr* 
     // If this packet is convertible to something XLink can understand, send
     if (mPacketHandler.ShouldSend()) {
         std::string lPacket{mPacketHandler.ConvertPacket()};
-        mConnector->Send(lPacket);
+        GetConnector()->Send(lPacket);
     }
 
-    mData   = aData;
-    mHeader = aHeader;
+    SetData(aData);
+    SetHeader(aHeader);
 
     // For use in userinterface
     if (mCurrentlyConnectedNetwork != nullptr) {
         *mCurrentlyConnectedNetwork = mPacketHandler.GetLockedSSID();
-        if (mHosting) {
+        if (IsHosting()) {
             // Send this over XLink Kai
-            mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString), mPacketHandler.GetLockedSSID());
+            GetConnector()->Send(std::string(XLinkKai_Constants::cSetESSIDString), mPacketHandler.GetLockedSSID());
         }
     }
 
-    mPacketCount++;
+    IncreasePacketCount();
 
     return lReturn;
-}
-
-void MonitorDevice::ShowPacketStatistics(const pcap_pkthdr* aHeader) const
-{
-    Logger::GetInstance().Log("Packet # " + std::to_string(mPacketCount), Logger::Level::TRACE);
-
-    // Show the size in bytes of the packet
-    Logger::GetInstance().Log("Packet size: " + std::to_string(aHeader->len) + " bytes", Logger::Level::TRACE);
-
-    // Show Epoch Time
-    Logger::GetInstance().Log(
-        "Epoch time: " + std::to_string(aHeader->ts.tv_sec) + ":" + std::to_string(aHeader->ts.tv_usec),
-        Logger::Level::TRACE);
-
-    // Show a warning if the length captured is different
-    if (aHeader->len != aHeader->caplen) {
-        Logger::GetInstance().Log("Capture size different than packet size:" + std::to_string(aHeader->len) + " bytes",
-                                  Logger::Level::TRACE);
-    }
-}
-
-const unsigned char* MonitorDevice::GetData()
-{
-    return mData;
 }
 
 const RadioTapReader::PhysicalDeviceParameters& MonitorDevice::GetDataPacketParameters()
@@ -157,29 +132,9 @@ const RadioTapReader::PhysicalDeviceParameters& MonitorDevice::GetDataPacketPara
     return mPacketHandler.GetDataPacketParameters();
 }
 
-const pcap_pkthdr* MonitorDevice::GetHeader()
-{
-    return mHeader;
-}
-
 uint64_t MonitorDevice::GetLockedBSSID()
 {
     return mPacketHandler.GetLockedBSSID();
-}
-
-std::string MonitorDevice::DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader)
-{
-    // Convert from char* to string
-    std::string lData{};
-
-    if ((aData != nullptr) && (aHeader != nullptr)) {
-        lData.resize(aHeader->caplen);
-        for (unsigned int lCount = 0; lCount < aHeader->caplen; lCount++) {
-            lData.at(lCount) = aData[lCount];
-        }
-    }
-
-    return lData;
 }
 
 bool MonitorDevice::Send(std::string_view aData)
@@ -202,11 +157,6 @@ bool MonitorDevice::Send(std::string_view aData)
     }
 
     return lReturn;
-}
-
-void MonitorDevice::SetConnector(std::shared_ptr<IConnector> aDevice)
-{
-    mConnector = aDevice;
 }
 
 bool MonitorDevice::StartReceiverThread()
@@ -250,16 +200,11 @@ bool MonitorDevice::StartReceiverThread()
 void MonitorDevice::SetSourceMACToFilter(uint64_t aMac)
 {
     if (aMac != 0) {
-        mPacketHandler.AddToMACWhiteList(aMac);
+        mPacketHandler.GetBlackList().AddToMACWhiteList(aMac);
     }
 }
 
 void MonitorDevice::SetAcknowledgePackets(bool aAcknowledge)
 {
     mAcknowledgePackets = aAcknowledge;
-}
-
-void MonitorDevice::SetHosting(bool aHosting)
-{
-    mHosting = aHosting;
 }

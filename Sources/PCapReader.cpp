@@ -20,11 +20,9 @@ PCapReader::PCapReader(bool                          aMonitorCapture,
 
 void PCapReader::BlackList(uint64_t aMAC)
 {
-    if (mMonitorCapture) {
-        auto lHandler = std::dynamic_pointer_cast<Handler80211>(mPacketHandler);
-        if (lHandler != nullptr) {
-            mPacketHandler->AddToMACBlackList(aMAC);
-        }
+    auto lHandler = std::dynamic_pointer_cast<Handler80211>(mPacketHandler);
+    if (lHandler != nullptr) {
+        mPacketHandler->GetBlackList().AddToMACBlackList(aMAC);
     }
 }
 
@@ -37,8 +35,8 @@ void PCapReader::Close()
     mWrapper->Close();
 
     mWrapper            = nullptr;
-    mData               = nullptr;
-    mHeader             = nullptr;
+    SetData(nullptr);
+    SetHeader(nullptr);
     mReplayThread       = nullptr;
     mAcknowledgePackets = false;
 }
@@ -47,21 +45,6 @@ bool PCapReader::Connect(std::string_view /*aESSID*/)
 {
     // Unused in the simulator for now
     return false;
-}
-
-std::string PCapReader::DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader)
-{
-    // Convert from char* to string
-    std::string lData{};
-
-    if ((aData != nullptr) && (aHeader != nullptr)) {
-        lData.resize(aHeader->caplen);
-        for (unsigned int lCount = 0; lCount < aHeader->caplen; lCount++) {
-            lData.at(lCount) = aData[lCount];
-        }
-    }
-
-    return lData;
 }
 
 uint64_t PCapReader::GetBSSID() const
@@ -76,16 +59,6 @@ uint64_t PCapReader::GetBSSID() const
     }
 
     return lBSSID;
-}
-
-const unsigned char* PCapReader::GetData()
-{
-    return mData;
-}
-
-const pcap_pkthdr* PCapReader::GetHeader()
-{
-    return mHeader;
 }
 
 std::shared_ptr<IHandler> PCapReader::GetPacketHandler()
@@ -184,7 +157,7 @@ bool PCapReader::ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHe
 
             // If this packet is convertible to something XLink can understand, send
             if (lHandler->ShouldSend()) {
-                mConnector->Send(lHandler->ConvertPacket());
+                GetConnector()->Send(lHandler->ConvertPacket());
             }
         }
     } else {
@@ -199,10 +172,10 @@ bool PCapReader::ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHe
                 mIncomingConnection->Send(lData);
             }
         } else {
-            mConnector->Send(lData);
+            GetConnector()->Send(lData);
         }
     }
-    mPacketCount++;
+    IncreasePacketCount();
 
     return lReturn;
 }
@@ -211,10 +184,15 @@ bool PCapReader::ReadNextData()
 {
     bool lReturn = true;
 
-    if (mWrapper->NextEx(&mHeader, &mData) < 0) {
+    pcap_pkthdr* lHeader = nullptr;
+    const unsigned char* lData = nullptr;
+    if (mWrapper->NextEx(&lHeader, &lData) < 0) {
         Logger::GetInstance().Log("Reading offline capture failed: " + std::string(mWrapper->GetError()),
                                   Logger::Level::ERROR);
         lReturn = false;
+    } else {
+        SetHeader(lHeader);
+        SetData(lData);
     }
 
     return lReturn;
@@ -261,33 +239,9 @@ void PCapReader::SetParameters(std::shared_ptr<RadioTapReader::PhysicalDevicePar
     mParameters = std::move(aParameters);
 }
 
-void PCapReader::SetConnector(std::shared_ptr<IConnector> aDevice)
-{
-    mConnector = aDevice;
-}
-
 void PCapReader::SetIncomingConnection(std::shared_ptr<IPCapDevice> aDevice)
 {
     mIncomingConnection = aDevice;
-}
-
-void PCapReader::ShowPacketStatistics(const pcap_pkthdr* aHeader) const
-{
-    Logger::GetInstance().Log("Packet # " + std::to_string(mPacketCount), Logger::Level::TRACE);
-
-    // Show the size in bytes of the packet
-    Logger::GetInstance().Log("Packet size: " + std::to_string(aHeader->len) + " bytes", Logger::Level::TRACE);
-
-    // Show Epoch Time
-    Logger::GetInstance().Log(
-        "Epoch time: " + std::to_string(aHeader->ts.tv_sec) + ":" + std::to_string(aHeader->ts.tv_usec),
-        Logger::Level::TRACE);
-
-    // Show a warning if the length captured is different
-    if (aHeader->len != aHeader->caplen) {
-        Logger::GetInstance().Log("Capture size different than packet size:" + std::to_string(aHeader->len) + " bytes",
-                                  Logger::Level::TRACE);
-    }
 }
 
 bool PCapReader::StartReceiverThread()
@@ -298,14 +252,14 @@ bool PCapReader::StartReceiverThread()
         if (mReplayThread == nullptr) {
             mReplayThread = std::make_shared<std::thread>([&] {
                 if (ReadNextData()) {
-                    microseconds lTimeStamp{mHeader->ts.tv_sec * 1000000 + mHeader->ts.tv_usec};
+                    microseconds lTimeStamp{GetHeader()->ts.tv_sec * 1000000 + GetHeader()->ts.tv_usec};
 
-                    ReadCallback(mData, mHeader);
+                    ReadCallback(GetData(), GetHeader());
 
                     while (ReadNextData()) {
                         // Get time offset.
-                        microseconds lSleepFor{mHeader->ts.tv_sec * 1000000 + mHeader->ts.tv_usec - lTimeStamp.count()};
-                        lTimeStamp = microseconds(mHeader->ts.tv_sec * 1000000 + mHeader->ts.tv_usec);
+                        microseconds lSleepFor{GetHeader()->ts.tv_sec * 1000000 + GetHeader()->ts.tv_usec - lTimeStamp.count()};
+                        lTimeStamp = microseconds(GetHeader()->ts.tv_sec * 1000000 + GetHeader()->ts.tv_usec);
 
                         if (mTimeAccurate) {
                             // Wait for next send.
@@ -313,7 +267,7 @@ bool PCapReader::StartReceiverThread()
                         }
 
                         // Wait for next send.
-                        ReadCallback(mData, mHeader);
+                        ReadCallback(GetData(), GetHeader());
                     }
                 }
                 mDoneReceiving = true;
@@ -329,16 +283,11 @@ bool PCapReader::StartReceiverThread()
 void PCapReader::SetSourceMACToFilter(uint64_t aMac)
 {
     if (aMac != 0) {
-        mPacketHandler->AddToMACWhiteList(aMac);
+        mPacketHandler->GetBlackList().AddToMACWhiteList(aMac);
     }
 }
 
 void PCapReader::SetAcknowledgePackets(bool aAcknowledge)
 {
     mAcknowledgePackets = aAcknowledge;
-}
-
-void PCapReader::SetHosting(bool aHosting)
-{
-    mHosting = aHosting;
 }

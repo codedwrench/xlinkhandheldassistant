@@ -100,6 +100,11 @@ int PCapWrapper::SetDirection(pcap_direction_t direction)
     return pcap_setdirection(mHandler, direction);
 }
 
+int PCapWrapper::SetImmediateMode(int mode)
+{
+    return pcap_set_immediate_mode(mHandler, mode);
+}
+
 int PCapWrapper::SetSnapLen(int snaplen)
 {
     return pcap_set_snaplen(mHandler, snaplen);

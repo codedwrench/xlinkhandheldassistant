@@ -12,8 +12,8 @@
 
 #include "Handler80211.h"
 #include "IConnector.h"
-#include "IPCapDevice.h"
 #include "IWifiInterface.h"
+#include "PCapDeviceBase.h"
 #include "PCapWrapper.h"
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -34,7 +34,7 @@ using namespace WirelessPSPPluginDevice_Constants;
 /**
  * Class which allows a wireless device in monitor mode to capture data and send wireless frames.
  */
-class WirelessPSPPluginDevice : public IPCapDevice
+class WirelessPSPPluginDevice : public PCapDeviceBase
 {
 public:
     explicit WirelessPSPPluginDevice(
@@ -78,25 +78,17 @@ public:
 
     bool Send(std::string_view aData) override;
     void SetConnector(std::shared_ptr<IConnector> aDevice) override;
-    void SetHosting(bool aHosting) override;
     bool StartReceiverThread() override;
 
 private:
-    void ShowPacketStatistics(const pcap_pkthdr* aHeader) const;
-
-    std::vector<uint64_t>           mBlackList{};
+    MACBlackList                    mBlackList{};
     bool                            mConnected{false};
     bool                            mSSIDFromHost{false};
-    std::shared_ptr<IConnector>     mConnector{nullptr};
-    const unsigned char*            mData{nullptr};
     std::shared_ptr<IPCapWrapper>   mWrapper{nullptr};
-    bool                            mHosting{false};
     uint64_t                        mAdapterMACAddress{};
     bool                            mAutoConnect{};
-    const pcap_pkthdr*              mHeader{nullptr};
     std::string*                    mCurrentlyConnected{nullptr};
     IWifiInterface::WifiInformation mCurrentlyConnectedInfo{};
-    unsigned int                    mPacketCount{0};
     bool                            mPausedAutoConnect{false};
     std::shared_ptr<std::thread>    mReceiverThread{nullptr};
     bool                            mSendReceivedData{false};

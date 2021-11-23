@@ -52,8 +52,7 @@ bool WirelessPSPPluginDevice::Open(std::string_view                aName,
     mWrapper->SetSnapLen(cSnapshotLength);
     mWrapper->SetTimeOut(cPCAPTimeoutMs);
     mWrapper->SetDirection(PCAP_D_IN);
-    // TODO: Test without immediate mode, see if it helps
-    // pcap_set_immediate_mode(mPcapWrapper, 1);
+    mWrapper->SetImmediateMode(1);
 
     int lStatus{mWrapper->Activate()};
     if (lStatus == 0) {
@@ -100,8 +99,8 @@ void WirelessPSPPluginDevice::Close()
     mWrapper->Close();
 
     mWrapper        = nullptr;
-    mData           = nullptr;
-    mHeader         = nullptr;
+    SetData(nullptr);
+    SetHeader(nullptr);
     mReceiverThread = nullptr;
     mWifiInterface  = nullptr;
 }
@@ -162,11 +161,11 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
                           Net_8023_Constants::cDestinationAddressLength,
                           lActualDestinationMac);
             lData.resize(lData.size() - Net_8023_Constants::cDestinationAddressLength);
-            mConnector->Send(lData);
+            GetConnector()->Send(lData);
 
-            mData   = aData;
-            mHeader = aHeader;
-            mPacketCount++;
+            SetData(aData);
+            SetHeader(aHeader);
+            IncreasePacketCount();
         }
     }
 
@@ -175,70 +174,7 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
 
 void WirelessPSPPluginDevice::BlackList(uint64_t aMAC)
 {
-    if (!IsMACBlackListed(aMAC)) {
-        Logger::GetInstance().Log("Added: " + IntToMac(aMAC) + " to blacklist.", Logger::Level::TRACE);
-        mBlackList.push_back(aMAC);
-    }
-}
-
-void WirelessPSPPluginDevice::ClearMACBlackList()
-{
-    mBlackList.clear();
-}
-
-bool WirelessPSPPluginDevice::IsMACBlackListed(uint64_t aMAC) const
-{
-    bool lReturn{false};
-
-    if (std::find(mBlackList.begin(), mBlackList.end(), aMAC) != mBlackList.end()) {
-        lReturn = true;
-    }
-
-    return lReturn;
-}
-void WirelessPSPPluginDevice::ShowPacketStatistics(const pcap_pkthdr* aHeader) const
-{
-    Logger::GetInstance().Log("Packet # " + std::to_string(mPacketCount), Logger::Level::TRACE);
-
-    // Show the size in bytes of the packet
-    Logger::GetInstance().Log("Packet size: " + std::to_string(aHeader->len) + " bytes", Logger::Level::TRACE);
-
-    // Show Epoch Time
-    Logger::GetInstance().Log(
-        "Epoch time: " + std::to_string(aHeader->ts.tv_sec) + ":" + std::to_string(aHeader->ts.tv_usec),
-        Logger::Level::TRACE);
-
-    // Show a warning if the length captured is different
-    if (aHeader->len != aHeader->caplen) {
-        Logger::GetInstance().Log("Capture size different than packet size:" + std::to_string(aHeader->len) + " bytes",
-                                  Logger::Level::TRACE);
-    }
-}
-
-const unsigned char* WirelessPSPPluginDevice::GetData()
-{
-    return mData;
-}
-
-const pcap_pkthdr* WirelessPSPPluginDevice::GetHeader()
-{
-    return mHeader;
-}
-
-// TODO: This is literally the same in all connection methods, put somewhere else
-std::string WirelessPSPPluginDevice::DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader)
-{
-    // Convert from char* to string
-    std::string lData{};
-
-    if ((aData != nullptr) && (aHeader != nullptr)) {
-        lData.resize(aHeader->caplen);
-        for (unsigned int lCount = 0; lCount < aHeader->caplen; lCount++) {
-            lData.at(lCount) = aData[lCount];
-        }
-    }
-
-    return lData;
+    mBlackList.AddToMACBlackList(aMAC);
 }
 
 bool WirelessPSPPluginDevice::Send(std::string_view aData)
@@ -321,8 +257,8 @@ bool WirelessPSPPluginDevice::Connect(std::string_view aESSID)
                             *mCurrentlyConnected    = lNetwork.ssid;
                             mCurrentlyConnectedInfo = lNetwork;
                             lDidConnect             = true;
-                            if (mHosting) {
-                                mConnector->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
+                            if (IsHosting()) {
+                                GetConnector()->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
                             }
                         }
                     }
@@ -357,11 +293,6 @@ bool WirelessPSPPluginDevice::Connect(std::string_view aESSID)
         mPausedAutoConnect = false;
     }
     return lReturn;
-}
-
-void WirelessPSPPluginDevice::SetConnector(std::shared_ptr<IConnector> aDevice)
-{
-    mConnector = aDevice;
 }
 
 bool WirelessPSPPluginDevice::StartReceiverThread()
@@ -417,9 +348,4 @@ bool WirelessPSPPluginDevice::StartReceiverThread()
     }
 
     return lReturn;
-}
-
-void WirelessPSPPluginDevice::SetHosting(bool aHosting)
-{
-    mHosting = aHosting;
 }

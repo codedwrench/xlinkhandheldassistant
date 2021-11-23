@@ -14,30 +14,6 @@ Handler80211::Handler80211(PhysicalDeviceHeaderType aType)
     mParameter80211Reader = std::make_shared<Parameter80211Reader>(mPhysicalDeviceHeaderReader);
 }
 
-void Handler80211::AddToMACBlackList(uint64_t aMAC)
-{
-    if (!IsMACBlackListed(aMAC)) {
-        Logger::GetInstance().Log("Added: " + IntToMac(aMAC) + " to blacklist.", Logger::Level::TRACE);
-        mBlackList.push_back(aMAC);
-    }
-}
-
-void Handler80211::AddToMACWhiteList(uint64_t aMAC)
-{
-    Logger::GetInstance().Log("Added: " + IntToMac(aMAC) + " to whitelist.", Logger::Level::TRACE);
-    mWhiteList.push_back(aMAC);
-}
-
-void Handler80211::ClearMACBlackList()
-{
-    mBlackList.clear();
-}
-
-void Handler80211::ClearMACWhiteList()
-{
-    mWhiteList.clear();
-}
-
 std::string Handler80211::ConvertPacket()
 {
     std::string lConvertedPacket{};
@@ -151,34 +127,6 @@ bool Handler80211::ShouldSend() const
     return mShouldSend;
 }
 
-bool Handler80211::IsMACAllowed(uint64_t aMAC)
-{
-    bool lReturn{false};
-
-    if (mWhiteList.empty()) {
-        if (std::find(mBlackList.begin(), mBlackList.end(), aMAC) == mBlackList.end()) {
-            lReturn = true;
-        }
-    } else {
-        if (std::find(mWhiteList.begin(), mWhiteList.end(), aMAC) != mWhiteList.end()) {
-            lReturn = true;
-        }
-    }
-
-    return lReturn;
-}
-
-bool Handler80211::IsMACBlackListed(uint64_t aMAC) const
-{
-    bool lReturn{false};
-
-    if (std::find(mBlackList.begin(), mBlackList.end(), aMAC) != mBlackList.end()) {
-        lReturn = true;
-    }
-
-    return lReturn;
-}
-
 bool Handler80211::IsSSIDAllowed(std::string_view aSSID)
 {
     bool lReturn{false};
@@ -213,16 +161,6 @@ void Handler80211::SetBSSID(uint64_t aBSSID)
     mLockedBSSID = aBSSID;
 }
 
-void Handler80211::SetMACBlackList(std::vector<uint64_t>& aBlackList)
-{
-    mBlackList = std::move(aBlackList);
-}
-
-void Handler80211::SetMACWhiteList(std::vector<uint64_t>& aWhiteList)
-{
-    mWhiteList = std::move(aWhiteList);
-}
-
 void Handler80211::SetSSIDFilterList(std::vector<std::string>& aSSIDList)
 {
     mSSIDList = std::move(aSSIDList);
@@ -248,7 +186,7 @@ void Handler80211::Update(std::string_view aPacket)
             UpdateDestinationMac();
 
             // Blacklisted MACs will have a destination MAC in XLink Kai, so only copy info about these packets
-            if (IsMACBlackListed(mDestinationMac)) {
+            if (GetBlackList().IsMACBlackListed(mDestinationMac)) {
                 UpdateControlPacketType();
 
                 if (mControlPacketType == Control80211PacketType::ACK) {
@@ -262,7 +200,7 @@ void Handler80211::Update(std::string_view aPacket)
             // Only do something with the data frame if we care about this network
             UpdateSourceMac();
             UpdateBSSID();
-            if (IsMACAllowed(mSourceMac) && IsBSSIDAllowed(mBSSID)) {
+            if (GetBlackList().IsMACAllowed(mSourceMac) && IsBSSIDAllowed(mBSSID)) {
                 UpdateDestinationMac();
                 UpdateAckable();
                 UpdateDataPacketType();
@@ -291,7 +229,7 @@ void Handler80211::Update(std::string_view aPacket)
         case Main80211PacketType::Management:
             UpdateSourceMac();
 
-            if (IsMACAllowed(mSourceMac)) {
+            if (GetBlackList().IsMACAllowed(mSourceMac)) {
                 UpdateManagementPacketType();
 
                 if (mManagementPacketType == Management80211PacketType::Beacon) {

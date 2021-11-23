@@ -97,6 +97,12 @@ public:
     virtual void SetHosting(bool aHosting) = 0;
 
     /**
+     * Prints some fancy statistics about a packet.
+     * @param aHeader - Header of the packet to show statistics of.
+     */
+    virtual void ShowPacketStatistics(const pcap_pkthdr* aHeader) const = 0;
+
+    /**
      * Starts receiving on device.
      * @return true if successful (for a file based device this will start replaying the capture).
      */

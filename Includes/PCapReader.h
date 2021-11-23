@@ -13,13 +13,13 @@
 #include "Handler80211.h"
 #include "Handler8023.h"
 #include "IConnector.h"
-#include "IPCapDevice.h"
+#include "PCapDeviceBase.h"
 #include "PCapWrapper.h"
 
 /**
  * This class contains the necessary components to read a PCap file.
  **/
-class PCapReader : public IPCapDevice, public IConnector
+class PCapReader : public PCapDeviceBase, public IConnector
 {
 public:
     /**
@@ -28,7 +28,11 @@ public:
      * @param aMonitorOutput - Tells the PCapReader whether the output should be 802.11 or 802.3.
      * @param aWrapper - Wrapper for the PCap functions
      */
-    explicit PCapReader(bool aMonitorCapture, bool aMonitorOutput, bool aTimeAccurate, std::shared_ptr<IPCapWrapper> aWrapper = std::make_shared<PCapWrapper>());
+    explicit PCapReader(bool                          aMonitorCapture,
+                        bool                          aMonitorOutput,
+                        bool                          aTimeAccurate,
+                        std::shared_ptr<IPCapWrapper> aWrapper = std::make_shared<PCapWrapper>());
+
     ~PCapReader() = default;
 
     /**
@@ -99,12 +103,8 @@ private:
     bool                                                      mAcknowledgePackets{false};
     uint64_t                                                  mBSSID{0};
     bool                                                      mConnected{false};
-    std::shared_ptr<IConnector>                               mConnector{nullptr};
-    const unsigned char*                                      mData{nullptr};
     std::shared_ptr<RadioTapReader::PhysicalDeviceParameters> mParameters{nullptr};
     std::shared_ptr<IPCapWrapper>                             mWrapper{nullptr};
-    pcap_pkthdr*                                              mHeader{nullptr};
-    bool                                                      mHosting{false};
     std::shared_ptr<IPCapDevice>                              mIncomingConnection{nullptr};
     bool                                                      mDoneReceiving{false};
     bool                                                      mMonitorCapture{false};
@@ -113,5 +113,4 @@ private:
     std::shared_ptr<IHandler>                                 mPacketHandler{nullptr};
     std::shared_ptr<std::thread>                              mReplayThread{nullptr};
     std::vector<std::string>                                  mSSIDFilter{};
-    unsigned int                                              mPacketCount{0};
 };
