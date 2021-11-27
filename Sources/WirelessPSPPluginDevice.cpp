@@ -252,7 +252,9 @@ bool WirelessPSPPluginDevice::Connect(std::string_view aESSID)
 
             Logger::GetInstance().Log("Switching networks due to host broadcast!", Logger::Level::DEBUG);
             lReturn              = mWifiInterface->Connect(lInformation);
-            *mCurrentlyConnected = lInformation.ssid;
+            if (mCurrentlyConnected != nullptr) {
+                *mCurrentlyConnected = lInformation.ssid;
+            }
         }
     }
 
