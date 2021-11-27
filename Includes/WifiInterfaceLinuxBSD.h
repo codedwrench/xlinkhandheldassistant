@@ -42,13 +42,13 @@ namespace WifiInterface_Constants
     {  // For FamilyHandler() and nl_get_multicast_id().
         std::string group;
         int         id;
-    } __attribute__((aligned(64))) __attribute__((packed));
+    };
 
     struct DumpResultArgument
     {
         std::array<nla_policy, NL80211_BSS_MAX + 1>&  bssserviceinfo;
         std::vector<IWifiInterface::WifiInformation>& adhocnetworks;
-    } __attribute__((aligned(16)));
+    };
 
     static constexpr std::chrono::seconds cScanTimeout{30};
 

@@ -142,7 +142,7 @@ public:
      * @param aPath - Path to save it in.
      * @return true if successful.
      */
-    [[nodiscard]] bool SaveToFile(std::string_view aPath) const;
+    bool SaveToFile(std::string_view aPath) const;
 
     /**
      * Loads the config in a file to a WindowModel.

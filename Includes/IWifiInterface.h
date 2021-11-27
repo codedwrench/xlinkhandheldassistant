@@ -24,7 +24,7 @@ public:
         int                    frequency;
         bool                   isadhoc;
         bool                   isconnected;
-    } __attribute__((packed));
+    };
 
     /**
      * Connects to a wireless network.
