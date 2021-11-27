@@ -37,6 +37,7 @@ bool WirelessPromiscuousBase::Open(std::string_view                aName,
 
     mWifiInterface = aInterface;
     mSSIDFilter    = aSSIDFilter;
+    mOldSSIDFilter = aSSIDFilter;
 
     if (mAutoConnect) {
         Connect();
