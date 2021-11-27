@@ -154,7 +154,7 @@ void HUDWindow::SetUp()
         false,
         // Only show if we're using the plugin or promiscuous method
         GetModel().mConnectionMethod == WindowModel_Constants::ConnectionMethod::Plugin ||
-                GetModel().mConnectionMethod == WindowModel_Constants::ConnectionMethod::Promiscuous)});
+            GetModel().mConnectionMethod == WindowModel_Constants::ConnectionMethod::Promiscuous)});
 
     AddObject({std::make_shared<Button>(
         *this,

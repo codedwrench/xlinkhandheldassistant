@@ -20,8 +20,8 @@ namespace
 }  // namespace
 
 PromiscuousOptionsStep::PromiscuousOptionsStep(WindowModel&                aModel,
-                                     std::string_view            aTitle,
-                                     std::function<Dimensions()> aCalculation) :
+                                               std::string_view            aTitle,
+                                               std::function<Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

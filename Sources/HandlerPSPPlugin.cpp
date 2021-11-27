@@ -2,6 +2,8 @@
 
 #include "../Includes/HandlerPSPPlugin.h"
 
+#include <climits>
+
 #include "../Includes/Logger.h"
 #include "../Includes/NetConversionFunctions.h"
 

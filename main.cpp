@@ -194,9 +194,10 @@ int main(int argc, char* argv[])
                                     break;
                                 case WindowModel_Constants::ConnectionMethod::Monitor:
                                     if (std::dynamic_pointer_cast<MonitorDevice>(lDevice) == nullptr) {
-                                        lDevice = std::make_shared<MonitorDevice>(MacToInt(mWindowModel.mOnlyAcceptFromMac),
-                                                                                  mWindowModel.mAcknowledgeDataFrames,
-                                                                                  &mWindowModel.mCurrentlyConnectedNetwork);
+                                        lDevice =
+                                            std::make_shared<MonitorDevice>(MacToInt(mWindowModel.mOnlyAcceptFromMac),
+                                                                            mWindowModel.mAcknowledgeDataFrames,
+                                                                            &mWindowModel.mCurrentlyConnectedNetwork);
                                         Logger::GetInstance().Log("Monitor Device created!", Logger::Level::INFO);
                                     }
                                 default:
