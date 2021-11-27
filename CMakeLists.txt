@@ -115,6 +115,7 @@ add_executable(xlinkhandheldassistant main.cpp
         Sources/Parameter80211Reader.cpp
         Sources/RadioTapReader.cpp
         Sources/WindowModel.cpp
+        Sources/WirelessPromiscuousBase.cpp
         Sources/WirelessPSPPluginDevice.cpp
         Sources/XLinkKaiConnection.cpp
         Sources/UserInterface/AboutWindow.cpp
@@ -158,6 +159,7 @@ add_executable(xlinkhandheldassistant main.cpp
         Includes/NetConversionFunctions.h
         Includes/XLinkKaiConnection.h
         Includes/WindowModel.h
+        Includes/WirelessPromiscuousBase.h
         Includes/WirelessPSPPluginDevice.h
         Includes/UserInterface/AboutWindow.h
         Includes/UserInterface/Button.h
@@ -251,6 +253,7 @@ if (ENABLE_TESTS)
             Sources/PCapWrapper.cpp
             Sources/RadioTapReader.cpp
             Sources/WindowModel.cpp
+            Sources/WirelessPromiscuousBase.cpp
             Sources/WirelessPSPPluginDevice.cpp
             Sources/WifiInterfaceLinuxBSD.cpp
             Sources/XLinkKaiConnection.cpp)

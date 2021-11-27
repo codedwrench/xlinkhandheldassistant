@@ -107,4 +107,12 @@ public:
      * @return true if successful (for a file based device this will start replaying the capture).
      */
     virtual bool StartReceiverThread() = 0;
+
+    /**
+     * Pcap Dispatch should be using this function to send data to.
+     * @param aData The data to process.
+     * @param aHeader The header to process.
+     * @return True if successful.
+     */
+    virtual bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader) = 0;
 };

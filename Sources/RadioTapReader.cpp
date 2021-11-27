@@ -1,6 +1,7 @@
 /* Copyright (c) 2020 [Rick de Bondt] - RadioTapReader.cpp */
 
 #include "../Includes/RadioTapReader.h"
+
 #include "../Includes/NetConversionFunctions.h"
 
 RadioTapReader::PhysicalDeviceParameters RadioTapReader::ExportRadioTapParameters()

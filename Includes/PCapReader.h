@@ -67,7 +67,7 @@ public:
     bool               Open(std::string_view aArgument) override;
     bool               Open(std::string_view aName, std::vector<std::string>& aSSIDFilter) override;
     // PCapReader should still be able to manually read next data, way too useful to private.
-    bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);
+    bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
     bool ReadNextData() override;
     bool Send(std::string_view aCommand, std::string_view aData) override;
     bool Send(std::string_view aData) override;

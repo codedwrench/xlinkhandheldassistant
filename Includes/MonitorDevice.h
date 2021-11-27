@@ -63,7 +63,7 @@ public:
     bool StartReceiverThread() override;
 
 private:
-    bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);
+    bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
 
     bool                          mAcknowledgePackets{false};
     bool                          mConnected{false};

@@ -30,7 +30,7 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingXLinkSide)
     auto                            lPCapWrapperMock{std::make_shared<::testing::NiceMock<IPCapWrapperMock>>()};
     auto                            lPSPPluginDevice{
         std::make_shared<WirelessPSPPluginDevice>(false,
-                                                  WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+                                                  WirelessPromiscuousBase_Constants::cReconnectionTimeOut,
                                                   nullptr,
                                                   std::make_shared<HandlerPSPPlugin>(),
                                                   std::static_pointer_cast<IPCapWrapper>(lPCapWrapperMock))};
@@ -127,7 +127,7 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
     std::vector<std::string>        lSSIDFilter{""};
     auto                            lPCapWrapperMock{std::make_shared<::testing::NiceMock<IPCapWrapperMock>>()};
     WirelessPSPPluginDevice         lPSPPluginDevice{false,
-                                             WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+                                             WirelessPromiscuousBase_Constants::cReconnectionTimeOut,
                                              nullptr,
                                              std::make_shared<HandlerPSPPlugin>(),
                                              std::static_pointer_cast<IPCapWrapper>(lPCapWrapperMock)};
@@ -244,7 +244,7 @@ TEST_F(PluginPacketHandlingTest, BroadcastMacToBeUsed)
     std::vector<std::string>        lSSIDFilter{""};
     auto                            lPCapWrapperMock{std::make_shared<::testing::NiceMock<IPCapWrapperMock>>()};
     WirelessPSPPluginDevice         lPSPPluginDevice{false,
-                                             WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+                                             WirelessPromiscuousBase_Constants::cReconnectionTimeOut,
                                              nullptr,
                                              std::make_shared<HandlerPSPPlugin>(),
                                              std::static_pointer_cast<IPCapWrapper>(lPCapWrapperMock)};
@@ -336,7 +336,7 @@ TEST_F(PluginPacketHandlingTest, NoBroadcastMacToBeUsedWhenNormalPacket)
     std::vector<std::string>        lSSIDFilter{""};
     auto                            lPCapWrapperMock{std::make_shared<::testing::NiceMock<IPCapWrapperMock>>()};
     WirelessPSPPluginDevice         lPSPPluginDevice{false,
-                                             WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+                                             WirelessPromiscuousBase_Constants::cReconnectionTimeOut,
                                              nullptr,
                                              std::make_shared<HandlerPSPPlugin>(),
                                              std::static_pointer_cast<IPCapWrapper>(lPCapWrapperMock)};

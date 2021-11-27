@@ -7,8 +7,6 @@
  **/
 
 #if not defined(_WIN32) && not defined(_WIN64)
-#include "IWifiInterface.h"
-
 #include <array>
 #include <chrono>
 #include <mutex>
@@ -21,6 +19,8 @@
 #include <netlink/genl/ctrl.h>
 #include <netlink/genl/genl.h>
 #include <netlink/netlink.h>
+
+#include "IWifiInterface.h"
 
 struct nl_sock;
 

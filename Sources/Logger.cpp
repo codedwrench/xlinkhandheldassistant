@@ -2,12 +2,12 @@
 
 #include "../Includes/Logger.h"
 
-#include "../Includes/WindowModel.h"
-
 #include <chrono>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+
+#include "../Includes/WindowModel.h"
 
 Logger::~Logger()
 {
