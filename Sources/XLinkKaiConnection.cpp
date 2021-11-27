@@ -260,7 +260,7 @@ bool XLinkKaiConnection::StartReceiverThread()
                     } else {
                         mIoService.poll();
                         // Very small delay to make the computer happy
-                        std::this_thread::sleep_for(1ms);
+                        std::this_thread::sleep_for(100us);
                     }
                 }
             });

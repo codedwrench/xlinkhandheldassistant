@@ -306,6 +306,7 @@ bool WirelessPSPPluginDevice::StartReceiverThread()
                             "Error occurred while reading packet: " + std::string(mWrapper->GetError()),
                             Logger::Level::DEBUG);
                     }
+                    std::this_thread::sleep_for(100us);
                 }
 
                 mSendReceivedData = lSendReceivedDataOld;
