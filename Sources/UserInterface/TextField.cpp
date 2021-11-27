@@ -1,9 +1,9 @@
+/* Copyright (c) 2020 [Rick de Bondt] - TextField.cpp */
+
 #include "../../Includes/UserInterface/TextField.h"
 
 #include <string>
 #include <utility>
-
-/* Copyright (c) 2020 [Rick de Bondt] - TextField.cpp */
 
 TextField::TextField(IWindow&                    aWindow,
                      std::string_view            aName,

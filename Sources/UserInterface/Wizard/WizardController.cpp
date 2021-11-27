@@ -1,3 +1,5 @@
+/* Copyright (c) 2021 [Rick de Bondt] - WizardController.cpp */
+
 #include "../../../Includes/UserInterface/Wizard/WizardController.h"
 
 #include "../../../Includes/PCapWrapper.h"
@@ -8,7 +10,6 @@
 
 #undef MOUSE_MOVED
 
-/* Copyright (c) 2021 [Rick de Bondt] - WizardController.cpp */
 
 using namespace WizardController_Constants;
 

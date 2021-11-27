@@ -5,8 +5,6 @@
 #include <iostream>
 
 #include "../../Includes/UserInterface/HUDController.h"
-#include "../../Includes/UserInterface/MainWindowController.h"
-#include "../Includes/UserInterface/HUDController.h"
 #include "../Includes/UserInterface/Wizard/WizardController.h"
 
 MainWindowController::MainWindowController(WindowModel& aWindowModel, bool aSkipWizard) :

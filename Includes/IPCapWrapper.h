@@ -6,7 +6,6 @@
  *
  **/
 
-
 /**
  * Interface for pcapwrapper.
  */

@@ -1,12 +1,13 @@
 #pragma once
-#if not defined(_WIN32) && not defined(_WIN64)
-#include "IWifiInterface.h"
 
 /* Copyright (c) 2020 [Rick de Bondt] - WifiInterfaceLinuxBSD.h
  *
  * This file contains Linux and BSD specific functions for managing WiFi adapters.
  *
  **/
+
+#if not defined(_WIN32) && not defined(_WIN64)
+#include "IWifiInterface.h"
 
 #include <array>
 #include <chrono>
@@ -35,19 +36,19 @@ namespace WifiInterface_Constants
     {
         int done;
         int aborted;
-    };
+    } __attribute__((aligned(8)));
 
     struct HandlerArguments
     {  // For FamilyHandler() and nl_get_multicast_id().
         std::string group;
         int         id;
-    };
+    } __attribute__((aligned(64))) __attribute__((packed));
 
     struct DumpResultArgument
     {
         std::array<nla_policy, NL80211_BSS_MAX + 1>&  bssserviceinfo;
         std::vector<IWifiInterface::WifiInformation>& adhocnetworks;
-    };
+    } __attribute__((aligned(16)));
 
     static constexpr std::chrono::seconds cScanTimeout{30};
 

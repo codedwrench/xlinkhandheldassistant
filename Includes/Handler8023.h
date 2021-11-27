@@ -37,6 +37,7 @@ public:
     [[nodiscard]] uint16_t GetEtherType() const override;
 
     std::string_view       GetPacket() override;
+
     [[nodiscard]] uint64_t GetSourceMac() const override;
 
     /**

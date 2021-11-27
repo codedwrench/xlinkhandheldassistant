@@ -1,3 +1,5 @@
+/* Copyright (c) 2021 [Rick de Bondt] - WifiInterfaceBSD.cpp */
+
 #include "../Includes/WifiInterfaceLinuxBSD.h"
 
 #include <cerrno>

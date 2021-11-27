@@ -4,7 +4,7 @@
  *
  * This file contains functions to capture data from a wireless device in monitor mode.
  *
- * */
+ **/
 
 #include <chrono>
 #include <memory>

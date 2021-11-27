@@ -1,6 +1,6 @@
-#include "../Includes/PCapReader.h"
-
 /* Copyright (c) 2020 [Rick de Bondt] - PCapReader.cpp */
+
+#include "../Includes/PCapReader.h"
 
 #include <chrono>
 #include <thread>

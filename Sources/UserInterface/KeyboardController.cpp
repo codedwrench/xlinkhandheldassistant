@@ -1,12 +1,11 @@
-#include "../../Includes/UserInterface/KeyboardController.h"
-
 /* Copyright (c) 2021 [Rick de Bondt] - KeyboardController.cpp */
+
+#include "../../Includes/UserInterface/KeyboardController.h"
 
 #include <chrono>
 #include <iostream>
 #include <thread>
 #include <utility>
-#include <vector>
 
 #define PDC_WIDE
 #include <curses.h>

@@ -1,0 +1,13 @@
+//
+// Created by codedwrench on 27-11-21.
+//
+
+#ifndef XLINKHANDHELDASSISTANT_PROMISCUOUSBASE_H
+#define XLINKHANDHELDASSISTANT_PROMISCUOUSBASE_H
+
+
+class PromiscuousBase
+{};
+
+
+#endif  // XLINKHANDHELDASSISTANT_PROMISCUOUSBASE_H

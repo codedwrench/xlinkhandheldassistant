@@ -1,3 +1,5 @@
+/* Copyright (c) 2021 [Rick de Bondt] - PluginOptionsStep.cpp */
+
 #include "../../../Includes/UserInterface/Wizard/PluginOptionsStep.h"
 
 #include <cmath>
@@ -10,7 +12,6 @@
 #include "../../../Includes/UserInterface/String.h"
 #include "../../../Includes/UserInterface/TextField.h"
 
-/* Copyright (c) 2021 [Rick de Bondt] - PluginOptionsStep.cpp */
 
 namespace
 {

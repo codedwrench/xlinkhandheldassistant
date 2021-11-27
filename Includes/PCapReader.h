@@ -39,7 +39,7 @@ public:
      * Adds a Mac address to the blacklist.
      * @param aMac - Mac address to blacklist.
      */
-    void BlackList(uint64_t aMac);
+    void BlackList(uint64_t aMac) override;
 
     void Close() override;
     bool Connect(std::string_view aESSID) override;

@@ -20,7 +20,7 @@ namespace IPCapDevice_Constants
         std::string SSID{};
         uint8_t     MaxRate{RadioTap_Constants::cRateFlags};
         uint16_t    Frequency{RadioTap_Constants::cChannel};
-    };
+    } __attribute__((packed));
 }  // namespace IPCapDevice_Constants
 
 class IConnector;

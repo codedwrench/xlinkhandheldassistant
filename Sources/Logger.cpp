@@ -1,8 +1,8 @@
+/* Copyright (c) 2020 [Rick de Bondt] - Logger.cpp */
+
 #include "../Includes/Logger.h"
 
 #include "../Includes/WindowModel.h"
-
-/* Copyright (c) 2020 [Rick de Bondt] - Logger.cpp */
 
 #include <chrono>
 #include <ctime>

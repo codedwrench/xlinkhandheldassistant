@@ -1,3 +1,5 @@
+/* Copyright (c) 2021 [Rick de Bondt] - WizardSelectorStep.cpp */
+
 #include "../../../Includes/UserInterface/Wizard/WizardSelectorStep.h"
 
 #include <cmath>
@@ -8,7 +10,6 @@
 #include "../../../Includes/UserInterface/RadioBoxGroup.h"
 #include "../../../Includes/UserInterface/String.h"
 
-/* Copyright (c) 2021 [Rick de Bondt] - WizardSelectorStep.cpp */
 
 namespace
 {

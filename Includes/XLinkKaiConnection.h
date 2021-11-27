@@ -4,7 +4,7 @@
  *
  * This file contains functions to talk to XLink Kai.
  *
- * */
+ **/
 
 #include <string>
 #include <thread>
@@ -99,7 +99,7 @@ public:
 
     bool StartReceiverThread() override;
 
-    bool Send(std::string_view aCommand, std::string_view aData);
+    bool Send(std::string_view aCommand, std::string_view aData) override;
 
     bool Send(std::string_view aData) override;
 

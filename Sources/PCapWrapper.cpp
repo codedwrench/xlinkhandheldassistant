@@ -1,6 +1,6 @@
-#include "../Includes/PCapWrapper.h"
-
 /* Copyright (c) 2021 [Rick de Bondt] - PCapWrapper.cpp */
+
+#include "../Includes/PCapWrapper.h"
 
 int PCapWrapper::Activate()
 {

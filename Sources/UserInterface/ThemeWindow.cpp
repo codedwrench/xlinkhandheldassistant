@@ -1,14 +1,12 @@
+/* Copyright (c) 2021 [Rick de Bondt] - ThemeWindow.cpp */
+
 #include "../../Includes/UserInterface/ThemeWindow.h"
 
-#include <cmath>
 #include <filesystem>
-#include <utility>
 
 #include "../../Includes/UserInterface/Button.h"
 #include "../../Includes/UserInterface/DefaultElements.h"
 #include "../../Includes/UserInterface/RadioBoxGroup.h"
-
-/* Copyright (c) 2021 [Rick de Bondt] - ThemeWindow.cpp */
 
 namespace
 {

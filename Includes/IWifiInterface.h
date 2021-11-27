@@ -1,16 +1,15 @@
 #pragma once
 
-#include <array>
-#include <cstdint>
-#include <string>
-#include <vector>
-
 /* Copyright (c) 2020 [Rick de Bondt] - IWifiInterface.h
  *
  * This file contains an interface for wifi devices.
  *
  **/
 
+#include <array>
+#include <cstdint>
+#include <string>
+#include <vector>
 
 /**
  * Interface for wifi devices.
@@ -25,7 +24,7 @@ public:
         int                    frequency;
         bool                   isadhoc;
         bool                   isconnected;
-    };
+    } __attribute__((packed));
 
     /**
      * Connects to a wireless network.

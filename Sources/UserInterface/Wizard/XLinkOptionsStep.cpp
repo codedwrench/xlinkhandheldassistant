@@ -1,3 +1,5 @@
+/* Copyright (c) 2020 [Rick de Bondt] - MonitorDeviceStep.cpp */
+
 #include "../../../Includes/UserInterface/Wizard/XLinkOptionsStep.h"
 
 #include <cmath>
@@ -9,7 +11,6 @@
 #include "../../../Includes/UserInterface/String.h"
 #include "../../../Includes/UserInterface/TextField.h"
 
-/* Copyright (c) 2020 [Rick de Bondt] - MonitorDeviceStep.cpp */
 
 namespace
 {

@@ -1,9 +1,10 @@
-#include "../Includes/WindowModel.h"
-
 /* Copyright (c) 2020 [Rick de Bondt] - WindowModel.cpp */
 
-using namespace WindowModel_Constants;
+#include "../Includes/WindowModel.h"
+
 #include <iostream>
+
+using namespace WindowModel_Constants;
 std::string BoolToString(bool aBool)
 {
     return aBool ? "true" : "false";

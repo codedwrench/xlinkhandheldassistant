@@ -5,7 +5,7 @@
  * This file contains the header for a Logger class which will be used to log
  * things happening in the applications based on different levels.
  *
- * */
+ **/
 
 #include <array>
 #include <fstream>

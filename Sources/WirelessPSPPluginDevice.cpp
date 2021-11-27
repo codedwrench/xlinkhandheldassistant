@@ -1,9 +1,8 @@
-#include "../Includes/WirelessPSPPluginDevice.h"
-
 /* Copyright (c) 2021 [Rick de Bondt] - WirelessPSPPluginDevice.cpp */
 
+#include "../Includes/WirelessPSPPluginDevice.h"
+
 #include <chrono>
-#include <cstring>
 #include <functional>
 #include <string>
 #include <thread>
@@ -87,7 +86,8 @@ void WirelessPSPPluginDevice::Close()
         while (!mReceiverThread->joinable()) {
             // Wait
             std::this_thread::sleep_for(1ms);
-        };
+        }
+
         mReceiverThread->join();
     }
 
@@ -95,7 +95,8 @@ void WirelessPSPPluginDevice::Close()
         while (!mWifiTimeoutThread->joinable()) {
             // Wait
             std::this_thread::sleep_for(1ms);
-        };
+        }
+
         mWifiTimeoutThread->join();
     }
 
@@ -258,7 +259,7 @@ bool WirelessPSPPluginDevice::Connect(std::string_view aESSID)
         }
     }
 
-    // Reset the timer so it won't autoconnect anyway, unless we are hosting
+    // Reset the timer, so it won't autoconnect anyway, unless we are hosting
     if (!mSSIDFromHost) {
         mReadWatchdog      = std::chrono::system_clock::now();
         mPausedAutoConnect = false;

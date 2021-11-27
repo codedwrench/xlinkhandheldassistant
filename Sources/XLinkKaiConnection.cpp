@@ -1,6 +1,6 @@
-#include "../Includes/XLinkKaiConnection.h"
-
 /* Copyright (c) 2020 [Rick de Bondt] - XLinkKaiConnection.cpp */
+
+#include "../Includes/XLinkKaiConnection.h"
 
 #include <chrono>
 #include <cstring>

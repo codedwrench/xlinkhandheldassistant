@@ -1,5 +1,11 @@
 #pragma once
 
+/* Copyright (c) 2021 [Rick de Bondt] - WindowModel.h
+ *
+ * This file contains variable from the UI to the backend.
+ *
+ **/
+
 #include <array>
 #include <chrono>
 #include <string>
@@ -77,7 +83,7 @@ namespace WindowModel_Constants
     static constexpr bool             cDefaultUseSSIDFromHost{false};
     static constexpr bool             cDefaultUseSSIDFromXLinkKai{false};
     static constexpr bool             cDefaultUseXLinkKaiHints{false};
-    static constexpr std::string_view cDefaultWifiAdapter{""};
+    static constexpr std::string_view cDefaultWifiAdapter;
     static constexpr std::string_view cDefaultXLinkIp{"127.0.0.1"};
     static constexpr std::string_view cDefaultXLinkPort{"34523"};
 }  // namespace WindowModel_Constants
@@ -136,7 +142,7 @@ public:
      * @param aPath - Path to save it in.
      * @return true if successful.
      */
-    bool SaveToFile(std::string_view aPath) const;
+    [[nodiscard]] bool SaveToFile(std::string_view aPath) const;
 
     /**
      * Loads the config in a file to a WindowModel.

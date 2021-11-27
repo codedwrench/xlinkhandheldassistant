@@ -1,3 +1,5 @@
+/* Copyright (c) 2021 [Rick de Bondt] - WifiInterfaceWindows.cpp */
+
 #include "../Includes/WifiInterfaceWindows.h"
 
 #include <codecvt>
