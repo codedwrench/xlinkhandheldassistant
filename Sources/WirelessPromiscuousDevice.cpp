@@ -65,6 +65,14 @@ bool WirelessPromiscuousDevice::Send(std::string_view aData)
         if (!aData.empty()) {
             std::string lData{aData.data(), aData.size()};
 
+            // If we got our specific DDS Mac Address, replace it by the one from our adapter.
+            if ((GetRawData<uint64_t>(lData, Net_8023_Constants::cSourceAddressIndex) & Net_Constants::cBroadcastMac) ==
+                Net_Constants::cDDSReplaceMac) {
+
+                uint64_t lAdapterMacAddress = GetAdapterMacAddress();
+                memcpy(lData.data(), &lAdapterMacAddress, Net_8023_Constants::cSourceAddressIndex);
+            }
+
             Logger::GetInstance().Log(std::string("Sent: ") + PrettyHexString(lData), Logger::Level::TRACE);
 
             if (GetWrapper()->SendPacket(lData) == 0) {

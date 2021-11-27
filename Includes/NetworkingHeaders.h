@@ -151,6 +151,7 @@ namespace Net_Constants
     static constexpr uint16_t         cSetMacType{0x636d};
     static constexpr uint16_t         cPSPEtherType{0xc888};
     static constexpr uint64_t         cBroadcastMac{0xFFFFFFFFFFFF};
+    static constexpr uint64_t         cDDSReplaceMac{0x00005E0001FE};
     static constexpr std::string_view cPSPSSIDFilterName{"PSP_"};
     static constexpr std::string_view cVitaSSIDFilterName{"SCE_"};
 }  // namespace Net_Constants
