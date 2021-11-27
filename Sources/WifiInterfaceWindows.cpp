@@ -254,7 +254,7 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
     return mLastReceivedScanInformation;
 }
 
-uint64_t WifiInterface::GetAdapterMACAddress()
+uint64_t WifiInterface::GetAdapterMacAddress()
 {
     uint64_t lReturn{0};
 

@@ -60,7 +60,7 @@ public:
 
     bool                                          Connect(const IWifiInterface::WifiInformation& aConnection) override;
     bool                                          LeaveIBSS() override;
-    uint64_t                                      GetAdapterMACAddress() override;
+    uint64_t                                      GetAdapterMacAddress() override;
     std::vector<IWifiInterface::WifiInformation>& GetAdhocNetworks() override;
 
 private:

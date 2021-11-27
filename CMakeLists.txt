@@ -103,9 +103,10 @@ find_package(Boost 1.71 REQUIRED COMPONENTS program_options)
 
 # TODO: Make this search for source files automatically, this is very ugly!
 add_executable(xlinkhandheldassistant main.cpp
-        Sources/MACBlackList.cpp
+        Sources/MacBlackList.cpp
         Sources/Handler8023.cpp
         Sources/Handler80211.cpp
+        Sources/HandlerPSPPlugin.cpp
         Sources/Logger.cpp
         Sources/PCapDeviceBase.cpp
         Sources/PCapReader.cpp
@@ -137,9 +138,10 @@ add_executable(xlinkhandheldassistant main.cpp
         Sources/UserInterface/Wizard/WizardController.cpp
         Sources/UserInterface/Wizard/WizardSelectorStep.cpp
         Sources/UserInterface/Wizard/XLinkOptionsStep.cpp
-        Includes/MACBlackList.h
+        Includes/MacBlackList.h
         Includes/Handler8023.h
         Includes/Handler80211.h
+        Includes/HandlerPSPPlugin.h
         Includes/IConnector.h
         Includes/IHandler.h
         Includes/IPCapDevice.h
@@ -239,8 +241,9 @@ if (ENABLE_TESTS)
             Tests/WindowModel_Test.cpp
             Sources/Handler8023.cpp
             Sources/Handler80211.cpp
+            Sources/HandlerPSPPlugin.cpp
             Sources/Logger.cpp
-            Sources/MACBlackList.cpp
+            Sources/MacBlackList.cpp
             Sources/MonitorDevice.cpp
             Sources/Parameter80211Reader.cpp
             Sources/PCapDeviceBase.cpp

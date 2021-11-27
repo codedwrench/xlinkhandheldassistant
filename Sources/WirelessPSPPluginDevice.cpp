@@ -18,14 +18,17 @@ using namespace std::chrono;
  * @param aAutoConnect - Whether or not to connect to networks automatically.
  * @param aReconnectionTimeOut - How long to wait when the connection is stale to reconnect.
  * @param aCurrentlyConnected - Reference to string where the currently connected SSID is stored.
+ * @param aPacketHandler - The packet handler used to do the conversion from and to plugin mode.
  * @param aPCapWrapper - Shared pointer to the wrapper with pcap functions.
  */
-WirelessPSPPluginDevice::WirelessPSPPluginDevice(bool                          aAutoConnect,
-                                                 std::chrono::seconds          aReconnectionTimeOut,
-                                                 std::string*                  aCurrentlyConnected,
-                                                 std::shared_ptr<IPCapWrapper> aPcapWrapper) :
+WirelessPSPPluginDevice::WirelessPSPPluginDevice(bool                              aAutoConnect,
+                                                 std::chrono::seconds              aReconnectionTimeOut,
+                                                 std::string*                      aCurrentlyConnected,
+                                                 std::shared_ptr<HandlerPSPPlugin> aHandler,
+                                                 std::shared_ptr<IPCapWrapper>     aPcapWrapper) :
     mAutoConnect(aAutoConnect),
-    mWrapper(aPcapWrapper), mReConnectionTimeOut(aReconnectionTimeOut), mCurrentlyConnected(aCurrentlyConnected)
+    mWrapper(aPcapWrapper), mReConnectionTimeOut(aReconnectionTimeOut), mCurrentlyConnected(aCurrentlyConnected),
+    mPacketHandler(aHandler)
 {}
 
 // Keeping the SSID filter in because of future autoconnect
@@ -42,9 +45,9 @@ bool WirelessPSPPluginDevice::Open(std::string_view                aName,
         Connect();
     }
 
-    mAdapterMACAddress = mWifiInterface->GetAdapterMACAddress();
+    mAdapterMacAddress = mWifiInterface->GetAdapterMacAddress();
     // Do not try to negiotiate with localhost
-    BlackList(mAdapterMACAddress);
+    BlackList(mAdapterMacAddress);
 
     std::array<char, PCAP_ERRBUF_SIZE> lErrorBuffer{};
 
@@ -111,56 +114,28 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
 
     // Load all needed information into the handler
     std::string lData{DataToString(aData, aHeader)};
-    uint64_t    lSourceMac{
-        (GetRawData<uint64_t>(lData, Net_8023_Constants::cSourceAddressIndex) & Net_Constants::cBroadcastMac)};
+    mPacketHandler->Update(lData);
 
-    if (!mBlackList.IsMACBlackListed(lSourceMac)) {
-        if (((GetRawData<uint64_t>(lData, Net_8023_Constants::cDestinationAddressIndex) &
-              Net_Constants::cBroadcastMac) == Net_Constants::cBroadcastMac) &&
-            (GetRawData<uint16_t>(lData, Net_8023_Constants::cEtherTypeIndex) == Net_Constants::cPSPEtherType)) {
+    if (!mPacketHandler->GetBlackList().IsMacBlackListed(mPacketHandler->GetSourceMac())) {
+        if (mPacketHandler->IsBroadcastPacket() && mPacketHandler->GetEtherType() == Net_Constants::cPSPEtherType) {
             // Reset the timer so it will not time out
             mReadWatchdog = std::chrono::system_clock::now();
 
-            // Obtain required MACs
-            uint64_t lAdapterMAC = mAdapterMACAddress;
-            auto     lPSPMAC     = GetRawData<uint64_t>(lData, Net_8023_Constants::cSourceAddressIndex);
-
-            // Tell the PSP what Mac address to use
-            std::string lPacket{};
-            // Reserve size
-            lPacket.resize(Net_8023_Constants::cHeaderLength + Net_8023_Constants::cSourceAddressLength);
-
-            // Now put it into a packet
-            int lIndex{0};
-            memcpy(lPacket.data(), &lPSPMAC, Net_8023_Constants::cDestinationAddressLength);
-            lIndex += Net_8023_Constants::cDestinationAddressLength;
-
-            memcpy(lPacket.data() + lIndex, &lAdapterMAC, Net_8023_Constants::cSourceAddressLength);
-            lIndex += Net_8023_Constants::cSourceAddressLength;
-
-            memcpy(lPacket.data() + lIndex, &Net_Constants::cPSPEtherType, Net_8023_Constants::cEtherTypeLength);
-            lIndex += Net_8023_Constants::cEtherTypeLength;
-
-            memcpy(lPacket.data() + lIndex, &lAdapterMAC, Net_8023_Constants::cDestinationAddressLength);
+            std::string lPacket{ConstructPSPPluginHandshake(mPacketHandler->GetSourceMac(), mAdapterMacAddress)};
 
             // Log
             Logger::GetInstance().Log("Sending: " + PrettyHexString(lPacket), Logger::Level::TRACE);
 
             Send(lPacket, false);
-        } else if ((GetRawData<uint16_t>(lData, Net_8023_Constants::cEtherTypeIndex) == Net_Constants::cPSPEtherType)) {
+        } else if (mPacketHandler->GetEtherType() == Net_Constants::cPSPEtherType) {
             // Log
             Logger::GetInstance().Log("Received: " + PrettyHexString(lData), Logger::Level::TRACE);
 
             // Reset the timer so it will not time out
             mReadWatchdog = std::chrono::system_clock::now();
 
-            // With the plugin the destination mac is kept at the end of the packet
-            std::string lActualDestinationMac{
-                lData.substr(lData.size() - Net_8023_Constants::cDestinationAddressLength)};
-            lData.replace(Net_8023_Constants::cDestinationAddressIndex,
-                          Net_8023_Constants::cDestinationAddressLength,
-                          lActualDestinationMac);
-            lData.resize(lData.size() - Net_8023_Constants::cDestinationAddressLength);
+            // From plugin mode -> 802.3
+            lData = mPacketHandler->ConvertPacketOut();
             GetConnector()->Send(lData);
 
             SetData(aData);
@@ -172,9 +147,11 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
     return lReturn;
 }
 
-void WirelessPSPPluginDevice::BlackList(uint64_t aMAC)
+void WirelessPSPPluginDevice::BlackList(uint64_t aMac)
 {
-    mBlackList.AddToMACBlackList(aMAC);
+    if (mPacketHandler != nullptr) {
+        mPacketHandler->GetBlackList().AddToMacBlackList(aMac);
+    }
 }
 
 bool WirelessPSPPluginDevice::Send(std::string_view aData)
@@ -190,16 +167,8 @@ bool WirelessPSPPluginDevice::Send(std::string_view aData, bool aModifyData)
             std::string lData{aData.data(), aData.size()};
 
             if (aModifyData) {
-                uint64_t lAdapterMAC = mAdapterMACAddress;
-
-                std::string lActualSourceMac{
-                    lData.substr(Net_8023_Constants::cSourceAddressIndex, Net_8023_Constants::cSourceAddressLength)};
-
-                memcpy(lData.data() + Net_8023_Constants::cSourceAddressIndex,
-                       &lAdapterMAC,
-                       Net_8023_Constants::cSourceAddressLength);
-
-                lData.append(lActualSourceMac);
+                // Convert 8023 -> PSP Plugin
+                lData = mPacketHandler->ConvertPacketIn(lData, mAdapterMacAddress);
             }
 
             Logger::GetInstance().Log(std::string("Sent: ") + PrettyHexString(lData), Logger::Level::TRACE);

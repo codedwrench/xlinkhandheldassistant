@@ -24,7 +24,7 @@ public:
     WifiInterface(std::string_view aAdapterName);
     ~WifiInterface();
     bool                          Connect(const WifiInformation& aConnection) override;
-    uint64_t                      GetAdapterMACAddress() override;
+    uint64_t                      GetAdapterMacAddress() override;
     std::vector<WifiInformation>& GetAdhocNetworks() override;
     bool                          LeaveIBSS() override;
 

@@ -1,6 +1,6 @@
-#include "../Includes/MonitorDevice.h"
-
 /* Copyright (c) 2020 [Rick de Bondt] - MonitorDevice.cpp */
+
+#include "../Includes/MonitorDevice.h"
 
 #include <chrono>
 #include <functional>
@@ -20,7 +20,7 @@ MonitorDevice::MonitorDevice(uint64_t                      aSourceMacToFilter,
     mCurrentlyConnectedNetwork(aCurrentlyConnectedNetwork), mPcapWrapper(aPcapWrapper)
 {
     if (aSourceMacToFilter != 0) {
-        mPacketHandler.GetBlackList().AddToMACWhiteList(aSourceMacToFilter);
+        mPacketHandler.GetBlackList().AddToMacWhiteList(aSourceMacToFilter);
     }
 }
 
@@ -59,9 +59,9 @@ bool MonitorDevice::Open(std::string_view aName, std::vector<std::string>& aSSID
     return lReturn;
 }
 
-void MonitorDevice::BlackList(uint64_t aMAC)
+void MonitorDevice::BlackList(uint64_t aMac)
 {
-    mPacketHandler.GetBlackList().AddToMACBlackList(aMAC);
+    mPacketHandler.GetBlackList().AddToMacBlackList(aMac);
 }
 
 void MonitorDevice::Close()
@@ -98,7 +98,7 @@ bool MonitorDevice::ReadCallback(const unsigned char* aData, const pcap_pkthdr* 
 
     if (mAcknowledgePackets && mPacketHandler.IsAckable()) {
         std::string lAcknowledgementFrame =
-            ConstructAcknowledgementFrame(mPacketHandler.GetSourceMAC(), mPacketHandler.GetControlPacketParameters());
+            ConstructAcknowledgementFrame(mPacketHandler.GetSourceMac(), mPacketHandler.GetControlPacketParameters());
 
         Logger::GetInstance().Log("Sent ACK", Logger::Level::TRACE);
         Send(lAcknowledgementFrame);
@@ -106,7 +106,7 @@ bool MonitorDevice::ReadCallback(const unsigned char* aData, const pcap_pkthdr* 
 
     // If this packet is convertible to something XLink can understand, send
     if (mPacketHandler.ShouldSend()) {
-        std::string lPacket{mPacketHandler.ConvertPacket()};
+        std::string lPacket{mPacketHandler.ConvertPacketOut()};
         GetConnector()->Send(lPacket);
     }
 
@@ -197,10 +197,10 @@ bool MonitorDevice::StartReceiverThread()
     return lReturn;
 }
 
-void MonitorDevice::SetSourceMACToFilter(uint64_t aMac)
+void MonitorDevice::SetSourceMacToFilter(uint64_t aMac)
 {
     if (aMac != 0) {
-        mPacketHandler.GetBlackList().AddToMACWhiteList(aMac);
+        mPacketHandler.GetBlackList().AddToMacWhiteList(aMac);
     }
 }
 

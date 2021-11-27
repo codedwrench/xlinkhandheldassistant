@@ -18,11 +18,11 @@ PCapReader::PCapReader(bool                          aMonitorCapture,
     mMonitorCapture(aMonitorCapture), mMonitorOutput(aMonitorOutput), mTimeAccurate(aTimeAccurate)
 {}
 
-void PCapReader::BlackList(uint64_t aMAC)
+void PCapReader::BlackList(uint64_t aMac)
 {
     auto lHandler = std::dynamic_pointer_cast<Handler80211>(mPacketHandler);
     if (lHandler != nullptr) {
-        mPacketHandler->GetBlackList().AddToMACBlackList(aMAC);
+        mPacketHandler->GetBlackList().AddToMacBlackList(aMac);
     }
 }
 
@@ -149,7 +149,7 @@ bool PCapReader::ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHe
 
             if (mAcknowledgePackets && lHandler->IsAckable()) {
                 std::string lAcknowledgementFrame = ConstructAcknowledgementFrame(
-                    mPacketHandler->GetSourceMAC(), lHandler->GetControlPacketParameters());
+                    mPacketHandler->GetSourceMac(), lHandler->GetControlPacketParameters());
 
                 Logger::GetInstance().Log("Sent ACK", Logger::Level::TRACE);
                 Send(lAcknowledgementFrame);
@@ -157,7 +157,7 @@ bool PCapReader::ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHe
 
             // If this packet is convertible to something XLink can understand, send
             if (lHandler->ShouldSend()) {
-                GetConnector()->Send(lHandler->ConvertPacket());
+                GetConnector()->Send(lHandler->ConvertPacketOut());
             }
         }
     } else {
@@ -166,7 +166,7 @@ bool PCapReader::ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHe
             if (mMonitorOutput) {
                 auto lHandler = std::dynamic_pointer_cast<Handler8023>(mPacketHandler);
                 if (lHandler != nullptr) {
-                    mIncomingConnection->Send(lHandler->ConvertPacket(mBSSID, *mParameters));
+                    mIncomingConnection->Send(lHandler->ConvertPacketOut(mBSSID, *mParameters));
                 }
             } else {
                 mIncomingConnection->Send(lData);
@@ -281,10 +281,10 @@ bool PCapReader::StartReceiverThread()
     return lReturn;
 }
 
-void PCapReader::SetSourceMACToFilter(uint64_t aMac)
+void PCapReader::SetSourceMacToFilter(uint64_t aMac)
 {
     if (aMac != 0) {
-        mPacketHandler->GetBlackList().AddToMACWhiteList(aMac);
+        mPacketHandler->GetBlackList().AddToMacWhiteList(aMac);
     }
 }
 

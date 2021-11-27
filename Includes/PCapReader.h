@@ -36,10 +36,10 @@ public:
     ~PCapReader() = default;
 
     /**
-     * Adds a MAC address to the blacklist.
-     * @param aMAC - MAC address to blacklist.
+     * Adds a Mac address to the blacklist.
+     * @param aMac - Mac address to blacklist.
      */
-    void BlackList(uint64_t aMAC);
+    void BlackList(uint64_t aMac);
 
     void Close() override;
     bool Connect(std::string_view aESSID) override;
@@ -86,7 +86,7 @@ public:
      */
     void SetParameters(std::shared_ptr<RadioTapReader::PhysicalDeviceParameters> aParameters);
 
-    void SetSourceMACToFilter(uint64_t aMac);
+    void SetSourceMacToFilter(uint64_t aMac);
     // In this case tries to simulate a real device
     bool StartReceiverThread() override;
 

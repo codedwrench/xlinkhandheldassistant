@@ -33,10 +33,10 @@ class IPCapDevice
 {
 public:
     /**
-     * Adds a MAC address to the blacklist.
-     * @param aMAC - MAC address to blacklist.
+     * Adds a Mac address to the blacklist.
+     * @param aMac - Mac address to blacklist.
      */
-    virtual void BlackList(uint64_t aMAC) = 0;
+    virtual void BlackList(uint64_t aMac) = 0;
 
     /**
      * Closes the PCAP device.

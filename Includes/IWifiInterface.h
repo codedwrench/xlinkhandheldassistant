@@ -42,10 +42,10 @@ public:
 
 
     /**
-     * Get the MAC address of the adapter.
-     * @return the MAC address of the adapter.
+     * Get the Mac address of the adapter.
+     * @return the Mac address of the adapter.
      */
-    virtual uint64_t GetAdapterMACAddress() = 0;
+    virtual uint64_t GetAdapterMacAddress() = 0;
 
     /**
      * Gets the adhoc networks the network adapter has found.

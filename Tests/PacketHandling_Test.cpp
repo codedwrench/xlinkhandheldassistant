@@ -31,7 +31,7 @@ protected:
     Handler8023  mHandler8023{};
 };
 
-// Tests whether MacToInt can successfully convert a well formed MAC address string.
+// Tests whether MacToInt can successfully convert a well formed Mac address string.
 TEST_F(PacketHandlingTest, MacToInt)
 {
     uint64_t aResult{MacToInt("01:23:45:67:AB:CD")};
@@ -226,7 +226,7 @@ TEST_F(PacketHandlingTest, ConstructAcknowledgementFrame)
 
     lPCapReader.SetAcknowledgePackets(true);
 
-    // MAC coming from XLink Kai.
+    // Mac coming from XLink Kai.
     lPCapReader.BlackList(MacToInt("d4:4b:5e:a8:c1:c4"));
 
     std::vector<std::string> lSendBuffer{};

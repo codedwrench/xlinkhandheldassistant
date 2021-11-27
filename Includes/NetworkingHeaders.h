@@ -154,6 +154,7 @@ namespace Net_Constants
     static constexpr std::string_view cPSPSSIDFilterName{"PSP_"};
     static constexpr std::string_view cVitaSSIDFilterName{"SCE_"};
 }  // namespace Net_Constants
+
 namespace Net_8023_Constants
 {
     static constexpr uint8_t cDestinationAddressIndex{0};

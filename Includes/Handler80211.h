@@ -34,9 +34,11 @@ public:
      * 802.11 header and adding an 802.3 header. Only converts data packets!
      * @return converted packet data, empty string if failed.
      */
-    std::string ConvertPacket();
+    std::string ConvertPacketOut();
 
-    MACBlackList& GetBlackList() override;
+    MacBlackList& GetBlackList() override;
+
+    [[nodiscard]] uint16_t GetEtherType() const override;
 
     /**
      * Gets parameters for a control packet type, for example used for constructing acknowledgement frames.
@@ -50,8 +52,8 @@ public:
      */
     const RadioTapReader::PhysicalDeviceParameters& GetDataPacketParameters();
 
-    [[nodiscard]] uint64_t GetDestinationMAC() const override;
-    [[nodiscard]] uint64_t GetSourceMAC() const override;
+    [[nodiscard]] uint64_t GetDestinationMac() const override;
+    [[nodiscard]] uint64_t GetSourceMac() const override;
 
     /**
      * Gets locked onto BSSID.
@@ -140,9 +142,10 @@ private:
     Management80211PacketType mManagementPacketType{Management80211PacketType::None};
 
     bool         mAckable{false};
-    MACBlackList mBlackList{};
+    MacBlackList mBlackList{};
     uint64_t     mBSSID{0};
     uint64_t     mDestinationMac{0};
+    uint16_t     mEtherType{};
     uint64_t     mLockedBSSID{0};
     std::string  mLockedSSID{};
     bool         mRetry{false};

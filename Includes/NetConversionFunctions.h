@@ -76,11 +76,11 @@ static uint64_t SwapMacEndian(uint64_t aMac)
 }
 
 /**
- * Helper function for ConvertPacket, adds the IEEE80211 Header.
+ * Helper function for ConvertPacketOut, adds the IEEE80211 Header.
  * This one is based on Ad-Hoc traffic.
  * @param aData - Data to insert the Header to
- * @param aSourceAddress - Source MAC to insert.
- * @param aDestinationAddress - Destination MAC to insert.
+ * @param aSourceAddress - Source Mac to insert.
+ * @param aDestinationAddress - Destination Mac to insert.
  * @param aBSSID - BSSID to insert.
  * @param aIndex - Index to insert the header at.
  */
@@ -235,8 +235,8 @@ static uint64_t MacToInt(std::string_view aMac)
 }
 
 /**
- * Creates an acknowledgement frame based on MAC-address.
- * @param aReceiverMac - MAC address to fill in.
+ * Creates an acknowledgement frame based on Mac-address.
+ * @param aReceiverMac - Mac address to fill in.
  * @param aParameters - Parameters to use.
  * @return A string with the full packet.
  */
@@ -279,6 +279,29 @@ static std::string ConstructAcknowledgementFrame(uint64_t                       
 
     lReturn = std::string(lFullPacket.begin(), lFullPacket.end());
     return lReturn;
+}
+
+static std::string ConstructPSPPluginHandshake(uint64_t aPSPMac, uint64_t aAdapterMac)
+{
+    // Tell the PSP what Mac address to use
+    std::string lPacket{};
+    // Reserve size
+    lPacket.resize(Net_8023_Constants::cHeaderLength + Net_8023_Constants::cSourceAddressLength);
+
+    // Now put it into a packet
+    int lIndex{0};
+    memcpy(lPacket.data(), &aPSPMac, Net_8023_Constants::cDestinationAddressLength);
+    lIndex += Net_8023_Constants::cDestinationAddressLength;
+
+    memcpy(lPacket.data() + lIndex, &aAdapterMac, Net_8023_Constants::cSourceAddressLength);
+    lIndex += Net_8023_Constants::cSourceAddressLength;
+
+    memcpy(lPacket.data() + lIndex, &Net_Constants::cPSPEtherType, Net_8023_Constants::cEtherTypeLength);
+    lIndex += Net_8023_Constants::cEtherTypeLength;
+
+    memcpy(lPacket.data() + lIndex, &aAdapterMac, Net_8023_Constants::cDestinationAddressLength);
+
+    return lPacket;
 }
 
 /**

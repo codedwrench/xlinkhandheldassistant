@@ -51,7 +51,7 @@ void MonitorDeviceStep::SetUp()
                                          GetModel().mAcknowledgeDataFrames));
 
     AddObject(std::make_shared<TextField>(*this,
-                                          "Only allow packets from the following MAC-address",
+                                          "Only allow packets from the following Mac-address",
                                           ScaleOnlyAcceptFromMac,
                                           GetModel().mOnlyAcceptFromMac,
                                           17,

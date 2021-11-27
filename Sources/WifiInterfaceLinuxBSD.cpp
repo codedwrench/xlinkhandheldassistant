@@ -47,7 +47,7 @@ void WifiInterface::SetBSSPolicy()
     mBSSPolicy[NL80211_BSS_BEACON_IES]           = {NLA_UNSPEC, 0, 0};
 }
 
-uint64_t WifiInterface::GetAdapterMACAddress()
+uint64_t WifiInterface::GetAdapterMacAddress()
 {
     uint64_t lReturn{0};
 

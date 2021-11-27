@@ -8,22 +8,29 @@
 
 #include <string_view>
 
-#include "MACBlackList.h"
+#include "MacBlackList.h"
 
 class IHandler
 {
 public:
     /**
-     * Gets destination MAC address of packet.
-     * @return the destination MAC address.
+     * Gets destination Mac address of packet.
+     * @return the destination Mac address.
      */
-    [[nodiscard]] virtual uint64_t GetDestinationMAC() const = 0;
+    [[nodiscard]] virtual uint64_t GetDestinationMac() const = 0;
 
     /**
      * Gets blacklist wrapper, so functions can be called on it.
      * @return the blacklist.
      */
-    virtual MACBlackList& GetBlackList() = 0;
+    virtual MacBlackList& GetBlackList() = 0;
+
+    /**
+     * Gets the EtherType of specified packet.
+     *
+     * @return the EtherType
+     */
+    [[nodiscard]] virtual uint16_t GetEtherType() const = 0;
 
     /**
      * Gets packet saved in this class.
@@ -32,10 +39,10 @@ public:
     virtual std::string_view GetPacket() = 0;
 
     /**
-     * Gets source MAC address of packet.
-     * @return the source MAC address.
+     * Gets source Mac address of packet.
+     * @return the source Mac address.
      */
-    [[nodiscard]] virtual uint64_t GetSourceMAC() const = 0;
+    [[nodiscard]] virtual uint64_t GetSourceMac() const = 0;
 
     /**
      * Preload data about this packet into this class.

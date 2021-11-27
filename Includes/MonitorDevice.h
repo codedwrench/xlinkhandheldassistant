@@ -30,7 +30,7 @@ class MonitorDevice : public PCapDeviceBase
 public:
     /**
      * Constructs the monitor device
-     * @param aSourceMacToFilter - If a specific MAC needs to be filtered out.
+     * @param aSourceMacToFilter - If a specific Mac needs to be filtered out.
      * @param aAcknowledgeDataFrames - If Data frames should be acknowledged.
      * @param aCurrentlyConnectedNetwork - For use in the user interface, shows SSID.
      * @param aPcapWrapper - The libpcap wrapper to use, allows for mocks to be shoved in.
@@ -40,7 +40,7 @@ public:
                   std::string*                  aCurrentlyConnectedNetwork = nullptr,
                   std::shared_ptr<IPCapWrapper> aPcapWrapper               = std::make_shared<PCapWrapper>());
 
-    void BlackList(uint64_t aMAC) override;
+    void BlackList(uint64_t aMac) override;
     void Close() override;
     bool Connect(std::string_view aESSID) override;
 
@@ -59,7 +59,7 @@ public:
     bool Open(std::string_view aName, std::vector<std::string>& aSSIDFilter) override;
     bool Send(std::string_view aData) override;
     void SetAcknowledgePackets(bool aAcknowledge);
-    void SetSourceMACToFilter(uint64_t aMac);
+    void SetSourceMacToFilter(uint64_t aMac);
     bool StartReceiverThread() override;
 
 private:

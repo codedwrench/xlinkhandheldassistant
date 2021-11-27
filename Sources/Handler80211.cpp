@@ -14,7 +14,7 @@ Handler80211::Handler80211(PhysicalDeviceHeaderType aType)
     mParameter80211Reader = std::make_shared<Parameter80211Reader>(mPhysicalDeviceHeaderReader);
 }
 
-std::string Handler80211::ConvertPacket()
+std::string Handler80211::ConvertPacketOut()
 {
     std::string lConvertedPacket{};
 
@@ -73,11 +73,11 @@ std::string Handler80211::ConvertPacket()
         }
     }
 
-    // [ Destination MAC | Source MAC | EtherType ] [ Payload ]
+    // [ Destination Mac | Source Mac | EtherType ] [ Payload ]
     return lConvertedPacket;
 }
 
-MACBlackList& Handler80211::GetBlackList()
+MacBlackList& Handler80211::GetBlackList()
 {
     return mBlackList;
 }
@@ -97,10 +97,16 @@ std::string_view Handler80211::GetPacket()
     return mLastReceivedData;
 }
 
-uint64_t Handler80211::GetDestinationMAC() const
+uint64_t Handler80211::GetDestinationMac() const
 {
     return mDestinationMac;
 }
+
+[[nodiscard]] uint16_t Handler80211::GetEtherType() const
+{
+    return mEtherType;
+}
+
 
 uint64_t Handler80211::GetLockedBSSID() const
 {
@@ -112,7 +118,7 @@ std::string Handler80211::GetLockedSSID() const
     return mLockedSSID;
 }
 
-uint64_t Handler80211::GetSourceMAC() const
+uint64_t Handler80211::GetSourceMac() const
 {
     return mSourceMac;
 }
@@ -179,6 +185,7 @@ void Handler80211::Update(std::string_view aPacket)
     mAckable    = false;
     mIsDropped  = true;
     mShouldSend = false;
+    mEtherType  = 0;
 
     if (mPhysicalDeviceHeaderReader != nullptr) {
         mPhysicalDeviceHeaderReader->FillRadioTapParameters(aPacket);
@@ -190,8 +197,8 @@ void Handler80211::Update(std::string_view aPacket)
         case Main80211PacketType::Control:
             UpdateDestinationMac();
 
-            // Blacklisted MACs will have a destination MAC in XLink Kai, so only copy info about these packets
-            if (GetBlackList().IsMACBlackListed(mDestinationMac)) {
+            // Blacklisted Macs will have a destination Mac in XLink Kai, so only copy info about these packets
+            if (GetBlackList().IsMacBlackListed(mDestinationMac)) {
                 UpdateControlPacketType();
 
                 if (mControlPacketType == Control80211PacketType::ACK) {
@@ -205,11 +212,12 @@ void Handler80211::Update(std::string_view aPacket)
             // Only do something with the data frame if we care about this network
             UpdateSourceMac();
             UpdateBSSID();
-            if (GetBlackList().IsMACAllowed(mSourceMac) && IsBSSIDAllowed(mBSSID)) {
+            if (GetBlackList().IsMacAllowed(mSourceMac) && IsBSSIDAllowed(mBSSID)) {
                 UpdateDestinationMac();
                 UpdateAckable();
                 UpdateDataPacketType();
                 UpdateRetry();
+                mEtherType = GetRawData<uint16_t>(mLastReceivedData, Net_8023_Constants::cEtherTypeIndex);
 
                 // Only save parameters on normal data types.
                 if (!mRetry) {
@@ -234,7 +242,7 @@ void Handler80211::Update(std::string_view aPacket)
         case Main80211PacketType::Management:
             UpdateSourceMac();
 
-            if (GetBlackList().IsMACAllowed(mSourceMac)) {
+            if (GetBlackList().IsMacAllowed(mSourceMac)) {
                 UpdateManagementPacketType();
 
                 if (mManagementPacketType == Management80211PacketType::Beacon) {
@@ -264,7 +272,7 @@ void Handler80211::UpdateAckable()
 {
     // TODO: Filter multicast
     // Not a broadcast
-    if (mDestinationMac != 0xFFFFFFFFFFFFU) {
+    if (mDestinationMac != Net_Constants::cBroadcastMac) {
         mAckable = true;
     }
 }
@@ -275,7 +283,7 @@ void Handler80211::UpdateBSSID()
     if (mPhysicalDeviceHeaderReader != nullptr) {
         lBSSID = GetRawData<uint64_t>(mLastReceivedData,
                                       mPhysicalDeviceHeaderReader->GetLength() + Net_80211_Constants::cBSSIDIndex);
-        lBSSID &= static_cast<uint64_t>(static_cast<uint64_t>(1LLU << 48U) - 1);  // it's actually a uint48.
+        lBSSID &= Net_Constants::cBroadcastMac;  // it's actually a uint48.
 
         mBSSID = lBSSID;
     }
@@ -408,7 +416,7 @@ void Handler80211::UpdateDestinationMac()
         uint64_t lDestinationMac{GetRawData<uint64_t>(
             mLastReceivedData,
             mPhysicalDeviceHeaderReader->GetLength() + Net_80211_Constants::cDestinationAddressIndex)};
-        lDestinationMac &= static_cast<uint64_t>(static_cast<uint64_t>(1LLU << 48U) - 1);  // it's actually a uint48.
+        lDestinationMac &= Net_Constants::cBroadcastMac;  // it's actually a uint48.
 
         mDestinationMac = lDestinationMac;
     }
@@ -419,7 +427,7 @@ void Handler80211::UpdateSourceMac()
     if (mPhysicalDeviceHeaderReader != nullptr) {
         uint64_t lSourceMac{GetRawData<uint64_t>(
             mLastReceivedData, mPhysicalDeviceHeaderReader->GetLength() + Net_80211_Constants::cSourceAddressIndex)};
-        lSourceMac &= static_cast<uint64_t>(static_cast<uint64_t>(1LLU << 48U) - 1);  // it's actually a uint48.
+        lSourceMac &= Net_Constants::cBroadcastMac;  // it's actually a uint48.
 
         mSourceMac = lSourceMac;
     }

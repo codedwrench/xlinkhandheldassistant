@@ -10,7 +10,7 @@
 #include <memory>
 #include <thread>
 
-#include "Handler80211.h"
+#include "HandlerPSPPlugin.h"
 #include "IConnector.h"
 #include "IWifiInterface.h"
 #include "PCapDeviceBase.h"
@@ -38,12 +38,13 @@ class WirelessPSPPluginDevice : public PCapDeviceBase
 {
 public:
     explicit WirelessPSPPluginDevice(
-        bool                          aAutoConnect         = false,
-        std::chrono::seconds          aReConnectionTimeOut = WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
-        std::string*                  aCurrentlyConnected  = nullptr,
-        std::shared_ptr<IPCapWrapper> aPcapWrapper         = std::make_shared<PCapWrapper>());
+        bool                 aAutoConnect              = false,
+        std::chrono::seconds aReConnectionTimeOut      = WirelessPSPPluginDevice_Constants::cReconnectionTimeOut,
+        std::string*         aCurrentlyConnected       = nullptr,
+        std::shared_ptr<HandlerPSPPlugin> aHandler     = std::make_shared<HandlerPSPPlugin>(),
+        std::shared_ptr<IPCapWrapper>     aPcapWrapper = std::make_shared<PCapWrapper>());
 
-    void BlackList(uint64_t aMAC) override;
+    void BlackList(uint64_t aMac) override;
 
     void Close() override;
 
@@ -60,7 +61,7 @@ public:
      * Opens the device so it can be used for capture.
      * @param aName - Name of the interface or file to use.
      * @param aSSIDFilter - The SSIDS to listen to.
-     * @param aInterface - The WifiInterface to use for connection/finding out the MAC address.
+     * @param aInterface - The WifiInterface to use for connection/finding out the Mac address.
      * @return true if successful.
      */
     bool Open(std::string_view                aName,
@@ -76,21 +77,21 @@ public:
     bool StartReceiverThread() override;
 
 private:
-    MACBlackList                    mBlackList{};
-    bool                            mConnected{false};
-    bool                            mSSIDFromHost{false};
-    std::shared_ptr<IPCapWrapper>   mWrapper{nullptr};
-    uint64_t                        mAdapterMACAddress{};
-    bool                            mAutoConnect{};
-    std::string*                    mCurrentlyConnected{nullptr};
-    IWifiInterface::WifiInformation mCurrentlyConnectedInfo{};
-    bool                            mPausedAutoConnect{false};
-    std::shared_ptr<std::thread>    mReceiverThread{nullptr};
-    bool                            mSendReceivedData{false};
-    std::vector<std::string>        mSSIDFilter{};
-    std::chrono::seconds            mReConnectionTimeOut{WirelessPSPPluginDevice_Constants::cReconnectionTimeOut};
-    std::shared_ptr<IWifiInterface> mWifiInterface{nullptr};
-    std::shared_ptr<std::thread>    mWifiTimeoutThread{nullptr};
+    bool                              mConnected{false};
+    bool                              mSSIDFromHost{false};
+    std::shared_ptr<IPCapWrapper>     mWrapper{nullptr};
+    uint64_t                          mAdapterMacAddress{};
+    bool                              mAutoConnect{};
+    std::string*                      mCurrentlyConnected{nullptr};
+    IWifiInterface::WifiInformation   mCurrentlyConnectedInfo{};
+    std::shared_ptr<HandlerPSPPlugin> mPacketHandler{nullptr};
+    bool                              mPausedAutoConnect{false};
+    std::shared_ptr<std::thread>      mReceiverThread{nullptr};
+    bool                              mSendReceivedData{false};
+    std::vector<std::string>          mSSIDFilter{};
+    std::chrono::seconds              mReConnectionTimeOut{WirelessPSPPluginDevice_Constants::cReconnectionTimeOut};
+    std::shared_ptr<IWifiInterface>   mWifiInterface{nullptr};
+    std::shared_ptr<std::thread>      mWifiTimeoutThread{nullptr};
     /**
      * This timer checks if any data has been received from the connected to network, if not it will try to reconnect.
      */

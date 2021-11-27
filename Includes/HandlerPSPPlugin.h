@@ -16,19 +16,24 @@
 #include "RadioTapReader.h"
 
 /**
- * This class reads packets from a monitor format and converts to a promiscuous format.
+ * This class reads packets from a PSP plugin format and converts to a promiscuous format.
  **/
-class Handler8023 : public IHandler
+class HandlerPSPPlugin : public IHandler
 {
 public:
     /**
-     * This function converts a promiscuous mode packet to a monitor mode packet, adding the radiotap and
-     * 802.11 header and removing the 802.3 header.
-     * @param aBSSID - BSSID to use when inserting the 80211 header.
-     * @param aParameters - Parameters to use to convert to 80211.
+     * This function converts a PSP plugin packet to a promiscuous mode packet.
      * @return converted packet data, empty string if failed.
      */
-    std::string ConvertPacketOut(uint64_t aBSSID, RadioTapReader::PhysicalDeviceParameters aParameters);
+    std::string ConvertPacketOut();
+
+    /**
+     * This function converts a promiscuous mode packet to a PSP plugin packet.
+     * @param aData - The data to convert to a PSP plugin packet.
+     * @param aAdapterMac - The mac address to put into the original destination field.
+     * @return converted packet data, empty string if failed.
+     */
+    std::string ConvertPacketIn(std::string_view aData, uint64_t aAdapterMac);
 
     MacBlackList& GetBlackList() override;
 
@@ -40,15 +45,22 @@ public:
     [[nodiscard]] uint64_t GetSourceMac() const override;
 
     /**
-     * Preloads data from 802.3 header into this object.
+     * Tells if the last received packet was a broacast packet.
+     * @return true if it was.
+     */
+    [[nodiscard]] bool IsBroadcastPacket() const;
+
+    /**
+     * Preloads data from PSP header into this object.
      * @param aPacket - Packet to use for loading data.
      */
     void Update(std::string_view aPacket) override;
 
 private:
     MacBlackList mBlackList{};
-    uint16_t     mEtherType{};
+    bool         mIsBroadcastPacket{};
     std::string  mLastReceivedData{};
     uint64_t     mSourceMac{0};
     uint64_t     mDestinationMac{0};
+    uint16_t     mEtherType{};
 };
