@@ -23,6 +23,9 @@ At this point receive and send PSP traffic succesfully through XLink Kai using t
 - Intel Pro Wireless 5100 AGN (iwlwifi)
 - Intel® Wi-Fi 6E AX210 (Gig +) (iwlwifi)
 
+### Mediatek
+- Xbox Wireless Adapter for Windows (mt76x2u) [Adapter](https://www.amazon.com/Xbox-One-Wireless-Adapter-Windows/dp/B00ZB7W4QU/)
+
 ### Ralink
 - TP-Link TL-WN727N v1 (Ralink rt3070 (rt2800usb))
 - WTXUP Ralink RT3070 (rt2800usb)
