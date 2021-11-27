@@ -14,7 +14,7 @@ public:
     MOCK_METHOD(std::string, DataToString, (const unsigned char* aData, const pcap_pkthdr* aHeader));
     MOCK_METHOD(const unsigned char*, GetData, ());
     MOCK_METHOD(const pcap_pkthdr*, GetHeader, ());
-    MOCK_METHOD(bool, ReadCallback ,(const unsigned char* aData, const pcap_pkthdr* aHeader));
+    MOCK_METHOD(bool, ReadCallback, (const unsigned char* aData, const pcap_pkthdr* aHeader));
     MOCK_METHOD(bool, Send, (std::string_view aData));
     MOCK_METHOD(void, SetConnector, (std::shared_ptr<IConnector> aDevice));
     MOCK_METHOD(void, SetHosting, (bool aHosting));

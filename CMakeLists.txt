@@ -21,7 +21,7 @@ string(REGEX REPLACE "[,\n]" "" GIT_VERSION "${GIT_VERSION}")
 if (MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2 /MT")
 else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
 endif ()
 
 option(BUILD_DOC "Build doxygen" OFF)
@@ -116,6 +116,7 @@ add_executable(xlinkhandheldassistant main.cpp
         Sources/RadioTapReader.cpp
         Sources/WindowModel.cpp
         Sources/WirelessPromiscuousBase.cpp
+        Sources/WirelessPromiscuousDevice.cpp
         Sources/WirelessPSPPluginDevice.cpp
         Sources/XLinkKaiConnection.cpp
         Sources/UserInterface/AboutWindow.cpp
@@ -136,6 +137,7 @@ add_executable(xlinkhandheldassistant main.cpp
         Sources/UserInterface/WindowControllerBase.cpp
         Sources/UserInterface/Wizard/MonitorDeviceStep.cpp
         Sources/UserInterface/Wizard/PluginOptionsStep.cpp
+        Sources/UserInterface/Wizard/PromiscuousOptionsStep.cpp
         Sources/UserInterface/Wizard/WizardController.cpp
         Sources/UserInterface/Wizard/WizardSelectorStep.cpp
         Sources/UserInterface/Wizard/XLinkOptionsStep.cpp
@@ -160,6 +162,7 @@ add_executable(xlinkhandheldassistant main.cpp
         Includes/XLinkKaiConnection.h
         Includes/WindowModel.h
         Includes/WirelessPromiscuousBase.h
+        Includes/WirelessPromiscuousDevice.h
         Includes/WirelessPSPPluginDevice.h
         Includes/UserInterface/AboutWindow.h
         Includes/UserInterface/Button.h
@@ -185,6 +188,7 @@ add_executable(xlinkhandheldassistant main.cpp
         Includes/UserInterface/WindowControllerBase.h
         Includes/UserInterface/Wizard/MonitorDeviceStep.h
         Includes/UserInterface/Wizard/PluginOptionsStep.h
+        Includes/UserInterface/Wizard/PromiscuousOptionsStep.h
         Includes/UserInterface/Wizard/WizardController.h
         Includes/UserInterface/Wizard/WizardSelectorStep.h
         Includes/UserInterface/Wizard/XLinkOptionsStep.h)
@@ -240,6 +244,7 @@ if (ENABLE_TESTS)
             Tests/IWifiInterfaceMock.h
             Tests/PacketHandling_Test.cpp
             Tests/PluginPacketHandling_Test.cpp
+            Tests/PromiscuousPacketHandling_Test.cpp
             Tests/WindowModel_Test.cpp
             Sources/Handler8023.cpp
             Sources/Handler80211.cpp
@@ -254,6 +259,7 @@ if (ENABLE_TESTS)
             Sources/RadioTapReader.cpp
             Sources/WindowModel.cpp
             Sources/WirelessPromiscuousBase.cpp
+            Sources/WirelessPromiscuousDevice.cpp
             Sources/WirelessPSPPluginDevice.cpp
             Sources/WifiInterfaceLinuxBSD.cpp
             Sources/XLinkKaiConnection.cpp)

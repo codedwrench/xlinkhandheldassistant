@@ -29,7 +29,8 @@ namespace WindowModel_Constants
 
     enum ConnectionMethod
     {
-        Plugin = 0, /**< Plugin device */
+        Plugin = 0,  /**< Plugin device */
+        Promiscuous, /**< Promiscuous device (L2MOD will work too) */
 #if not defined(_WIN32) && not defined(_WIN64)
         Monitor, /**< Monitor mode device */
 #endif
@@ -45,9 +46,11 @@ namespace WindowModel_Constants
     };
 
 #if not defined(_WIN32) && not defined(_WIN64)
-    static constexpr std::array<std::string_view, 4> cConnectionMethodTexts{"Plugin", "Monitor", "USB", "Simulation"};
+    static constexpr std::array<std::string_view, 5> cConnectionMethodTexts{
+        "Plugin", "Promiscuous", "Monitor", "USB", "Simulation"};
 #else
-    static constexpr std::array<std::string_view, 4> cConnectionMethodTexts{"Plugin", "USB", "Simulation"};
+    static constexpr std::array<std::string_view, 5> cConnectionMethodTexts{
+        "Plugin", "Promiscuous", "USB", "Simulation"};
 #endif
 
     static constexpr std::array<std::string_view, 3> cEngineStatusTexts{"Idle", "Running", "Error"};

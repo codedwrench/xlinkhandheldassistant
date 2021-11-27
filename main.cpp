@@ -17,6 +17,7 @@
 #include "Includes/UserInterface/KeyboardController.h"
 #include "Includes/UserInterface/MainWindowController.h"
 #include "Includes/WirelessPSPPluginDevice.h"
+#include "Includes/WirelessPromiscuousDevice.h"
 #include "Includes/XLinkKaiConnection.h"
 
 namespace
@@ -166,26 +167,44 @@ int main(int argc, char* argv[])
                                 Logger::GetInstance().SetLogLevel(mWindowModel.mLogLevel);
                             }
 
-                            // If we are using a PSP plugin device set up normal WiFi adapter
-                            if (mWindowModel.mConnectionMethod == WindowModel_Constants::ConnectionMethod::Plugin) {
-                                if (std::dynamic_pointer_cast<WirelessPSPPluginDevice>(lDevice) == nullptr) {
-                                    std::chrono::seconds lTimeOut =
-                                        std::chrono::seconds(std::stoi(mWindowModel.mReConnectionTimeOutS));
-                                    lDevice = std::make_shared<WirelessPSPPluginDevice>(
-                                        mWindowModel.mAutoDiscoverPSPVitaNetworks,
-                                        lTimeOut,
-                                        &mWindowModel.mCurrentlyConnectedNetwork);
+                            switch (mWindowModel.mConnectionMethod) {
+                                case WindowModel_Constants::ConnectionMethod::Plugin:
+                                    if (std::dynamic_pointer_cast<WirelessPSPPluginDevice>(lDevice) == nullptr) {
+                                        std::chrono::seconds lTimeOut =
+                                            std::chrono::seconds(std::stoi(mWindowModel.mReConnectionTimeOutS));
+                                        lDevice = std::make_shared<WirelessPSPPluginDevice>(
+                                            mWindowModel.mAutoDiscoverPSPVitaNetworks,
+                                            lTimeOut,
+                                            &mWindowModel.mCurrentlyConnectedNetwork);
 
-                                    Logger::GetInstance().Log("Plugin Device created!", Logger::Level::INFO);
-                                }
-                            } else {
-                                if (std::dynamic_pointer_cast<MonitorDevice>(lDevice) == nullptr) {
-                                    lDevice = std::make_shared<MonitorDevice>(MacToInt(mWindowModel.mOnlyAcceptFromMac),
-                                                                              mWindowModel.mAcknowledgeDataFrames,
-                                                                              &mWindowModel.mCurrentlyConnectedNetwork);
-                                    Logger::GetInstance().Log("Monitor Device created!", Logger::Level::INFO);
-                                }
+                                        Logger::GetInstance().Log("Plugin Device created!", Logger::Level::INFO);
+                                    }
+                                    break;
+                                case WindowModel_Constants::ConnectionMethod::Promiscuous:
+                                    if (std::dynamic_pointer_cast<WirelessPromiscuousDevice>(lDevice) == nullptr) {
+                                        std::chrono::seconds lTimeOut =
+                                            std::chrono::seconds(std::stoi(mWindowModel.mReConnectionTimeOutS));
+                                        lDevice = std::make_shared<WirelessPromiscuousDevice>(
+                                            mWindowModel.mAutoDiscoverPSPVitaNetworks,
+                                            lTimeOut,
+                                            &mWindowModel.mCurrentlyConnectedNetwork);
+
+                                        Logger::GetInstance().Log("Promiscuous Device created!", Logger::Level::INFO);
+                                    }
+                                    break;
+                                case WindowModel_Constants::ConnectionMethod::Monitor:
+                                    if (std::dynamic_pointer_cast<MonitorDevice>(lDevice) == nullptr) {
+                                        lDevice = std::make_shared<MonitorDevice>(MacToInt(mWindowModel.mOnlyAcceptFromMac),
+                                                                                  mWindowModel.mAcknowledgeDataFrames,
+                                                                                  &mWindowModel.mCurrentlyConnectedNetwork);
+                                        Logger::GetInstance().Log("Monitor Device created!", Logger::Level::INFO);
+                                    }
+                                default:
+                                    Logger::GetInstance().Log("Unknown method!", Logger::Level::ERROR);
+                                    gRunning = false;
+                                    break;
                             }
+
                             lXLinkKaiConnection->SetIncomingConnection(lDevice);
                             lXLinkKaiConnection->SetUseHostSSID(mWindowModel.mUseSSIDFromHost);
 

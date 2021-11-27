@@ -81,6 +81,8 @@ public:
      */
     [[nodiscard]] bool IsDropped() const;
 
+    [[nodiscard]] bool IsBroadcastPacket() const override;
+
     /**
      * Checks if this BSSID is locked onto.
      * @param aBSSID - BSSID to check
@@ -146,6 +148,7 @@ private:
     uint64_t     mBSSID{0};
     uint64_t     mDestinationMac{0};
     uint16_t     mEtherType{};
+    bool         mIsBroadcastPacket{};
     uint64_t     mLockedBSSID{0};
     std::string  mLockedSSID{};
     bool         mRetry{false};

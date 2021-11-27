@@ -14,6 +14,7 @@ namespace WizardController_Constants
     {
         Selector = 0,
         MonitorOptions,
+        PromiscuousOptions,
         PluginOptions,
         SimulationOptions,
         USBOptions,

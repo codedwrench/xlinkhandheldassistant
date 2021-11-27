@@ -40,6 +40,8 @@ public:
 
     [[nodiscard]] uint64_t GetSourceMac() const override;
 
+    [[nodiscard]] bool IsBroadcastPacket() const override;
+
     /**
      * Preloads data from 802.3 header into this object.
      * @param aPacket - Packet to use for loading data.
@@ -49,6 +51,7 @@ public:
 private:
     MacBlackList mBlackList{};
     uint16_t     mEtherType{};
+    bool         mIsBroadcastPacket{};
     std::string  mLastReceivedData{};
     uint64_t     mSourceMac{0};
     uint64_t     mDestinationMac{0};

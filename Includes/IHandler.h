@@ -45,6 +45,12 @@ public:
     [[nodiscard]] virtual uint64_t GetSourceMac() const = 0;
 
     /**
+     * Tells if the last received packet was a broacast packet.
+     * @return true if it is.
+     */
+    [[nodiscard]] virtual bool IsBroadcastPacket() const = 0;
+
+    /**
      * Preload data about this packet into this class.
      * @param aData - Packet to dissect.
      */

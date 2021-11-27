@@ -128,6 +128,11 @@ bool Handler80211::IsAckable() const
     return mAckable;
 }
 
+bool Handler80211::IsBroadcastPacket() const
+{
+    return mIsBroadcastPacket;
+}
+
 bool Handler80211::IsBSSIDAllowed(uint64_t aBSSID) const
 {
     return mLockedBSSID == aBSSID;
@@ -182,10 +187,11 @@ void Handler80211::Update(std::string_view aPacket)
     // Save data in object and fill RadioTap parameters.
     mLastReceivedData = aPacket;
 
-    mAckable    = false;
-    mIsDropped  = true;
-    mShouldSend = false;
-    mEtherType  = 0;
+    mAckable           = false;
+    mIsDropped         = true;
+    mShouldSend        = false;
+    mEtherType         = 0;
+    mIsBroadcastPacket = false;
 
     if (mPhysicalDeviceHeaderReader != nullptr) {
         mPhysicalDeviceHeaderReader->FillRadioTapParameters(aPacket);
@@ -214,9 +220,14 @@ void Handler80211::Update(std::string_view aPacket)
             UpdateBSSID();
             if (GetBlackList().IsMacAllowed(mSourceMac) && IsBSSIDAllowed(mBSSID)) {
                 UpdateDestinationMac();
+
+                // Put above ackable because ackable needs this flag to be up-to-date
+                mIsBroadcastPacket = mDestinationMac == Net_Constants::cBroadcastMac;
+
                 UpdateAckable();
                 UpdateDataPacketType();
                 UpdateRetry();
+
                 mEtherType = GetRawData<uint16_t>(mLastReceivedData, Net_8023_Constants::cEtherTypeIndex);
 
                 // Only save parameters on normal data types.
@@ -272,7 +283,7 @@ void Handler80211::UpdateAckable()
 {
     // TODO: Filter multicast
     // Not a broadcast
-    if (mDestinationMac != Net_Constants::cBroadcastMac) {
+    if (!mIsBroadcastPacket) {
         mAckable = true;
     }
 }

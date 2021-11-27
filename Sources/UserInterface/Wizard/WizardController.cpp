@@ -5,6 +5,7 @@
 #include "../../../Includes/PCapWrapper.h"
 #include "../../../Includes/UserInterface/Wizard/MonitorDeviceStep.h"
 #include "../../../Includes/UserInterface/Wizard/PluginOptionsStep.h"
+#include "../../../Includes/UserInterface/Wizard/PromiscuousOptionsStep.h"
 #include "../../../Includes/UserInterface/Wizard/WizardSelectorStep.h"
 #include "../../../Includes/UserInterface/Wizard/XLinkOptionsStep.h"
 
@@ -146,7 +147,6 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
         aPcapWrapper->FreeAllDevices(lDevices);
     }
 }
-
 #endif
 
 void WizardController::HandleConnectionMethod()
@@ -160,6 +160,18 @@ void WizardController::HandleConnectionMethod()
 
             // Add the Plugin wizard step
             ReplaceWindow<PluginOptionsStep>(GetWindows(), GetWindowModel(), "Plugin options", [&] {
+                return ScaleWizard(GetHeightReference(), GetWidthReference());
+            });
+
+            break;
+        case WindowModel_Constants::ConnectionMethod::Promiscuous:
+            mWizardStep = PromiscuousOptions;
+
+            // We are going to fill the WiFi-adapter list now, since we need it here
+            FillWifiAdapters(GetWindowModel().mWifiAdapterList);
+
+            // Add the Promiscuous wizard step
+            ReplaceWindow<PromiscuousOptionsStep>(GetWindows(), GetWindowModel(), "Promiscuous options", [&] {
                 return ScaleWizard(GetHeightReference(), GetWidthReference());
             });
 
@@ -226,6 +238,16 @@ bool WizardController::Process()
                 });
                 break;
             case PluginOptions:
+                // Convert the wifi adapter selection to a string
+                GetWindowModel().mWifiAdapter =
+                    GetWindowModel().mWifiAdapterList.at(GetWindowModel().mWifiAdapterSelection).first;
+
+                mWizardStep = XLinkKaiOptions;
+                ReplaceWindow<XLinkOptionsStep>(GetWindows(), GetWindowModel(), "XLink Kai options", [&] {
+                    return ScaleWizard(GetHeightReference(), GetWidthReference());
+                });
+                break;
+            case PromiscuousOptions:
                 // Convert the wifi adapter selection to a string
                 GetWindowModel().mWifiAdapter =
                     GetWindowModel().mWifiAdapterList.at(GetWindowModel().mWifiAdapterSelection).first;

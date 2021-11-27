@@ -68,7 +68,7 @@ public:
 protected:
     uint64_t&                                           GetAdapterMacAddress();
     std::chrono::time_point<std::chrono::system_clock>& GetReadWatchdog();
-    std::shared_ptr<IPCapWrapper>& GetWrapper();
+    std::shared_ptr<IPCapWrapper>&                      GetWrapper();
 
 private:
     bool                            mConnected{false};

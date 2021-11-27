@@ -45,11 +45,7 @@ public:
 
     [[nodiscard]] uint64_t GetSourceMac() const override;
 
-    /**
-     * Tells if the last received packet was a broacast packet.
-     * @return true if it was.
-     */
-    [[nodiscard]] bool IsBroadcastPacket() const;
+    [[nodiscard]] bool IsBroadcastPacket() const override;
 
     /**
      * Preloads data from PSP header into this object.

@@ -32,6 +32,7 @@ void WizardSelectorStep::SetUp()
                                                    reinterpret_cast<int&>(GetModel().mConnectionMethod))};
 
     lSelector->AddRadioBox("Plugin Device");
+    lSelector->AddRadioBox("Vita Device");
 #if not defined(_WIN32) && not defined(_WIN64)
     lSelector->AddRadioBox("Monitor Device");
 #endif

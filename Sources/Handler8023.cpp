@@ -81,6 +81,11 @@ uint64_t Handler8023::GetSourceMac() const
     return mSourceMac;
 }
 
+bool Handler8023::IsBroadcastPacket() const
+{
+    return mIsBroadcastPacket;
+}
+
 void Handler8023::Update(std::string_view aPacket)
 {
     // Save data in object and fill RadioTap parameters.
@@ -95,7 +100,8 @@ void Handler8023::Update(std::string_view aPacket)
     auto lDestinationMac = GetRawData<uint64_t>(mLastReceivedData, Net_8023_Constants::cDestinationAddressIndex);
     lDestinationMac &= Net_Constants::cBroadcastMac;  // it's actually a uint48.
 
-    mDestinationMac = lDestinationMac;
+    mDestinationMac    = lDestinationMac;
+    mIsBroadcastPacket = mDestinationMac == Net_Constants::cBroadcastMac;
 
     mEtherType = GetRawData<uint16_t>(mLastReceivedData, Net_8023_Constants::cEtherTypeIndex);
 }
