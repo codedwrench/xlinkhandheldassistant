@@ -155,9 +155,9 @@ namespace Net_Constants
     static constexpr uint16_t         cARPOpCodeSize{2};
     static constexpr uint16_t         cARPOpCodeRequest{1};
     static constexpr uint16_t         cARPOpCodeReply{2};
-    static constexpr uint16_t         cARPRequestSenderMacIndex{22};
+    static constexpr uint16_t         cARPSenderMacIndex{22};
     static constexpr uint8_t          cMacAddressLength{6};
-    static constexpr uint16_t         cARPReplyTargetMacIndex{32};
+    static constexpr uint16_t         cARPTargetMacIndex{32};
     static constexpr uint64_t         cBroadcastMac{0xFFFFFFFFFFFF};
     static constexpr uint64_t         cDDSReplaceMac{0xFE01005E0000};
     static constexpr std::string_view cPSPSSIDFilterName{"PSP_"};
