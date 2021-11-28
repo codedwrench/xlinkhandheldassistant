@@ -72,6 +72,23 @@ bool WirelessPromiscuousDevice::Send(std::string_view aData)
                 memcpy(lData.data() + Net_8023_Constants::cSourceAddressIndex,
                        &lAdapterMacAddress,
                        Net_8023_Constants::cSourceAddressLength);
+
+                // Check if we are an ARP-Something
+                if (GetRawData<uint16_t>(lData.data(), Net_8023_Constants::cEtherTypeIndex) ==
+                    Net_Constants::cARPEtherType) {
+                    auto lOpCode = GetRawData<uint16_t>(lData.data(), Net_Constants::cARPOpCodeIndex);
+                    if (lOpCode == Net_Constants::cARPOpCodeRequest) {
+                        // This would also contain the XLink Kai VRRP Mac
+                        memcpy(lData.data() + Net_Constants::cARPRequestSenderMacIndex,
+                               &lAdapterMacAddress,
+                               Net_Constants::cMacAddressLength);
+                    } else if (lOpCode == Net_Constants::cARPOpCodeReply) {
+                        // This would also contain the XLink Kai VRRP Mac
+                        memcpy(lData.data() + Net_Constants::cARPReplyTargetMacIndex,
+                               &lAdapterMacAddress,
+                               Net_Constants::cMacAddressLength);
+                    }
+                }
             }
 
             Logger::GetInstance().Log(std::string("Sent: ") + PrettyHexString(lData), Logger::Level::TRACE);

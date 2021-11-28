@@ -150,6 +150,14 @@ namespace Net_Constants
     // Own packet type used to tell PSP what mac to use
     static constexpr uint16_t         cSetMacType{0x636D};
     static constexpr uint16_t         cPSPEtherType{0xC888};
+    static constexpr uint16_t         cARPEtherType{0x0608};
+    static constexpr uint16_t         cARPOpCodeIndex{20};
+    static constexpr uint16_t         cARPOpCodeSize{2};
+    static constexpr uint16_t         cARPOpCodeRequest{1};
+    static constexpr uint16_t         cARPOpCodeReply{2};
+    static constexpr uint16_t         cARPRequestSenderMacIndex{22};
+    static constexpr uint8_t          cMacAddressLength{6};
+    static constexpr uint16_t         cARPReplyTargetMacIndex{32};
     static constexpr uint64_t         cBroadcastMac{0xFFFFFFFFFFFF};
     static constexpr uint64_t         cDDSReplaceMac{0xFE01005E0000};
     static constexpr std::string_view cPSPSSIDFilterName{"PSP_"};
