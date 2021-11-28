@@ -30,7 +30,7 @@ public:
         uint8_t  mKnownMCSInfo{0};
         uint8_t  mMCSFlags{0};
         uint8_t  mMCSInfo{0};
-    } __attribute__((aligned(16))) __attribute__((packed));
+    };
 
     /**
      * Resets all the member variables to default.

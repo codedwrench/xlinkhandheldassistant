@@ -75,12 +75,11 @@ bool WirelessPromiscuousDevice::Send(std::string_view aData)
 
                 // Check if we are an ARP-Something
                 if (GetRawData<uint16_t>(lData.data(), Net_8023_Constants::cEtherTypeIndex) ==
-                    Net_Constants::cARPEtherType) {
-                    auto lOpCode = GetRawData<uint16_t>(lData.data(), Net_Constants::cARPOpCodeIndex);
-                    if (lOpCode == Net_Constants::cARPOpCodeRequest ||
-                        lOpCode == Net_Constants::cARPOpCodeReply) {
+                    Net_Constants::Arp::cEtherType) {
+                    auto lOpCode = GetRawData<uint16_t>(lData.data(), Net_Constants::Arp::cOpCodeIndex);
+                    if (lOpCode == Net_Constants::Arp::cOpCodeRequest || lOpCode == Net_Constants::Arp::cOpCodeReply) {
                         // This would also contain the XLink Kai VRRP Mac
-                        memcpy(lData.data() + Net_Constants::cARPSenderMacIndex,
+                        memcpy(lData.data() + Net_Constants::Arp::cSenderMacIndex,
                                &lAdapterMacAddress,
                                Net_Constants::cMacAddressLength);
                     }

@@ -147,17 +147,22 @@ PACK(struct RadioTapHeader {
 // General Network Constants, for both 802.3 and 802.11
 namespace Net_Constants
 {
+    namespace Arp
+    {
+        static constexpr uint16_t cEtherType{0x0608};
+        static constexpr uint16_t cOpCodeIndex{20};
+        static constexpr uint16_t cOpCodeSize{2};
+        static constexpr uint16_t cOpCodeRequest{0x0100};
+        static constexpr uint16_t cOpCodeReply{0x0200};
+        static constexpr uint16_t cSenderMacIndex{22};
+        static constexpr uint16_t cTargetMacIndex{32};
+        static constexpr uint64_t cNoTargetMac{0x000000000000};
+    }  // namespace Arp
+
     // Own packet type used to tell PSP what mac to use
     static constexpr uint16_t         cSetMacType{0x636D};
     static constexpr uint16_t         cPSPEtherType{0xC888};
-    static constexpr uint16_t         cARPEtherType{0x0608};
-    static constexpr uint16_t         cARPOpCodeIndex{20};
-    static constexpr uint16_t         cARPOpCodeSize{2};
-    static constexpr uint16_t         cARPOpCodeRequest{0x0100};
-    static constexpr uint16_t         cARPOpCodeReply{0x0200};
-    static constexpr uint16_t         cARPSenderMacIndex{22};
     static constexpr uint8_t          cMacAddressLength{6};
-    static constexpr uint16_t         cARPTargetMacIndex{32};
     static constexpr uint64_t         cBroadcastMac{0xFFFFFFFFFFFF};
     static constexpr uint64_t         cDDSReplaceMac{0xFE01005E0000};
     static constexpr std::string_view cPSPSSIDFilterName{"PSP_"};
