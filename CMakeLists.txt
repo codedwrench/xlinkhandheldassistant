@@ -21,7 +21,7 @@ string(REGEX REPLACE "[,\n]" "" GIT_VERSION "${GIT_VERSION}")
 if (MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2 /MT")
 else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 endif ()
 
 option(BUILD_DOC "Build doxygen" OFF)

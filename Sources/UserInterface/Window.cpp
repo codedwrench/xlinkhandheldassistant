@@ -3,6 +3,7 @@
 #include "../../Includes/UserInterface/Window.h"
 
 #include <codecvt>
+#include <locale>
 
 #include "../../Includes/UserInterface/NCursesKeys.h"
 
