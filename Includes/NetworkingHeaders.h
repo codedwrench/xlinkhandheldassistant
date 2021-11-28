@@ -153,8 +153,8 @@ namespace Net_Constants
     static constexpr uint16_t         cARPEtherType{0x0608};
     static constexpr uint16_t         cARPOpCodeIndex{20};
     static constexpr uint16_t         cARPOpCodeSize{2};
-    static constexpr uint16_t         cARPOpCodeRequest{1};
-    static constexpr uint16_t         cARPOpCodeReply{2};
+    static constexpr uint16_t         cARPOpCodeRequest{0x0100};
+    static constexpr uint16_t         cARPOpCodeReply{0x0200};
     static constexpr uint16_t         cARPSenderMacIndex{22};
     static constexpr uint8_t          cMacAddressLength{6};
     static constexpr uint16_t         cARPTargetMacIndex{32};
