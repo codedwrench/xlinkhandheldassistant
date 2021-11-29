@@ -61,10 +61,16 @@ if (MSVC OR MSYS OR MINGW)
         execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/build_scripts/generateDelayLoadedWPCap.bat"
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build_scripts
         )
+
+        # Conversion from res file to .o file so we can link it in a way that will make the version info stick
+	# See: https://stackoverflow.com/questions/63013037/mingw-winpthreads-overrides-rc-resource-file-information
+        execute_process(COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/build_scripts/resourceToObject.bat"
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build_scripts
+        )
             
         # Add WinSock, liphlpapi, wlanapi and ole32 to the platform specific libraries, MINGW needs it.
         set(CMAKE_CXX_STANDARD_LIBRARIES "-liphlpapi -lwlanapi -lole32 -lwinmm -lws2_32 ${CMAKE_CXX_STANDARD_LIBRARIES}")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/xlinkhandheldassistant.o -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
     
         # Needed because otherwise the libraries cannot be found.
         set(Boost_ARCHITECTURE "-x64")
