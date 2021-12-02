@@ -18,6 +18,8 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #include "WifiInterfaceWindows.h"
+#elif defined (__APPLE__)
+#include "WifiInterfaceApple.h"
 #else
 #include "WifiInterfaceLinuxBSD.h"
 #endif

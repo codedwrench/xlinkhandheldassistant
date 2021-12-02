@@ -15,6 +15,8 @@ class WindowModel;
 class IWindowController
 {
 public:
+    virtual ~IWindowController() = default;
+
     /**
      * Sets up the layout and sets up curses in case of the mainn controller.
      * @return true if successful

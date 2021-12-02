@@ -40,8 +40,8 @@ void KeyboardController::StartThread()
                 lNumCyclesSinceComboKeyPressed++;
                 lComboKeyPressed = true;
                 // I should probably differentiate between these two, but whatever
-            } else if (lComboKeyPressed && (lKey == cKeypadArrowCombo) ||
-                       lComboKeyPressed && (lKey == cKeypadCenterCombo)) {
+            } else if ((lComboKeyPressed && (lKey == cKeypadArrowCombo)) ||
+                       (lComboKeyPressed && (lKey == cKeypadCenterCombo))) {
                 lNumCyclesSinceComboKeyPressed++;
                 lKeyIsKeypad = true;
             } else if (lComboKeyPressed) {

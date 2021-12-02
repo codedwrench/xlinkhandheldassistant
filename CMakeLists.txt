@@ -86,24 +86,33 @@ if (MSVC OR MSYS OR MINGW)
     
     set(CURSES_INCLUDE_DIRS "c:/pdcurses/")
     set(CURSES_LIBRARIES ${PDCURSES_LIBRARIES})
-else ()                                                                                                 
-    set(CURSES_NEED_WIDE TRUE)
-    find_package(Curses REQUIRED)
+elseif(NOT APPLE)                                              
     find_package(LibNL REQUIRED)
-endif ()
+endif()
 
 if (BUILD_STATIC)
     message("Static linking enabled")
-    set(BUILD_STATIC ON)
-    set(BOOST_ROOT "/home/codedwrench/src/boost")
     add_definitions(-DBUILD_STATIC)
+    set(BUILD_STATIC ON)
+
     set(Boost_USE_STATIC_LIBS ON)
+    set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../boost")
+
+    set(PCAP_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/../libpcap/libpcap.a")
+    set(PCAP_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libpcap/")
+
+    set(CURSES_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../ncurses/include")
+    set(CURSES_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/../ncurses/lib/libncursesw.a
+                          ${CMAKE_CURRENT_SOURCE_DIR}/../ncurses/lib/libformw.a)
+else()
+    find_package(PCAP REQUIRED)
+    set(CURSES_NEED_WIDE TRUE)
+    find_package(Curses REQUIRED)
 endif()
 
 # Concepts seems to break on a bunch of compilers, see: https://github.com/boostorg/asio/issues/312
 add_definitions(-DBOOST_ASIO_DISABLE_CONCEPTS)
 
-find_package(PCAP REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Boost 1.71 REQUIRED COMPONENTS program_options)
 
@@ -204,6 +213,8 @@ if(WIN32)
         set_property(TARGET xlinkhandheldassistant APPEND PROPERTY LINK_FLAGS "/DELAYLOAD:wpcap.dll")
     endif()
     target_sources(xlinkhandheldassistant PRIVATE Sources/WifiInterfaceWindows.cpp Includes/WifiInterfaceWindows.h)
+elseif (APPLE)
+    target_sources(xlinkhandheldassistant PRIVATE Includes/WifiInterfaceApple.h)
 elseif (UNIX)
     target_sources(xlinkhandheldassistant PRIVATE Sources/WifiInterfaceLinuxBSD.cpp Includes/WifiInterfaceLinuxBSD.h)
 endif()
@@ -212,7 +223,7 @@ endif()
 # We have no GUI anyway!
 add_definitions(-DGIT_VERSION="${GIT_VERSION}" -DNOGDI)
 
-if (BUILD_STATIC)    
+if (BUILD_STATIC AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ ${CMAKE_EXE_LINKER_FLAGS}")
 endif ()
 
