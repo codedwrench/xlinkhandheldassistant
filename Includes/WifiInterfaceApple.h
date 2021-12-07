@@ -18,14 +18,14 @@ namespace WifiInterface_Constants
 class WifiInterface : public IWifiInterface
 {
 public:
-    explicit WifiInterface(std::string_view aAdapterName) {};
-    ~WifiInterface() {};
+    explicit WifiInterface(std::string_view aAdapterName);
+    ~WifiInterface();
 
     // just placeholders for now
-    bool                                          Connect(const IWifiInterface::WifiInformation& aConnection) override { return false; };
-    bool                                          LeaveIBSS() override { return false; }
-    uint64_t                                      GetAdapterMacAddress() override { return 0x012345678900; }
-    std::vector<IWifiInterface::WifiInformation>& GetAdhocNetworks() override { return mAdhocNetworks; }
+    bool                                          Connect(const IWifiInterface::WifiInformation& aConnection) override;
+    bool                                          LeaveIBSS() override;
+    uint64_t                                      GetAdapterMacAddress() override;
+    std::vector<IWifiInterface::WifiInformation>& GetAdhocNetworks() override;
 
 private:
     std::vector<IWifiInterface::WifiInformation> mAdhocNetworks{};

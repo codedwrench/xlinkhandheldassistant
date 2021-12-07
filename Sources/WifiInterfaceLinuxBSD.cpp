@@ -19,8 +19,8 @@
 
 using namespace WifiInterface_Constants;
 
-WifiInterface::WifiInterface(std::string_view aAdapter) :
-    mAdapterName(aAdapter), mSocket(nl_socket_alloc()), mNetworkAdapterIndex(if_nametoindex(mAdapterName.data()))
+WifiInterface::WifiInterface(std::string_view aAdapterName) :
+    mAdapterName(aAdapterName), mSocket(nl_socket_alloc()), mNetworkAdapterIndex(if_nametoindex(mAdapterName.data()))
 {
     SetBSSPolicy();
     // Open socket to kernel.
