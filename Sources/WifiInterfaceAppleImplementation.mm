@@ -23,7 +23,8 @@ WifiInterface::WifiInterface(std::string_view aAdapterName) :
     mImplementation([[WifiInterfaceAppleImplementation alloc] init]),
     mAdapterName(aAdapterName)
 {
-    
+  [mImplementation SetInterfaceWithName : [NSString stringWithCString : aAdapterName.data()
+                                                              encoding:[NSString defaultCStringEncoding]]];
 }
 
 WifiInterface::~WifiInterface() = default;
