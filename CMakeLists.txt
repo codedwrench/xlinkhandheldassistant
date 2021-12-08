@@ -217,7 +217,9 @@ if(WIN32)
   endif()
   target_sources(xlinkhandheldassistant PRIVATE Sources/WifiInterfaceWindows.cpp Includes/WifiInterfaceWindows.h)
 elseif (APPLE)
-  target_sources(xlinkhandheldassistant PRIVATE ${CW} Sources/WifiInterfaceAppleImplementation.mm Sources/WifiInterfaceApple.cpp Includes/WifiInterfaceApple.h)
+  set_property (TARGET xlinkhandheldassistant APPEND_STRING PROPERTY
+                COMPILE_FLAGS "-fobjc-arc")
+  target_sources(xlinkhandheldassistant PRIVATE ${CW} Sources/WifiInterfaceAppleImplementation.mm Includes/WifiInterfaceAppleImplementation.h Includes/WifiInterfaceApple.h)
 elseif (UNIX)
   target_sources(xlinkhandheldassistant PRIVATE Sources/WifiInterfaceLinuxBSD.cpp Includes/WifiInterfaceLinuxBSD.h)
 endif()
@@ -252,7 +254,6 @@ endif()
 
 target_include_directories(xlinkhandheldassistant PRIVATE ${PCAP_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${CURSES_INCLUDE_DIRS} ${LibNL_INCLUDE_DIR})
 target_link_libraries(xlinkhandheldassistant Threads::Threads ${PCAP_LIBRARY} ${Boost_LIBRARIES} ${CURSES_LIBRARIES} ${PLATFORM_SPECIFIC_LIBRARIES} ${LibNL_LIBRARIES})
-
 
 if (ENABLE_TESTS)
   find_package(GTest REQUIRED)

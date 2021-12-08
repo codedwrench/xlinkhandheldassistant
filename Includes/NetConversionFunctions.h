@@ -58,6 +58,23 @@ static int ConvertChannelToFrequency(int aChannel)
 }
 
 /**
+ * Converts a frequency to channel, only 2.4Ghz frequencies supported.
+ * @param aFrequency - Frequency to convert,
+ * @return Frequency to channel.
+ */
+static int ConvertFrequencyToChannel(int aFrequency)
+{
+    int lReturn{-1};
+
+    // 2.4GHz, steps of 5hz.
+    if (aFrequency >= 2412 && aFrequency <= 2472) {
+        lReturn = ((aFrequency - 2412) / 5) + 1;
+    }
+
+    return lReturn;
+}
+
+/**
  * Helper function to get raw data more easily.
  * @param aPacket - Packet to grab data from.
  */

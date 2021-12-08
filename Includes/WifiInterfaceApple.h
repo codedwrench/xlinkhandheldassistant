@@ -6,7 +6,16 @@
  *
  **/
 
+#include <objc/objc-runtime.h>
+
 #include "IWifiInterface.h"
+
+
+#ifdef __OBJC__
+    @class WifiInterfaceAppleImplementation;
+#else
+    typedef struct objc_object WifiInterfaceAppleImplementation;
+#endif
 
 /**
  * Class that manages WiFi adapters.
@@ -15,6 +24,7 @@ namespace WifiInterface_Constants
 {
     static constexpr std::chrono::seconds cScanTimeout{30};
 }  // namespace WifiInterface_Constants
+
 class WifiInterface : public IWifiInterface
 {
 public:
@@ -28,5 +38,7 @@ public:
     std::vector<IWifiInterface::WifiInformation>& GetAdhocNetworks() override;
 
 private:
-    std::vector<IWifiInterface::WifiInformation> mAdhocNetworks{};
+    // Objective-C++ wrapper using PIMPL-idiom
+    WifiInterfaceAppleImplementation* mImplementation;
+    std::string mAdapterName;
 };
