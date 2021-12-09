@@ -12,7 +12,6 @@
   CWInterface*  wifiInterface;
   NSSet*      networks;
   std::vector<IWifiInterface::WifiInformation> externalNetworks;
-  CLLocationManager* locationManager;
 }
 
 - (id) init;

@@ -90,8 +90,6 @@ elseif(NOT APPLE)
   find_package(LibNL REQUIRED)
 elseif(APPLE)
   find_library(CoreW CoreWLAN)
-  find_library(CoreL CoreLocation)
-  list(APPEND PLATFORM_SPECIFIC_LIBRARIES ${CoreL})
   list(APPEND PLATFORM_SPECIFIC_LIBRARIES ${CoreW})
 
   # HomeBrew installs libpcap here

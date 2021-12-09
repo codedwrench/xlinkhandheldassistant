@@ -6,6 +6,7 @@
  *
  **/
 
+#include "RadioBoxGroup.h"
 #include "Window.h"
 
 /**
@@ -20,5 +21,7 @@ public:
     void         Draw() override;
 
 private:
+    void GetThemes(std::string_view aPath, std::shared_ptr<RadioBoxGroup> aThemeSelector);
+
     int mThemeSelector{0};
 };

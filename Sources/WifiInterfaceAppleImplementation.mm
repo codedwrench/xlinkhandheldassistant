@@ -6,7 +6,6 @@
 
 #import "../Includes/WifiInterfaceAppleImplementation.h"
 #import <CoreWLAN/CoreWLAN.h>
-#import <CoreLocation/CoreLocation.h>
 
 #include <cerrno>
 #include <chrono>
@@ -80,14 +79,6 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
     wifiInterfaceName = @"";
     wifiInterface = nil;
     networks = nil;
-    locationManager = [[CLLocationManager alloc] init];
-     
-    // TODO: This is broken on CLI for some stupid reason
-    //if (@available(macOS 10.15, *)) {
-    //    // Needed so that BSSIDs can be obtained
-    //    [locationManager requestAlwaysAuthorization];
-    //    [locationManager startUpdatingLocation];
-    //}
   }
 
   return self;
