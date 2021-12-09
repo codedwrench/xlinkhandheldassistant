@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 [Rick de Bondt] - WifiInterfaceLinuxAppleImplementation.mm
+/* Copyright (c) 2021 [Rick de Bondt] - WifiInterfaceAppleImplementation.mm
  *
  * This file contains Apple specific functions for managing WiFi adapters.
  *
