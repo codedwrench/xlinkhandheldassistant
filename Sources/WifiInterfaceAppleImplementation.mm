@@ -110,7 +110,7 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
 - (bool) Connect : (const struct IWifiInterface::WifiInformation&) connection;
 {
     if (wifiInterface != nil) {
-  Logger::GetInstance().Log("Connecting to: " + connection.ssid, Logger::Level::TRACE);
+  Logger::GetInstance().Log("Connecting to: " + connection.ssid + " Channel: " + std::to_string(ConvertFrequencyToChannel(connection.frequency)), Logger::Level::TRACE);
 
   // Grab the right CWNetwork from our saved scanResults
       
