@@ -6,6 +6,7 @@
 
 #import "../Includes/WifiInterfaceAppleImplementation.h"
 #import <CoreWLAN/CoreWLAN.h>
+#import <CoreLocation/CoreLocation.h>
 
 #include <cerrno>
 #include <chrono>
@@ -79,6 +80,14 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
     wifiInterfaceName = @"";
     wifiInterface = nil;
     networks = nil;
+    locationManager = [[CLLocationManager alloc] init];
+     
+    // TODO: This is broken on CLI for some stupid reason
+    //if (@available(macOS 10.15, *)) {
+    //    // Needed so that BSSIDs can be obtained
+    //    [locationManager requestAlwaysAuthorization];
+    //    [locationManager startUpdatingLocation];
+    //}
   }
 
   return self;
@@ -103,39 +112,15 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
     if (wifiInterface != nil) {
   Logger::GetInstance().Log("Connecting to: " + connection.ssid, Logger::Level::TRACE);
 
-  if (connection.bssid.at(0) == 0 && connection.bssid.at(1) == 0) {
-    // If no BSSID, create network (or join existing hopefully)
-    // TODO: Figure out if this can actually join existing networks
-    NSString* ssidNSString = [NSString stringWithCString:connection.ssid.c_str()
-                                       encoding:[NSString defaultCStringEncoding]];
-    
-    NSData* ssidNSData = [ssidNSString dataUsingEncoding:NSUTF8StringEncoding];
+  // Grab the right CWNetwork from our saved scanResults
       
-    BOOL success = [wifiInterface startIBSSModeWithSSID : ssidNSData
-                                                          security : kCWIBSSModeSecurityNone
-                                                          channel : ConvertFrequencyToChannel(connection.frequency)
-                                                          password : nil
-                                                          error : nil];
-      
-    return success == YES;
-      
-  } else {
-    // If there was a bssid, grab the right CWNetwork from our saved scanResults
-    NSSet* scanResults = [wifiInterface cachedScanResults];
-      
-    // Make sure we can dump this BSSID as a string by making this into a uint64_t that IntToMac can pickup
-    uint64_t bssidAsInt = 0;
-    memcpy(&bssidAsInt, connection.bssid.data(), connection.bssid.size());
-
-      
-    NSString* targetBssidAsString = [NSString stringWithCString : IntToMac(bssidAsInt).c_str()
+    NSString* targetSsidAsString = [NSString stringWithCString : connection.ssid.c_str()
                                               encoding : [NSString defaultCStringEncoding]];
 
-    // Make list of networks fitting the bssid we got.
-    NSSet* filteredResults = [filteredResults objectsPassingTest: ^(CWNetwork* object ,BOOL *stop) {
+    // Make list of networks fitting the ssid we got.
+    NSSet* filteredResults = [networks objectsPassingTest: ^(CWNetwork* object ,BOOL *stop) {
       BOOL testResult = NO;
-      NSString* bssid = object.bssid;
-      if ([bssid isEqualToString : targetBssidAsString]) {
+      if ([object.ssid isEqualToString : targetSsidAsString]) {
         testResult = YES;
       }
 
@@ -143,6 +128,8 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
     }];
 
     if ([filteredResults count] != 0) {
+        Logger::GetInstance().Log(std::to_string([filteredResults count]) + " networks matched the filter", Logger::Level::TRACE);
+
       NSArray* resultsAsArray = [filteredResults allObjects];
       CWNetwork* network = [resultsAsArray objectAtIndex : 0];
 
@@ -152,7 +139,22 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
                                                         error: nil];
     
       return success == YES;
-    }
+    } else {
+        // If no SSID, create network (or join existing hopefully)
+        // TODO: Figure out if this can actually join existing networks
+        NSString* ssidNSString = [NSString stringWithCString:connection.ssid.c_str()
+                                           encoding:[NSString defaultCStringEncoding]];
+        
+        NSData* ssidNSData = [ssidNSString dataUsingEncoding:NSUTF8StringEncoding];
+          
+        BOOL success = [wifiInterface startIBSSModeWithSSID : ssidNSData
+                                                              security : kCWIBSSModeSecurityNone
+                                                              channel : ConvertFrequencyToChannel(connection.frequency)
+                                                              password : nil
+                                                              error : nil];
+          
+        return success == YES;
+        
   }
     } else {
         Logger::GetInstance().Log("Wifi interface did not exist! can't continue", Logger::Level::ERROR);
@@ -165,7 +167,9 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
 {
   if (wifiInterface != nil)
   {
-    [wifiInterface disassociate];
+      [wifiInterface disassociate];
+      Logger::GetInstance().Log("Network left", Logger::Level::DEBUG);
+
 
     return true;
   } else {
@@ -179,24 +183,43 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
 {
     if (wifiInterface != nil)
     {
-    networks = [wifiInterface scanForNetworksWithSSID: nil
-                              includeHidden : NO
-                              error: nil];
+        NSError *error = nil;
+
+        networks = [wifiInterface scanForNetworksWithSSID: nil
+                                         error: &error];
+        if (error)
+        {
+            Logger::GetInstance().Log("Scanning gave error: " + std::to_string(error.code), Logger::Level::ERROR);
+            return externalNetworks;
+        }
         
-        for(CWNetwork* network in networks) {
-            if(network.ibss) {
-                std::string bssid = std::string([network.bssid UTF8String]);
+        externalNetworks.clear();
+        
+        if([networks count] != 0)
+        {
+            NSArray* networksArray = [networks allObjects];
+            for(CWNetwork* network in networksArray) {
+            if([network ibss]) {
+                std::string ssid = [[network ssid] UTF8String];
+                std::string bssid = ([network bssid] == nil) ? "00:00:00:00:00:00" : [[network bssid] UTF8String];
+                
+                Logger::GetInstance().Log(std::string("Found: ") + ssid + " with bssid: " + bssid, Logger::Level::DEBUG);
+
                 uint64_t bssidAsInt = MacToInt(bssid);
                 std::array<uint8_t, 6> bssidAsArray = {};
                 memcpy(bssidAsArray.data(), &bssidAsInt, 6);
                 
                 IWifiInterface::WifiInformation information;
+                information.ssid = ssid;
                 information.frequency = ConvertChannelToFrequency(network.wlanChannel.channelNumber);
                 information.bssid = bssidAsArray;
                 information.isadhoc = true;
-                information.isconnected = [wifiInterface bssid] == network.bssid;
+                information.isconnected = false;
                 
                 externalNetworks.push_back(information);
+            
+            }
+                
             }
         }
         

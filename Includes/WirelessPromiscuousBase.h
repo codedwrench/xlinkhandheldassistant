@@ -26,6 +26,11 @@
 
 namespace WirelessPromiscuousBase_Constants
 {
+#ifdef __APPLE__
+    static constexpr bool                 cCanConnectWithoutScan{false};
+#else
+    static constexpr bool                 cCanConnectWithoutScan{true};
+#endif
     static constexpr unsigned int         cSnapshotLength{65535};
     static constexpr unsigned int         cPCAPTimeoutMs{1};
     static constexpr std::chrono::seconds cReconnectionTimeOut{15};

@@ -135,7 +135,8 @@ bool WirelessPromiscuousBase::Connect(std::string_view aESSID)
         int  lCount{0};
 
         // If we are getting the SSID from the host, scanning is too slow, so rather than doing that, connect directly.
-        if (!mSSIDFromHost) {
+        // Apple devices can't connect without the network being in the scanned list, so they'll have to scan.
+        if ((!mSSIDFromHost) || (!cCanConnectWithoutScan)) {
             std::vector<IWifiInterface::WifiInformation>& lNetworks = mWifiInterface->GetAdhocNetworks();
             for (const auto& lNetwork : lNetworks) {
                 for (const auto& lFilter : mSSIDFilter) {
