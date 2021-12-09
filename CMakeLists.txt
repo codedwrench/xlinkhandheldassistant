@@ -93,6 +93,12 @@ elseif(APPLE)
   find_library(CoreL CoreLocation)
   list(APPEND PLATFORM_SPECIFIC_LIBRARIES ${CoreL})
   list(APPEND PLATFORM_SPECIFIC_LIBRARIES ${CoreW})
+
+  # HomeBrew installs libpcap here
+  set(PCAP_ROOT_DIR "/usr/local/opt/libpcap")
+
+  # Make it search for HomeBrew ncurses locations as well, the macOS version is not good enough
+  set(Curses_ROOT "/usr/local/opt/ncurses") 
 endif()
 
 if (BUILD_STATIC)
@@ -112,6 +118,7 @@ if (BUILD_STATIC)
 else()
   find_package(PCAP REQUIRED)
   set(CURSES_NEED_WIDE TRUE)
+  set(CURSES_NEED_NCURSES TRUE)
   find_package(Curses REQUIRED)
 endif()
 
@@ -220,8 +227,8 @@ if(WIN32)
   target_sources(xlinkhandheldassistant PRIVATE Sources/WifiInterfaceWindows.cpp Includes/WifiInterfaceWindows.h)
 elseif (APPLE)
   set_property (TARGET xlinkhandheldassistant APPEND_STRING PROPERTY
-                COMPILE_FLAGS "-fobjc-arc")
-              target_sources(xlinkhandheldassistant PRIVATE ${CoreW} ${CoreL} Sources/WifiInterfaceAppleImplementation.mm Includes/WifiInterfaceAppleImplementation.h Includes/WifiInterfaceApple.h)
+    COMPILE_FLAGS "-fobjc-arc")
+  target_sources(xlinkhandheldassistant PRIVATE ${CoreW} ${CoreL} Sources/WifiInterfaceAppleImplementation.mm Includes/WifiInterfaceAppleImplementation.h Includes/WifiInterfaceApple.h)
 elseif (UNIX)
   target_sources(xlinkhandheldassistant PRIVATE Sources/WifiInterfaceLinuxBSD.cpp Includes/WifiInterfaceLinuxBSD.h)
 endif()
