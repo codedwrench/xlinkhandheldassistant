@@ -192,7 +192,7 @@ int main(int argc, char* argv[])
                                         Logger::GetInstance().Log("Promiscuous Device created!", Logger::Level::INFO);
                                     }
                                     break;
-                                #if not defined(_WIN32) && not defined(_WIN64)
+#if not defined(_WIN32) && not defined(_WIN64)
                                 case WindowModel_Constants::ConnectionMethod::Monitor:
                                     if (std::dynamic_pointer_cast<MonitorDevice>(lDevice) == nullptr) {
                                         lDevice =
@@ -201,7 +201,7 @@ int main(int argc, char* argv[])
                                                                             &mWindowModel.mCurrentlyConnectedNetwork);
                                         Logger::GetInstance().Log("Monitor Device created!", Logger::Level::INFO);
                                     }
-                                #endif
+#endif
                                 default:
                                     Logger::GetInstance().Log("Unknown method!", Logger::Level::ERROR);
                                     gRunning = false;

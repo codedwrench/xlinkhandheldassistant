@@ -6,15 +6,15 @@
  *
  **/
 
-#include <objc/objc-runtime.h>
-
 #include "IWifiInterface.h"
+
+#include <objc/objc-runtime.h>
 
 
 #ifdef __OBJC__
-    @class WifiInterfaceAppleImplementation;
+@class WifiInterfaceAppleImplementation;
 #else
-    typedef struct objc_object WifiInterfaceAppleImplementation;
+typedef struct objc_object WifiInterfaceAppleImplementation;
 #endif
 
 /**
@@ -40,5 +40,5 @@ public:
 private:
     // Objective-C++ wrapper using PIMPL-idiom
     WifiInterfaceAppleImplementation* mImplementation;
-    std::string mAdapterName;
+    std::string                       mAdapterName;
 };

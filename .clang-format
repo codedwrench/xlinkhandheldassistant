@@ -1,5 +1,3 @@
----
-Language:        Cpp
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
 AlignConsecutiveMacros: true
@@ -74,7 +72,7 @@ IncludeCategories:
   - Regex:           '<([A-Za-z0-9\Q/-_\E])+>'
     Priority:        1
     SortPriority:    0
-  - Regex:           '<(linux|boost|pcap|sys|gtest|gmock)\/'
+  - Regex:           '<(CoreWLAN|linux|boost|pcap|sys|gtest|gmock)\/'
     Priority:        2
     SortPriority:    0
   - Regex:           '<([A-Za-z0-9.\Q/-_\E])+>'
@@ -172,3 +170,4 @@ TabWidth:        4
 UseCRLF:         false
 UseTab:          Never
 ...
+

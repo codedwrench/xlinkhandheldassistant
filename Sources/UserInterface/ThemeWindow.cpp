@@ -2,7 +2,6 @@
 
 #include "../../Includes/UserInterface/ThemeWindow.h"
 
-
 #include "../../Includes/UserInterface/Button.h"
 #include "../../Includes/UserInterface/DefaultElements.h"
 
@@ -19,10 +18,10 @@ ThemeWindow::ThemeWindow(WindowModel& aModel, std::string_view aTitle, std::func
     Window(aModel, aTitle, aCalculation)
 {}
 
-#ifdef __APPLE__ 
-#include "Availability.h" 
+#ifdef __APPLE__
+#include "Availability.h"
 #if (__MAC_OS_X_VERSION_MIN_REQUIRED <= 101500)
-  #define HAS_NO_FILESYSTEM
+#define HAS_NO_FILESYSTEM
 #endif
 #endif
 
@@ -31,48 +30,44 @@ ThemeWindow::ThemeWindow(WindowModel& aModel, std::string_view aTitle, std::func
 #include <dirent.h>
 #include <stdio.h>
 
-void ThemeWindow::GetThemes(std::string_view aPath, std::shared_ptr<RadioBoxGroup> aThemeSelector) 
+void ThemeWindow::GetThemes(std::string_view aPath, std::shared_ptr<RadioBoxGroup> aThemeSelector)
 {
     int lCount{0};
-     
+
     DIR* lDirectory = opendir(aPath.data());
 
-    if(lDirectory)
-    {
-    dirent* lEntry = readdir(lDirectory);
+    if (lDirectory) {
+        dirent* lEntry = readdir(lDirectory);
 
-    while (lEntry != nullptr)
-    {
-        if (lEntry->d_type == DT_DIR && 
-           std::string(lEntry->d_name) != "." && 
-           std::string(lEntry->d_name) != "..")
-	{
+        while (lEntry != nullptr) {
+            if (lEntry->d_type == DT_DIR && std::string(lEntry->d_name) != "." && std::string(lEntry->d_name) != "..") {
                 if (lCount == 0) {
-                	// Only make the theme selector at all if there are themes
-                	aThemeSelector = std::make_shared<RadioBoxGroup>(
-                     		*this, "Select Theme:", ScaleThemeSelector, reinterpret_cast<int&>(mThemeSelector));
-		}
-    
+                    // Only make the theme selector at all if there are themes
+                    aThemeSelector = std::make_shared<RadioBoxGroup>(
+                        *this, "Select Theme:", ScaleThemeSelector, reinterpret_cast<int&>(mThemeSelector));
+                }
+
 
                 aThemeSelector->AddRadioBox(lEntry->d_name);
                 if (GetModel().mTheme == lEntry->d_name) {
-                   aThemeSelector->SetChecked(lCount);
+                    aThemeSelector->SetChecked(lCount);
                 }
                 lCount++;
-	}
+            }
 
-	lEntry = readdir(lDirectory);
-    }
+            lEntry = readdir(lDirectory);
+        }
         if (aThemeSelector != nullptr) {
             AddObject(aThemeSelector);
         }
-    closedir(lDirectory);
-}
+        closedir(lDirectory);
+    }
 }
 #else
 #include <filesystem>
 
-void ThemeWindow::GetThemes(std::string_view aPath, std::shared_ptr<RadioBoxGroup> aThemeSelector) {
+void ThemeWindow::GetThemes(std::string_view aPath, std::shared_ptr<RadioBoxGroup> aThemeSelector)
+{
     try {
         int lCount{0};
         for (const auto& lEntry : std::filesystem::directory_iterator(aPath)) {
@@ -84,7 +79,7 @@ void ThemeWindow::GetThemes(std::string_view aPath, std::shared_ptr<RadioBoxGrou
                 }
                 aThemeSelector->AddRadioBox(lEntry.path().stem().string());
                 if (GetModel().mTheme == lEntry.path().stem().string()) {
-                   alThemeSelector->SetChecked(lCount);
+                    alThemeSelector->SetChecked(lCount);
                 }
                 lCount++;
             }

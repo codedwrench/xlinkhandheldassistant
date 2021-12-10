@@ -6,10 +6,11 @@
  *
  **/
 
-#include <stddef.h>
 #include <functional>
 #include <memory>
 #include <string>
+
+#include <stddef.h>
 
 #define PDC_WIDE
 #include <curses.h>

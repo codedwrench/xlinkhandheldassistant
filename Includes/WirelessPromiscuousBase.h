@@ -18,7 +18,7 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #include "WifiInterfaceWindows.h"
-#elif defined (__APPLE__)
+#elif defined(__APPLE__)
 #include "WifiInterfaceApple.h"
 #else
 #include "WifiInterfaceLinuxBSD.h"
@@ -27,9 +27,9 @@
 namespace WirelessPromiscuousBase_Constants
 {
 #ifdef __APPLE__
-    static constexpr bool                 cCanConnectWithoutScan{false};
+    static constexpr bool cCanConnectWithoutScan{false};
 #else
-    static constexpr bool                 cCanConnectWithoutScan{true};
+    static constexpr bool cCanConnectWithoutScan{true};
 #endif
     static constexpr unsigned int         cSnapshotLength{65535};
     static constexpr unsigned int         cPCAPTimeoutMs{1};
