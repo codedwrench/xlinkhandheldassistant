@@ -136,13 +136,18 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
         NSString* ssidNSString = [NSString stringWithCString:connection.ssid.c_str()
                                            encoding:[NSString defaultCStringEncoding]];
         
-        NSData* ssidNSData = [ssidNSString dataUsingEncoding:NSUTF8StringEncoding];
+        NSData* ssidNSData = [ssidNSString dataUsingEncoding : NSUTF8StringEncoding];
           
+        NSError* error;
         BOOL success = [wifiInterface startIBSSModeWithSSID : ssidNSData
                                                               security : kCWIBSSModeSecurityNone
                                                               channel : ConvertFrequencyToChannel(connection.frequency)
-                                                              password : nil
-                                                              error : nil];
+                                                              password : @""
+                                                              error : &error];
+        
+        if (error) {
+            Logger::GetInstance().Log(std::string("Creating network failed due to: ") + [[error localizedDescription] UTF8String], Logger::Level::ERROR);
+        }
           
         return success == YES;
         
