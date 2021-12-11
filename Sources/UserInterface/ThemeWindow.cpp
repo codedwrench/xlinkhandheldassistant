@@ -79,7 +79,7 @@ void ThemeWindow::GetThemes(std::string_view aPath, std::shared_ptr<RadioBoxGrou
                 }
                 aThemeSelector->AddRadioBox(lEntry.path().stem().string());
                 if (GetModel().mTheme == lEntry.path().stem().string()) {
-                    alThemeSelector->SetChecked(lCount);
+                    aThemeSelector->SetChecked(lCount);
                 }
                 lCount++;
             }
