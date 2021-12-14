@@ -11,18 +11,24 @@ For XLink Handheld Assistant there are a few modes the assistant can run in, nam
 
 - Monitor mode (only on Linux)
 - Plugin mode (only for PSP)
+- Vita Mode (for use with the Playstation Vita on Vita games only, you still need plugin mode for PSP games)
 
 These modes have their own upsides and downsides which will be explained below.
 
 - Monitor mode: can only be used on Linux and is generally less reliable than the Plugin mode, its reliability highly depends on the WiFi card used and how busy the WiFi space is in general. The upside of Monitor mode is that it also works on Playstation Vita games, and hopefully in the future more devices as well.
-- Plugin mode: can be used on both Windows and Linux, however it only works on PSP games (PSP or Vita using Adrenaline) and needs a plugin to be enabled on the respective device, so the device needs to be modded (CFW/HEN) as well.
+- Plugin mode: can be used on Windows, Linux and MacOS, however it only works on PSP games (PSP or Vita using Adrenaline) and needs a plugin to be enabled on the respective device, so the device needs to be modded (CFW/HEN) as well.
+- Vita mode: This is solely for Vita games on the Vita for now, no plugin is required as this uses a specific function of XLink Kai (available from 7.4.42). The best possible option for Vita games.
 
 \
 Follow one of the following guides depending on your chosen method and operating system:
 
 - [Linux - Monitor Mode][]
 - [Linux - Plugin Mode][]
+- [Linux - Vita Mode][]
 - [Windows - Plugin Mode][]
+- [Windows - Vita Mode][]
+- [MacOS - Plugin Mode][]
+- [MacOS - Vita Mode][]
 
 For a general description of all the functions in XLink Handheld Assistant, check [General Overview][].
 
@@ -160,6 +166,62 @@ If you want to redo these steps or choose another connection method, go into "Op
 If you want to redo these steps or choose another connection method, go into "Options" -> "Reconfigure the application"
 
 \newpage
+## Linux - Vita Mode
+1. Start a game on the Vita.
+2. Run the following to set the wifi interface to ad-hoc mode. \
+\
+**NOTE:** This does disable NetworkManager, if another WiFi connection is used to connect to the internet, it might be better to make NetworkManager ignore the WiFi adapter used for XLHA and edit the "set_interface_bss" script to not disable NetworkManager. \
+
+    ```bash
+    sudo chmod 775 ./linux_scripts/set_interface_bss.sh \
+    && ./linux_scripts/set_interface_bss.sh "Name of Wifi adapter"
+    ```
+
+3. Start [XLink Kai](http://teamxlink.co.uk/) on the PC
+    1. Follow steps on [XLink Kai Debian Guide](https://repo.teamxlink.co.uk/) or download the binary from the [download page](https://www.teamxlink.co.uk/go?c=download), after downloading (only when not using the Debian guide): 
+    
+       ```bash
+       tar xvf kaiEngine-*.tar.gz \
+       && cd "$(ls -f | grep kaiEngine | grep -v *.tar.gz)" \
+       && sudo chmod 755 ./kaiengine \
+       && sudo setcap cap_net_admin,cap_net_raw=eip ./kaiengine \
+       && ./kaiengine
+       ```
+4. Start XLink Handheld Assistant 
+   ```bash
+   sudo chmod 755 ./xlinkhandheldassistant \
+   && sudo setcap cap_net_admin,cap_net_raw=eip ./xlinkhandheldassistant \
+   && ./xlinkhandheldassistant
+   ```
+   If you get an error about terminal size at this point, make sure your terminal is atleast of size 80x24.
+   Example: Terminal size too small: 46x18, make sure the terminal is at least 80x24
+   
+5. In the wizard select "Vita Device" and then use the arrow keys to move down to the "Next" button and press enter.
+6. Press space on "Automatically connect to PSP/Vita networks".
+7. Move down to the right network adapter with the arrow keys and press space on the WiFi adapter to be used for XLHA.
+8. Move to "Next" button and press enter.
+9. Press enter on the "Next" button again.
+10. In the Dashboard if you're hosting press space on "Hosting", else just move to the next step.
+11. Press enter on "Start Engine".
+12. Enter the arena on XLink Kai you want to play on [WebUI](http://127.0.0.1:34522/)
+13. On the Vita side go into the multiplayer menu start hosting/joining a game.
+14. In the top right-corner of the Dashboard "Connected to SCE_...." should appear after 5-30 seconds.
+15. In XLink Kai click on metrics and scroll down, you should see the following:
+![](screenshots/XLinkMetrics.PNG){ width=100% }
+(There is an XLHA device in Connected Applications, the Vita shows up in Found Consoles, and you see Broadcast Traffic out).
+16. Enjoy the game!
+17. To stop XLHA, simply press 'q' on the Dashboard.
+18. Run the following to restore your WiFi-card to the normal situation:
+
+    ```bash
+    sudo chmod 775 ./linux_scripts/restore_managed.sh \
+    && ./linux_scripts/restore_managed.sh "Name of Wifi adapter"
+    ```
+
+\
+If you want to redo these steps or choose another connection method, go into "Options" -> "Reconfigure the application"
+
+\newpage
 ## Windows - Plugin Mode
 **Note:** On Windows 10 there are quite a few WiFi cards that will only work with Windows 7 or older drivers, if the program will not connect to networks after following these steps, try to downgrade the driver to a Windows 7 driver! You may also want to check if the WiFi card supports Ad-Hoc mode at all! \
 
@@ -180,22 +242,130 @@ If you want to redo these steps or choose another connection method, go into "Op
     1. Download [here](https://www.teamxlink.co.uk/go?c=download)
     2. Install XLink Kai by running the downloaded exe
     3. Run XLink Kai, by hitting Start and searching for 'Start XLink Kai'
-7. Start XLink Handheld Assistant; If you get an error about terminal size at this point, make sure your command prompt is atleast of size 80x24. Example: Terminal size too small: 46x18, make sure the terminal is at least 80x24
-8. In the wizard select "Plugin Device" and then use the arrow keys to move down to the "Next" button and press enter.
-9. Press space on "Automatically connect to PSP networks".
-10. Move down to the right network adapter with the arrow keys and press space on the WiFi adapter to be used for XLHA.
-11. Move to "Next" button and press enter.
-12. Press enter on the "Next" button again.
-13. In the Dashboard if you're hosting press space on "Hosting", else just move to the next step.
-14. Press enter on "Start Engine".
-15. Enter the arena on XLink Kai you want to play on [WebUI](http://127.0.0.1:34522/)
-16. On the PSP side go into the multiplayer menu start hosting/joining a game.
-17. In the top right-corner of the Dashboard "Connected to PSP_GameID_...." should appear after 5-30 seconds.
-18. In XLink Kai click on metrics and scroll down, you should see the following:
+6. Start XLink Handheld Assistant; If you get an error about terminal size at this point, make sure your command prompt is atleast of size 80x24. Example: Terminal size too small: 46x18, make sure the terminal is at least 80x24
+7. In the wizard select "Plugin Device" and then use the arrow keys to move down to the "Next" button and press enter.
+8. Press space on "Automatically connect to PSP networks".
+9. Move down to the right network adapter with the arrow keys and press space on the WiFi adapter to be used for XLHA.
+10. Move to "Next" button and press enter.
+11. Press enter on the "Next" button again.
+12. In the Dashboard if you're hosting press space on "Hosting", else just move to the next step.
+13. Press enter on "Start Engine".
+14. Enter the arena on XLink Kai you want to play on [WebUI](http://127.0.0.1:34522/)
+15. On the PSP side go into the multiplayer menu start hosting/joining a game.
+16. In the top right-corner of the Dashboard "Connected to PSP_GameID_...." should appear after 5-30 seconds.
+17. In XLink Kai click on metrics and scroll down, you should see the following:
 ![](screenshots/XLinkMetrics.PNG){ width=100% }
 (There is an XLHA device in Connected Applications, the PSP shows up in Found Consoles, and you see Broadcast Traffic out).
-19. Enjoy the game!
-20. To stop XLHA, simply press 'q' on the Dashboard.
+18. Enjoy the game!
+19. To stop XLHA, simply press 'q' on the Dashboard.
+
+\
+If you want to redo these steps or choose another connection method, go into "Options" -> "Reconfigure the application"
+
+\newpage
+## Windows - Vita Mode
+**Note:** On Windows 10 there are quite a few WiFi cards that will only work with Windows 7 or older drivers, if the program will not connect to networks after following these steps, try to downgrade the driver to a Windows 7 driver! You may also want to check if the WiFi card supports Ad-Hoc mode at all! \
+
+1. Start a game on the Vita.
+2. Start [XLink Kai](http://teamxlink.co.uk/) on the PC
+    1. Download [here](https://www.teamxlink.co.uk/go?c=download)
+    2. Install XLink Kai by running the downloaded exe
+    3. Run XLink Kai, by hitting Start and searching for 'Start XLink Kai'
+3. Start XLink Handheld Assistant; If you get an error about terminal size at this point, make sure your command prompt is atleast of size 80x24. Example: Terminal size too small: 46x18, make sure the terminal is at least 80x24
+4. In the wizard select "Vita Device" and then use the arrow keys to move down to the "Next" button and press enter.
+5. Press space on "Automatically connect to PSP/Vita networks".
+6. Move down to the right network adapter with the arrow keys and press space on the WiFi adapter to be used for XLHA.
+7. Move to "Next" button and press enter.
+8. Press enter on the "Next" button again.
+9. In the Dashboard if you're hosting press space on "Hosting", else just move to the next step.
+10. Press enter on "Start Engine".
+11. Enter the arena on XLink Kai you want to play on [WebUI](http://127.0.0.1:34522/)
+12. On the Vita side go into the multiplayer menu start hosting/joining a game.
+13. In the top right-corner of the Dashboard "Connected to SCE_...." should appear after 5-30 seconds.
+14. In XLink Kai click on metrics and scroll down, you should see the following:
+\newpage
+![](screenshots/XLinkMetrics.PNG){ width=100% }
+(There is an XLHA device in Connected Applications, the Vita shows up in Found Consoles, and you see Broadcast Traffic out).
+15. Enjoy the game!
+16. To stop XLHA, simply press 'q' on the Dashboard.
+
+\
+If you want to redo these steps or choose another connection method, go into "Options" -> "Reconfigure the application"
+
+\newpage
+## MacOS - Plugin Mode
+**Note:** For the SSID broadcast option on macOS to work properly, macOS needs to be allowed to create networks. 
+The entitlement 'com.apple.wifi.ibss' needs to be given. You can do that by signing the XLHA binary with the 'entitlements.plist' in the repo using an account that has access to the Apple Development Program or by disabling AMFI.
+If you don't know what this means, ignore this note, just know that the SSID broadcast option will have problems.
+
+1. Copy [AdHocRedirectorWiFi.prx](./Plugin/AdHocRedirectorWiFi.prx) to /SEPLUGINS on the PSP.
+2. Create or open /SEPLUGINS/GAME.TXT.
+3. Add 
+
+   ```ms0:/seplugins/AdHocRedirectorWiFi.prx 1``` (for PSP 1000/2000/3000) 
+
+   or 
+
+   ``` ef0:/seplugins/AdHocRedirectorWiFi.prx 1``` (for PSP GO)
+   
+4. Start a game on the PSP.
+5. Start [XLink Kai](http://teamxlink.co.uk/) on the PC
+    1. Follow the instructions [here](https://www.teamxlink.co.uk/wiki/Installing_on_macOS).
+6. Start XLink Handheld Assistant; If you get an error about terminal size at this point, make sure your command prompt is atleast of size 80x24. Example: Terminal size too small: 46x18, make sure the terminal is at least 80x24.
+\
+\
+**Note:** You may have to right click the executable and then click open, otherwise it might complain about not being downloaded from the App Store and not let you through.
+\
+![](screenshots/UnknownApp.PNG){ width=30% }
+7. In the wizard select "Plugin Device" and then use the arrow keys to move down to the "Next" button and press enter.
+8. Press space on "Automatically connect to PSP networks".
+9. Move down to the right network adapter with the arrow keys and press space on the WiFi adapter to be used for XLHA.
+10. Move to "Next" button and press enter.
+11. Press enter on the "Next" button again.
+12. In the Dashboard if you're hosting press space on "Hosting", else just move to the next step.
+13. Press enter on "Start Engine".
+14. Enter the arena on XLink Kai you want to play on [WebUI](http://127.0.0.1:34522/)
+15. On the PSP side go into the multiplayer menu start hosting/joining a game.
+16. In the top right-corner of the Dashboard "Connected to PSP_GameID_...." should appear after 5-30 seconds.
+17. In XLink Kai click on metrics and scroll down, you should see the following:
+![](screenshots/XLinkMetrics.PNG){ width=100% }
+(There is an XLHA device in Connected Applications, the PSP shows up in Found Consoles, and you see Broadcast Traffic out).
+18. Enjoy the game!
+19. To stop XLHA, simply press 'q' on the Dashboard.
+
+\
+If you want to redo these steps or choose another connection method, go into "Options" -> "Reconfigure the application"
+
+\newpage
+## MacOS - Vita Mode
+**Note:** For the SSID broadcast option on macOS to work properly, macOS needs to be allowed to create networks. 
+The entitlement 'com.apple.wifi.ibss' needs to be given. You can do that by signing the XLHA binary with the 'entitlements.plist' in the repo using an account that has access to the Apple Development Program or by disabling AMFI.
+If you don't know what this means, ignore this note, just know that the SSID broadcast option will have problems.
+
+1. Start a game on the Vita
+2. Start [XLink Kai](http://teamxlink.co.uk/) on the PC
+    1. Follow the instructions [here](https://www.teamxlink.co.uk/wiki/Installing_on_macOS).
+3. Start XLink Handheld Assistant; If you get an error about terminal size at this point, make sure your command prompt is atleast of size 80x24. Example: Terminal size too small: 46x18, make sure the terminal is at least 80x24.
+\
+\
+**Note:** You may have to right click the executable and then click open, otherwise it might complain about not being downloaded from the App Store and not let you through.
+\
+![](screenshots/UnknownApp.PNG){ width=30% }
+4. In the wizard select "Vita Device" and then use the arrow keys to move down to the "Next" button and press enter.
+5. Press space on "Automatically connect to PSP/Vita networks".
+6. Move down to the right network adapter with the arrow keys and press space on the WiFi adapter to be used for XLHA.
+7. Move to "Next" button and press enter.
+8. Press enter on the "Next" button again.
+9. In the Dashboard if you're hosting press space on "Hosting", else just move to the next step.
+10. Press enter on "Start Engine".
+11. Enter the arena on XLink Kai you want to play on [WebUI](http://127.0.0.1:34522/)
+12. On the Vita side go into the multiplayer menu start hosting/joining a game.
+13. In the top right-corner of the Dashboard "Connected to "SCE_...." should appear after 5-30 seconds.
+14. In XLink Kai click on metrics and scroll down, you should see the following:
+![](screenshots/XLinkMetrics.PNG){ width=100% }
+(There is an XLHA device in Connected Applications, the Vita shows up in Found Consoles, and you see Broadcast Traffic out).
+15. Enjoy the game!
+16. To stop XLHA, simply press 'q' on the Dashboard.
 
 \
 If you want to redo these steps or choose another connection method, go into "Options" -> "Reconfigure the application"
@@ -210,6 +380,7 @@ If you want to redo these steps or choose another connection method, go into "Op
 This is the first step of the wizard and contains the following items:
 
 - Monitor Device: Allows you to use the Monitor mode method (Only on Linux).
+- Vita Device: Allows you to use the Promiscuous (Vita) method.
 - Plugin Device: Allows you to use the Plugin method.
 - Next: Allows you to go to the next step of the wizard.
 
@@ -235,6 +406,19 @@ This has all the options for monitor mode, there are quite a few things here:
 This has all the options for plugin mode:
 
 - Automatically connect to PSP networks: When checked will look for PSP_ networks and uses those for forwarding data to XLink Kai.
+- Reconnect after network has been inactive for (seconds): When automatically connect is checked this will allow you to finetune how long it will wait when there is no traffic, it is set to 15 seconds by default, if it is set to '0' it will only initially automatically connect to a PSP network after the engine is started but not after that. This can be useful for some games that do not send anything for a long time or rely on a connection to already be there.
+- Use SSID from host broadcast: If checked, will listen to other XLink Handheld Assistants for networks to connect to.
+- Use the following adapter: Check the WiFi adapter that can be used for forwarding data.
+- Next: Go to the next step in the wizard.
+
+\newpage
+### Promiscuous device settings
+
+![Promiscuous device settings](screenshots/Promiscuous.PNG)
+
+This has all the options for promiscuous (vita) mode:
+
+- Automatically connect to PSP/Vita networks: When checked will look for PSP_ and SCE_ networks and uses those for forwarding data to XLink Kai.
 - Reconnect after network has been inactive for (seconds): When automatically connect is checked this will allow you to finetune how long it will wait when there is no traffic, it is set to 15 seconds by default, if it is set to '0' it will only initially automatically connect to a PSP network after the engine is started but not after that. This can be useful for some games that do not send anything for a long time or rely on a connection to already be there.
 - Use SSID from host broadcast: If checked, will listen to other XLink Handheld Assistants for networks to connect to.
 - Use the following adapter: Check the WiFi adapter that can be used for forwarding data.
