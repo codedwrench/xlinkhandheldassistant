@@ -38,7 +38,8 @@ Releases on Windows are compiled using MSYS2. Visual Studio should also work, bu
 **Note:** Monitor mode is not available on Windows. NPcap does not support packet injection, see: https://github.com/nmap/npcap/issues/85 .
 
 The following programs are needed:
-- MSYS2 with a GCC version of atleast 10. (Visual Studio 2019 or higher is also possible)  
+- MSYS2 with a GCC version of atleast 10. (Visual Studio 2019 or higher is also possible) 
+  The official releases use the MSYS2 Mingw32 Command-Line to compile XLHA. 
   Installed in MSYS2:
   - bison
   - mingw-w64-i686-cmake
