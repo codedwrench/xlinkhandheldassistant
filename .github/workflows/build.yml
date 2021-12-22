@@ -28,34 +28,9 @@ jobs:
       - name: Build
         run: |
           mkdir build && cd build && cmake .. && cmake --build . -- -j`nproc`
-          ls
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: XLHA-Debian
-          path: build/xlinkhandheldassistant
-          if-no-files-found: error
-
-  macos:
-    name: MacOS
-    runs-on: macos-latest
-    steps:
-      - name: Clone Tree
-        uses: actions/checkout@v2
-        with:
-          submodules: recursive
-      - name: Install Dependencies
-        run: |
-          brew install cmake gcc@10 boost ncurses libpcap libpthread-stubs
-          echo 'export PATH="/usr/local/opt/ncurses/bin:$PATH"' >> /Users/runner/.bash_profile
-          echo 'export PATH="/usr/local/opt/libpcap/bin:$PATH"' >> /Users/runner/.bash_profile
-      - name: Build
-        run: |
-          mkdir build && cd build && cmake .. && cmake --build . -- -j`nproc`
-          
-          ls
-      - uses: actions/upload-artifact@v2
-        with:
-          name: XLHA-MacOS
           path: build/xlinkhandheldassistant
           if-no-files-found: error
