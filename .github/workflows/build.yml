@@ -46,7 +46,7 @@ jobs:
           submodules: recursive
       - name: Install Dependencies
         run: |
-          brew install cmake gcc@10 boost ncurses libpcap libpthread-stub
+          brew install cmake gcc@10 boost ncurses libpcap libpthread-stubs
       - name: Build
         run: |
           mkdir build && cd build && cmake .. && cmake --build . -- -j`nproc`
