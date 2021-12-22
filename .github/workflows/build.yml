@@ -24,7 +24,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake gcc-10 g++-10 liboost-dev libboost-program-options-dev libncurses5-dev libpcap-dev libpthread-stubs0-dev libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev
+          sudo apt-get install -y cmake gcc-10 g++-10 libboost-dev libboost-program-options-dev libncurses5-dev libpcap-dev libpthread-stubs0-dev libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev
       - name: Build
         run: |
           ls
