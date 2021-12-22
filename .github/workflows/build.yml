@@ -36,21 +36,20 @@ jobs:
           path: build/xlinkhandheldassistant
           if-no-files-found: error
 
-  windows:
-    name: Windows
-    runs-on: windows-latest
-    env:
-      POWERSHELL_TELEMETRY_OPTOUT: 1
+  macos:
+    name: MacOS
+    runs-on: macos-latest
     steps:
-      - name: Clone Tree
+    - name: Clone Tree
         uses: actions/checkout@v2
         with:
           submodules: recursive
-      - name: Build
-        run: | 
-          mkdir build && cd build && cmake .. && cmake --build . -- -j`nproc`
-          ls
-      - uses: actions/upload-artifact@v2
-        with:
-          name: XLHA-Windows
-          path: build/xlinkhandheldassistant.exe
+    - name: Build
+      run: |
+        mkdir build && cd build && cmake .. && cmake --build . -- -j`nproc`
+        ls
+    - uses: actions/upload-artifact@v2
+      with:
+        name: XLHA-MacOS
+        path: build/xlinkhandheldassistant
+        if-no-files-found: error
