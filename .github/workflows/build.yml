@@ -1,0 +1,54 @@
+name: Build
+
+on:
+  push:
+    paths-ignore:
+      - '.github/*'
+      - '.github/*_TEMPLATE/**'
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - '.github/*'
+      - '.github/*_TEMPLATE/**'
+      - '*.md'
+
+jobs:
+  ubuntu:
+    name: Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Tree
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake gcc-10 g++-10 libboost-dev libboost-program-options-dev libncurses5-dev libpcap-dev libpthread-stubs0-dev libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev
+      - name: Build
+        run: |
+          mkdir build && cd build && cmake .. && cmake --build . -- -j`nproc`
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: XLHA-Debian
+          path: build/xlinkhandheldassistant
+          if-no-files-found: error
+
+  unittests:
+    name: Unit Tests
+    needs: ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Tree
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake gcc-10 g++-10 libboost-dev libboost-program-options-dev libncurses5-dev libpcap-dev libpthread-stubs0-dev libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev libgtest-dev libgmock-dev
+      - name: Build & Run Unit Tests
+        run: |
+          mkdir build && cd build && cmake .. -DENABLE_TESTS=1 && cmake --build . -- -j`nproc`
+          ./tests
