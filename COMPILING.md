@@ -52,7 +52,7 @@ The following programs are needed:
 The following libraries are needed:
 - Boost 0.7.1 or higher https://www.boost.org/users/download/ (system and program_options required 
   (Visual Studio also wants date-time for some reason)).  
-  Commands used (from root of boost dir (in MSYS2)): 
+  Commands used (from root of boost dir (in MSYS2 MINGW32)): 
   - cd tools/build
   - ./bootstrap.bat mingw
   - cp b2 ../..
@@ -71,7 +71,7 @@ After installing these, open the CMakeLists.txt and set the paths to the librari
 By default it looks in the following paths:
 - c:\boost\
 - c:\pdcurses\
-- c:\npcapsdk
+- c:\npcapsdk\
 
 If that is all in order you should be able to compile the program using Visual Studio 2019 or higher, by opening the project using it and then pressing the compile button.
 
