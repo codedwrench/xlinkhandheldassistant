@@ -1,11 +1,13 @@
+#include <winver.h>
+
 1 VERSIONINFO
 FILEVERSION     1,1,0,0
 PRODUCTVERSION  1,1,0,0
-BEGIN
+{
   BLOCK "StringFileInfo"
-  BEGIN
+  {
     BLOCK "080904E4"
-    BEGIN
+    {
       VALUE "FileDescription", "Helps handheld devices connect through XLink Kai"
       VALUE "FileVersion", "1.1"
       VALUE "InternalName", "xlinkhandheldassistant"
@@ -13,12 +15,12 @@ BEGIN
       VALUE "OriginalFilename", "xlinkhandheldassistant.exe"
       VALUE "ProductName", "Xlink Handheld Assistant"
       VALUE "ProductVersion", "1.1"
-    END
-  END
+    }
+  }
   BLOCK "VarFileInfo"
-  BEGIN
+  {
     VALUE "Translation", 0x809, 1252
-  END
-END
+  }
+}
 
-id ICON icon.ico
+IDI_ICON1 ICON icon.ico
