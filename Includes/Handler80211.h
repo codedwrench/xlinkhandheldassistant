@@ -29,17 +29,16 @@ public:
      */
     explicit Handler80211(PhysicalDeviceHeaderType aType = PhysicalDeviceHeaderType::RadioTap);
 
-    void AddToMACBlackList(uint64_t aMAC) override;
-    void AddToMACWhiteList(uint64_t aMAC) override;
-    void ClearMACBlackList() override;
-    void ClearMACWhiteList() override;
-
     /**
      * This function converts a monitor mode packet to a promiscuous mode packet, stripping the radiotap and
      * 802.11 header and adding an 802.3 header. Only converts data packets!
      * @return converted packet data, empty string if failed.
      */
-    std::string ConvertPacket();
+    std::string ConvertPacketOut();
+
+    MacBlackList& GetBlackList() override;
+
+    [[nodiscard]] uint16_t GetEtherType() const override;
 
     /**
      * Gets parameters for a control packet type, for example used for constructing acknowledgement frames.
@@ -53,8 +52,8 @@ public:
      */
     const RadioTapReader::PhysicalDeviceParameters& GetDataPacketParameters();
 
-    [[nodiscard]] uint64_t GetDestinationMAC() const override;
-    [[nodiscard]] uint64_t GetSourceMAC() const override;
+    [[nodiscard]] uint64_t GetDestinationMac() const override;
+    [[nodiscard]] uint64_t GetSourceMac() const override;
 
     /**
      * Gets locked onto BSSID.
@@ -82,14 +81,14 @@ public:
      */
     [[nodiscard]] bool IsDropped() const;
 
+    [[nodiscard]] bool IsBroadcastPacket() const override;
+
     /**
      * Checks if this BSSID is locked onto.
      * @param aBSSID - BSSID to check
      * @return true if BSSID is locked onto.
      */
     [[nodiscard]] bool IsBSSIDAllowed(uint64_t aBSSID) const;
-
-    [[nodiscard]] bool IsMACBlackListed(uint64_t aMAC) const override;
 
     /**
      * Sets a BSSID to listen to in case no beacon frames were sent out.
@@ -103,8 +102,6 @@ public:
      */
     [[nodiscard]] bool ShouldSend() const;
 
-    bool IsMACAllowed(uint64_t aMAC) override;
-
     /**
      * Checks if this SSID is whitelisted.
      * @param aSSID - SSID to check
@@ -117,16 +114,6 @@ public:
      *  @param aParameters - reference to struct containing those parameters.
      */
     void SavePhysicalDeviceParameters(RadioTapReader::PhysicalDeviceParameters& aParameters);
-
-    /**
-     * Sets the source MAC addresses blacklist.
-     */
-    void SetMACBlackList(std::vector<uint64_t>& aBlackList);
-
-    /**
-     * Sets the source MAC addresses whitelist.
-     */
-    void SetMACWhiteList(std::vector<uint64_t>& aWhiteList);
 
     /**
      * Sets the SSID to filter on.
@@ -149,24 +136,25 @@ private:
     // Save last data in this class
     std::string mLastReceivedData{};
 
-    std::vector<uint64_t>    mBlackList{};
     std::vector<std::string> mSSIDList{};
-    std::vector<uint64_t>    mWhiteList{};
 
     Main80211PacketType       mMainPacketType{Main80211PacketType::None};
     Control80211PacketType    mControlPacketType{Control80211PacketType::None};
     Data80211PacketType       mDataPacketType{Data80211PacketType::None};
     Management80211PacketType mManagementPacketType{Management80211PacketType::None};
 
-    bool        mAckable{false};
-    uint64_t    mBSSID{0};
-    uint64_t    mDestinationMac{0};
-    uint64_t    mLockedBSSID{0};
-    std::string mLockedSSID{};
-    bool        mRetry{false};
-    bool        mShouldSend{false};
-    uint64_t    mSourceMac{0};
-    bool        mIsDropped{false};
+    bool         mAckable{false};
+    MacBlackList mBlackList{};
+    uint64_t     mBSSID{0};
+    uint64_t     mDestinationMac{0};
+    uint16_t     mEtherType{};
+    bool         mIsBroadcastPacket{};
+    uint64_t     mLockedBSSID{0};
+    std::string  mLockedSSID{};
+    bool         mRetry{false};
+    bool         mShouldSend{false};
+    uint64_t     mSourceMac{0};
+    bool         mIsDropped{false};
 
     std::shared_ptr<Parameter80211Reader> mParameter80211Reader{nullptr};
     std::shared_ptr<RadioTapReader>       mPhysicalDeviceHeaderReader{nullptr};

@@ -11,6 +11,14 @@
 #define bswap_16(x) _byteswap_ushort(x)
 #define bswap_32(x) _byteswap_ulong(x)
 #define bswap_64(x) _byteswap_uint64(x)
+#elif defined(__APPLE__)
+#define bswap_16(value) ((((value) &0xff) << 8) | ((value) >> 8))
+
+#define bswap_32(value)                                                                                                \
+    (((uint32_t) bswap_16((uint16_t) ((value) &0xffff)) << 16) | (uint32_t) bswap_16((uint16_t) ((value) >> 16)))
+
+#define bswap_64(value)                                                                                                \
+    (((uint64_t) bswap_32((uint32_t) ((value) &0xffffffff)) << 32) | (uint64_t) bswap_32((uint32_t) ((value) >> 32)))
 #else
 #include <byteswap.h>  // bswap_16 bswap_32 bswap_64
 #endif
@@ -40,6 +48,23 @@ static int ConvertChannelToFrequency(int aChannel)
     // 2.4GHz, steps of 5hz.
     if (aChannel >= 1 && aChannel <= 13) {
         lReturn = 2412 + ((aChannel - 1) * 5);
+    }
+
+    return lReturn;
+}
+
+/**
+ * Converts a frequency to channel, only 2.4Ghz frequencies supported.
+ * @param aFrequency - Frequency to convert,
+ * @return Frequency to channel.
+ */
+static int ConvertFrequencyToChannel(int aFrequency)
+{
+    int lReturn{-1};
+
+    // 2.4GHz, steps of 5hz.
+    if (aFrequency >= 2412 && aFrequency <= 2472) {
+        lReturn = ((aFrequency - 2412) / 5) + 1;
     }
 
     return lReturn;
@@ -76,11 +101,11 @@ static uint64_t SwapMacEndian(uint64_t aMac)
 }
 
 /**
- * Helper function for ConvertPacket, adds the IEEE80211 Header.
+ * Helper function for ConvertPacketOut, adds the IEEE80211 Header.
  * This one is based on Ad-Hoc traffic.
  * @param aData - Data to insert the Header to
- * @param aSourceAddress - Source MAC to insert.
- * @param aDestinationAddress - Destination MAC to insert.
+ * @param aSourceAddress - Source Mac to insert.
+ * @param aDestinationAddress - Destination Mac to insert.
  * @param aBSSID - BSSID to insert.
  * @param aIndex - Index to insert the header at.
  */
@@ -235,8 +260,8 @@ static uint64_t MacToInt(std::string_view aMac)
 }
 
 /**
- * Creates an acknowledgement frame based on MAC-address.
- * @param aReceiverMac - MAC address to fill in.
+ * Creates an acknowledgement frame based on Mac-address.
+ * @param aReceiverMac - Mac address to fill in.
  * @param aParameters - Parameters to use.
  * @return A string with the full packet.
  */
@@ -279,6 +304,29 @@ static std::string ConstructAcknowledgementFrame(uint64_t                       
 
     lReturn = std::string(lFullPacket.begin(), lFullPacket.end());
     return lReturn;
+}
+
+static std::string ConstructPSPPluginHandshake(uint64_t aPSPMac, uint64_t aAdapterMac)
+{
+    // Tell the PSP what Mac address to use
+    std::string lPacket{};
+    // Reserve size
+    lPacket.resize(Net_8023_Constants::cHeaderLength + Net_8023_Constants::cSourceAddressLength);
+
+    // Now put it into a packet
+    int lIndex{0};
+    memcpy(lPacket.data(), &aPSPMac, Net_8023_Constants::cDestinationAddressLength);
+    lIndex += Net_8023_Constants::cDestinationAddressLength;
+
+    memcpy(lPacket.data() + lIndex, &aAdapterMac, Net_8023_Constants::cSourceAddressLength);
+    lIndex += Net_8023_Constants::cSourceAddressLength;
+
+    memcpy(lPacket.data() + lIndex, &Net_Constants::cPSPEtherType, Net_8023_Constants::cEtherTypeLength);
+    lIndex += Net_8023_Constants::cEtherTypeLength;
+
+    memcpy(lPacket.data() + lIndex, &aAdapterMac, Net_8023_Constants::cDestinationAddressLength);
+
+    return lPacket;
 }
 
 /**

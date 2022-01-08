@@ -1,13 +1,11 @@
+/* Copyright (c) 2020 [Rick de Bondt] - Window.cpp */
+
 #include "../../Includes/UserInterface/Window.h"
 
 #include <codecvt>
-#include <iostream>
 #include <locale>
 
-#include "../../Includes/Logger.h"
 #include "../../Includes/UserInterface/NCursesKeys.h"
-
-/* Copyright (c) 2020 [Rick de Bondt] - Window.cpp */
 
 Window::Window(WindowModel&                aModel,
                std::string_view            aTitle,
@@ -17,7 +15,7 @@ Window::Window(WindowModel&                aModel,
                bool                        aVisible) :
     mModel{aModel},
     mTitle{aTitle}, mScaleCalculation(aCalculation), mNCursesWindow{nullptr}, mHeight{0}, mWidth{0},
-    mDrawBorder(aDrawBorder), mExclusive{aExclusive}, mVisible{aVisible}, mSelectedObject{-1}, mObjects{}
+    mDrawBorder(aDrawBorder), mExclusive{aExclusive}, mVisible{aVisible}, mSelectedObject{-1}
 {
     Dimensions lWindowParameters{aCalculation()};
     mHeight        = lWindowParameters.at(2);
@@ -38,7 +36,7 @@ bool Window::HandleKey(unsigned int aKeyCode)
         case KEY_UP:
             lReturn = RecedeSelectionVertical();
             break;
-        case cCombinedKeypadDown: 
+        case cCombinedKeypadDown:
         case KEY_DOWN:
             lReturn = AdvanceSelectionVertical();
             break;

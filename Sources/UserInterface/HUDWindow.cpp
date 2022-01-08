@@ -1,3 +1,5 @@
+/* Copyright (c) 2021 [Rick de Bondt] - HUDWindow.cpp */
+
 #include "../../Includes/UserInterface/HUDWindow.h"
 
 #include <cmath>
@@ -7,8 +9,6 @@
 #include "../../Includes/UserInterface/CheckBox.h"
 #include "../../Includes/UserInterface/DefaultElements.h"
 #include "../../Includes/UserInterface/TextField.h"
-
-/* Copyright (c) 2021 [Rick de Bondt] - HUDWindow.cpp */
 
 namespace
 {
@@ -152,8 +152,9 @@ void HUDWindow::SetUp()
             return true;
         },
         false,
-        // Only show if we're using the plugin method
-        GetModel().mConnectionMethod == WindowModel_Constants::ConnectionMethod::Plugin)});
+        // Only show if we're using the plugin or promiscuous method
+        GetModel().mConnectionMethod == WindowModel_Constants::ConnectionMethod::Plugin ||
+            GetModel().mConnectionMethod == WindowModel_Constants::ConnectionMethod::Promiscuous)});
 
     AddObject({std::make_shared<Button>(
         *this,

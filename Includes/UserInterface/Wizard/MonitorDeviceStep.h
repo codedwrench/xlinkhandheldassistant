@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../Window.h"
-
 /* Copyright (c) 2021 [Rick de Bondt] - MonitorDeviceStep.h
  *
  * This file contains an class for a userinterface monitor window.
  *
  **/
+
+#include "../Window.h"
 
 namespace MonitorDeviceStep_Constants
 {}  // namespace MonitorDeviceStep_Constants

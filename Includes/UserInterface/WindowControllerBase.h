@@ -14,7 +14,7 @@
 class WindowControllerBase : public IWindowController
 {
 public:
-    WindowControllerBase(WindowModel& aWindowModel);
+    explicit WindowControllerBase(WindowModel& aWindowModel);
     bool KeyAction(unsigned int aAction) override;
     bool Process() override;
     void SetReleaseCallback(std::function<void()> aCallback) override;

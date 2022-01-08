@@ -1,6 +1,6 @@
-#include "../Includes/PCapWrapper.h"
-
 /* Copyright (c) 2021 [Rick de Bondt] - PCapWrapper.cpp */
+
+#include "../Includes/PCapWrapper.h"
 
 int PCapWrapper::Activate()
 {
@@ -98,6 +98,11 @@ int PCapWrapper::SendPacket(std::string_view buffer)
 int PCapWrapper::SetDirection(pcap_direction_t direction)
 {
     return pcap_setdirection(mHandler, direction);
+}
+
+int PCapWrapper::SetImmediateMode(int mode)
+{
+    return pcap_set_immediate_mode(mHandler, mode);
 }
 
 int PCapWrapper::SetSnapLen(int snaplen)

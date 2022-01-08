@@ -1,11 +1,11 @@
+/* Copyright (c) 2020 [Rick de Bondt] - Button.cpp */
+
 #include "../../Includes/UserInterface/Button.h"
 
 #include <string>
 #include <utility>
 
 #include "../Includes/UserInterface/NCursesKeys.h"
-
-/* Copyright (c) 2020 [Rick de Bondt] - Button.cpp */
 
 Button::Button(IWindow&                    aWindow,
                std::string_view            aName,

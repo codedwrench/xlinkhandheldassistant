@@ -1,9 +1,9 @@
+/* Copyright (c) 2020 [Rick de Bondt] - TextField.cpp */
+
 #include "../../Includes/UserInterface/TextField.h"
 
 #include <string>
 #include <utility>
-
-/* Copyright (c) 2020 [Rick de Bondt] - TextField.cpp */
 
 TextField::TextField(IWindow&                    aWindow,
                      std::string_view            aName,
@@ -62,7 +62,7 @@ bool TextField::HandleKey(unsigned int aKeyCode)
 {
     bool lReturn{false};
 
-    if ((mAcceptLetters && (aKeyCode >= 'a' && aKeyCode <= 'z') || (aKeyCode >= 'A' && aKeyCode <= 'Z')) ||
+    if ((mAcceptLetters && ((aKeyCode >= 'a' && aKeyCode <= 'z') || (aKeyCode >= 'A' && aKeyCode <= 'Z'))) ||
         (mAcceptNumbers && (aKeyCode >= '0' && aKeyCode <= '9')) ||
         (find(mAcceptSymbols.begin(), mAcceptSymbols.end(), aKeyCode) != mAcceptSymbols.end())) {
         lReturn = AddToText(static_cast<char>(aKeyCode));

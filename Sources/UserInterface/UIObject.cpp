@@ -1,9 +1,9 @@
+/* Copyright (c) 2020 [Rick de Bondt] - UIObject.cpp */
+
 #include "../../Includes/UserInterface/UIObject.h"
 
 #include <string>
 #include <utility>
-
-/* Copyright (c) 2020 [Rick de Bondt] - UIObject.cpp */
 
 UIObject::UIObject(IWindow&                    aWindow,
                    std::string_view            aName,

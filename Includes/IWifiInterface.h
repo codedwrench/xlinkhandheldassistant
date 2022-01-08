@@ -1,16 +1,15 @@
 #pragma once
 
-#include <array>
-#include <cstdint>
-#include <string>
-#include <vector>
-
 /* Copyright (c) 2020 [Rick de Bondt] - IWifiInterface.h
  *
  * This file contains an interface for wifi devices.
  *
  **/
 
+#include <array>
+#include <cstdint>
+#include <string>
+#include <vector>
 
 /**
  * Interface for wifi devices.
@@ -42,10 +41,10 @@ public:
 
 
     /**
-     * Get the MAC address of the adapter.
-     * @return the MAC address of the adapter.
+     * Get the Mac address of the adapter.
+     * @return the Mac address of the adapter.
      */
-    virtual uint64_t GetAdapterMACAddress() = 0;
+    virtual uint64_t GetAdapterMacAddress() = 0;
 
     /**
      * Gets the adhoc networks the network adapter has found.

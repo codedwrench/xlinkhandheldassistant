@@ -1,8 +1,8 @@
+/* Copyright (c) 2020 [Rick de Bondt] - Parameter80211Reader.cpp */
+
 #include "../Includes/Parameter80211Reader.h"
 
 #include <utility>
-
-/* Copyright (c) 2020 [Rick de Bondt] - Parameter80211Reader.cpp */
 
 #include "../Includes/NetConversionFunctions.h"
 

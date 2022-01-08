@@ -10,6 +10,8 @@
 #include <memory>
 #include <string>
 
+#include <stddef.h>
+
 #define PDC_WIDE
 #include <curses.h>
 #undef timeout

@@ -1,6 +1,4 @@
 #pragma once
-#if not defined(_WIN32) && not defined(_WIN64)
-#include "IWifiInterface.h"
 
 /* Copyright (c) 2020 [Rick de Bondt] - WifiInterfaceLinuxBSD.h
  *
@@ -8,6 +6,7 @@
  *
  **/
 
+#if not defined(_WIN32) && not defined(_WIN64)
 #include <array>
 #include <chrono>
 #include <mutex>
@@ -20,6 +19,8 @@
 #include <netlink/genl/ctrl.h>
 #include <netlink/genl/genl.h>
 #include <netlink/netlink.h>
+
+#include "IWifiInterface.h"
 
 struct nl_sock;
 
@@ -35,7 +36,7 @@ namespace WifiInterface_Constants
     {
         int done;
         int aborted;
-    };
+    } __attribute__((aligned(8)));
 
     struct HandlerArguments
     {  // For FamilyHandler() and nl_get_multicast_id().
@@ -60,7 +61,7 @@ public:
 
     bool                                          Connect(const IWifiInterface::WifiInformation& aConnection) override;
     bool                                          LeaveIBSS() override;
-    uint64_t                                      GetAdapterMACAddress() override;
+    uint64_t                                      GetAdapterMacAddress() override;
     std::vector<IWifiInterface::WifiInformation>& GetAdhocNetworks() override;
 
 private:

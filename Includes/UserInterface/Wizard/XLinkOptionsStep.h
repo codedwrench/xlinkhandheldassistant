@@ -1,12 +1,13 @@
 #pragma once
 
-#include "../Window.h"
-
 /* Copyright (c) 2020 [Rick de Bondt] - MonitorDeviceStep.h
  *
  * This file contains an class for a userinterface xlink window.
  *
  **/
+
+
+#include "../Window.h"
 
 namespace XLinkOptionsStep_Constants
 {

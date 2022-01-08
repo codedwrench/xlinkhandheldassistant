@@ -1,5 +1,11 @@
 #pragma once
 
+/* Copyright (c) 2021 [Rick de Bondt] - WindowModel.h
+ *
+ * This file contains variable from the UI to the backend.
+ *
+ **/
+
 #include <array>
 #include <chrono>
 #include <string>
@@ -23,7 +29,8 @@ namespace WindowModel_Constants
 
     enum ConnectionMethod
     {
-        Plugin = 0, /**< Plugin device */
+        Plugin = 0,  /**< Plugin device */
+        Promiscuous, /**< Promiscuous device (L2MOD will work too) */
 #if not defined(_WIN32) && not defined(_WIN64)
         Monitor, /**< Monitor mode device */
 #endif
@@ -39,9 +46,11 @@ namespace WindowModel_Constants
     };
 
 #if not defined(_WIN32) && not defined(_WIN64)
-    static constexpr std::array<std::string_view, 4> cConnectionMethodTexts{"Plugin", "Monitor", "USB", "Simulation"};
+    static constexpr std::array<std::string_view, 5> cConnectionMethodTexts{
+        "Plugin", "Promiscuous", "Monitor", "USB", "Simulation"};
 #else
-    static constexpr std::array<std::string_view, 4> cConnectionMethodTexts{"Plugin", "USB", "Simulation"};
+    static constexpr std::array<std::string_view, 5> cConnectionMethodTexts{
+        "Plugin", "Promiscuous", "USB", "Simulation"};
 #endif
 
     static constexpr std::array<std::string_view, 3> cEngineStatusTexts{"Idle", "Running", "Error"};
@@ -77,7 +86,7 @@ namespace WindowModel_Constants
     static constexpr bool             cDefaultUseSSIDFromHost{false};
     static constexpr bool             cDefaultUseSSIDFromXLinkKai{false};
     static constexpr bool             cDefaultUseXLinkKaiHints{false};
-    static constexpr std::string_view cDefaultWifiAdapter{""};
+    static constexpr std::string_view cDefaultWifiAdapter;
     static constexpr std::string_view cDefaultXLinkIp{"127.0.0.1"};
     static constexpr std::string_view cDefaultXLinkPort{"34523"};
 }  // namespace WindowModel_Constants

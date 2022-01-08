@@ -4,7 +4,7 @@
  *
  * This file contains functions to talk to XLink Kai.
  *
- * */
+ **/
 
 #include <string>
 #include <thread>
@@ -53,12 +53,13 @@ namespace XLinkKai_Constants
                                                  cEthernetDataFormat.data() + cSeparator.data()};
 
     static const std::string cEthernetDataMetaString{std::string(cEthernetDataFormat) + cSeparator.data() +
-                                                 cEthernetDataMetaFormat.data() + cSeparator.data()};
+                                                     cEthernetDataMetaFormat.data() + cSeparator.data()};
 
     static const std::string cSettingDDSOnlyString{std::string(cSettingFormat) + cSeparator.data() +
                                                    cSettingDDSOnly.data() + cSeparator.data() + "true"};
 
-    static const std::string cSetESSIDString(std::string(cEthernetDataMetaString.data()) + cSetESSIDFormat.data() + cSeparator.data());
+    static const std::string cSetESSIDString(std::string(cEthernetDataMetaString.data()) + cSetESSIDFormat.data() +
+                                             cSeparator.data());
 }  // namespace XLinkKai_Constants
 
 using namespace XLinkKai_Constants;
@@ -98,7 +99,7 @@ public:
 
     bool StartReceiverThread() override;
 
-    bool Send(std::string_view aCommand, std::string_view aData);
+    bool Send(std::string_view aCommand, std::string_view aData) override;
 
     bool Send(std::string_view aData) override;
 

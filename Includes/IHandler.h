@@ -8,36 +8,29 @@
 
 #include <string_view>
 
+#include "MacBlackList.h"
+
 class IHandler
 {
 public:
     /**
-     * Add the source MAC address to blacklist.
-     * @param aMac - MAC address to blacklist.
+     * Gets destination Mac address of packet.
+     * @return the destination Mac address.
      */
-    virtual void AddToMACBlackList(uint64_t aMAC) = 0;
+    [[nodiscard]] virtual uint64_t GetDestinationMac() const = 0;
 
     /**
-     * Add the source MAC address to whitelist. Whitelist takes prevalence over the blacklist.
-     * @param aMac - MAC address to whitelist.
+     * Gets blacklist wrapper, so functions can be called on it.
+     * @return the blacklist.
      */
-    virtual void AddToMACWhiteList(uint64_t aMAC) = 0;
+    virtual MacBlackList& GetBlackList() = 0;
 
     /**
-     * Clears blacklist.
+     * Gets the EtherType of specified packet.
+     *
+     * @return the EtherType
      */
-    virtual void ClearMACBlackList() = 0;
-
-    /**
-     * Clears whitelist.
-     */
-    virtual void ClearMACWhiteList() = 0;
-
-    /**
-     * Gets destination MAC address of packet.
-     * @return the destination MAC address.
-     */
-    [[nodiscard]] virtual uint64_t GetDestinationMAC() const = 0;
+    [[nodiscard]] virtual uint16_t GetEtherType() const = 0;
 
     /**
      * Gets packet saved in this class.
@@ -46,24 +39,16 @@ public:
     virtual std::string_view GetPacket() = 0;
 
     /**
-     * Gets source MAC address of packet.
-     * @return the source MAC address.
+     * Gets source Mac address of packet.
+     * @return the source Mac address.
      */
-    [[nodiscard]] virtual uint64_t GetSourceMAC() const = 0;
+    [[nodiscard]] virtual uint64_t GetSourceMac() const = 0;
 
     /**
-     * Checks if MAC is in receiver blacklist.
-     * @param aMAC - MAC to check
-     * @return true if MAC is blacklisted.
+     * Tells if the last received packet was a broacast packet.
+     * @return true if it is.
      */
-    [[nodiscard]] virtual bool IsMACBlackListed(uint64_t aMAC) const = 0;
-
-    /**
-     * Checks if this MAC is not blacklisted / whitelisted.
-     * @param aMAC - MAC to check
-     * @return true if MAC address is allowed.
-     */
-    virtual bool IsMACAllowed(uint64_t aMAC) = 0;
+    [[nodiscard]] virtual bool IsBroadcastPacket() const = 0;
 
     /**
      * Preload data about this packet into this class.

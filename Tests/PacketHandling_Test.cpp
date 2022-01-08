@@ -2,7 +2,6 @@
  * This file contains tests for the PacketConverter class.
  **/
 
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -10,27 +9,12 @@
 #include "../Includes/PCapReader.h"
 #include "../Includes/XLinkKaiConnection.h"
 #include "IConnectorMock.h"
+#include "IPCapDeviceMock.h"
 
 using ::testing::_;
 using ::testing::DoAll;
 using ::testing::Return;
 using ::testing::WithArg;
-
-class IPCapDeviceMock : public IPCapDevice
-{
-public:
-    MOCK_METHOD(void, BlackList, (uint64_t aMac));
-    MOCK_METHOD(void, Close, ());
-    MOCK_METHOD(bool, Connect, (std::string_view aESSID));
-    MOCK_METHOD(bool, Open, (std::string_view aName, std::vector<std::string>& aSSIDFilter));
-    MOCK_METHOD(std::string, DataToString, (const unsigned char* aData, const pcap_pkthdr* aHeader));
-    MOCK_METHOD(const unsigned char*, GetData, ());
-    MOCK_METHOD(const pcap_pkthdr*, GetHeader, ());
-    MOCK_METHOD(bool, Send, (std::string_view aData));
-    MOCK_METHOD(void, SetConnector, (std::shared_ptr<IConnector> aDevice));
-    MOCK_METHOD(void, SetHosting, (bool aHosting));
-    MOCK_METHOD(bool, StartReceiverThread, ());
-};
 
 class PCapReaderDerived : public PCapReader
 {
@@ -46,7 +30,7 @@ protected:
     Handler8023  mHandler8023{};
 };
 
-// Tests whether MacToInt can successfully convert a well formed MAC address string.
+// Tests whether MacToInt can successfully convert a well formed Mac address string.
 TEST_F(PacketHandlingTest, MacToInt)
 {
     uint64_t aResult{MacToInt("01:23:45:67:AB:CD")};
@@ -241,7 +225,7 @@ TEST_F(PacketHandlingTest, ConstructAcknowledgementFrame)
 
     lPCapReader.SetAcknowledgePackets(true);
 
-    // MAC coming from XLink Kai.
+    // Mac coming from XLink Kai.
     lPCapReader.BlackList(MacToInt("d4:4b:5e:a8:c1:c4"));
 
     std::vector<std::string> lSendBuffer{};

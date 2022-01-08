@@ -1,6 +1,6 @@
-#include "../Includes/XLinkKaiConnection.h"
-
 /* Copyright (c) 2020 [Rick de Bondt] - XLinkKaiConnection.cpp */
+
+#include "../Includes/XLinkKaiConnection.h"
 
 #include <chrono>
 #include <cstring>
@@ -183,11 +183,12 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
 
                         // If it is actually a monitor device, do convert.
                         if (lMonitorDevice != nullptr) {
-                            mEthernetData = mPacketHandler.ConvertPacket(lMonitorDevice->GetLockedBSSID(),
-                                                                         lMonitorDevice->GetDataPacketParameters());
+                            mEthernetData = mPacketHandler.ConvertPacketOut(lMonitorDevice->GetLockedBSSID(),
+                                                                            lMonitorDevice->GetDataPacketParameters());
                         }
+
                         // Data from XLink Kai should never be caught in the receiver thread
-                        mIncomingConnection->BlackList(mPacketHandler.GetSourceMAC());
+                        mIncomingConnection->BlackList(mPacketHandler.GetSourceMac());
                         mIncomingConnection->Send(mEthernetData);
                     }
                 } else if (lCommand == cEthernetDataMetaString) {
@@ -259,7 +260,7 @@ bool XLinkKaiConnection::StartReceiverThread()
                     } else {
                         mIoService.poll();
                         // Very small delay to make the computer happy
-                        std::this_thread::sleep_for(10us);
+                        std::this_thread::sleep_for(100us);
                     }
                 }
             });

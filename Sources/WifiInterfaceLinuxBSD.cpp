@@ -1,3 +1,5 @@
+/* Copyright (c) 2021 [Rick de Bondt] - WifiInterfaceBSD.cpp */
+
 #include "../Includes/WifiInterfaceLinuxBSD.h"
 
 #include <cerrno>
@@ -17,8 +19,8 @@
 
 using namespace WifiInterface_Constants;
 
-WifiInterface::WifiInterface(std::string_view aAdapter) :
-    mAdapterName(aAdapter), mSocket(nl_socket_alloc()), mNetworkAdapterIndex(if_nametoindex(mAdapterName.data()))
+WifiInterface::WifiInterface(std::string_view aAdapterName) :
+    mAdapterName(aAdapterName), mSocket(nl_socket_alloc()), mNetworkAdapterIndex(if_nametoindex(mAdapterName.data()))
 {
     SetBSSPolicy();
     // Open socket to kernel.
@@ -47,7 +49,7 @@ void WifiInterface::SetBSSPolicy()
     mBSSPolicy[NL80211_BSS_BEACON_IES]           = {NLA_UNSPEC, 0, 0};
 }
 
-uint64_t WifiInterface::GetAdapterMACAddress()
+uint64_t WifiInterface::GetAdapterMacAddress()
 {
     uint64_t lReturn{0};
 

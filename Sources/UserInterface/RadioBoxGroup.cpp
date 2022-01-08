@@ -1,13 +1,12 @@
+/* Copyright (c) 2020 [Rick de Bondt] - RadioBoxGroup.cpp */
+
 #include "../../Includes/UserInterface/RadioBoxGroup.h"
 
 #include <functional>
-#include <iostream>
 #include <string>
 #include <utility>
 
 #include "../../Includes/UserInterface/NCursesKeys.h"
-
-/* Copyright (c) 2020 [Rick de Bondt] - RadioBoxGroup.cpp */
 
 RadioBoxGroup::RadioBoxGroup(IWindow&                    aWindow,
                              std::string_view            aName,

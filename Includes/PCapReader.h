@@ -13,13 +13,13 @@
 #include "Handler80211.h"
 #include "Handler8023.h"
 #include "IConnector.h"
-#include "IPCapDevice.h"
+#include "PCapDeviceBase.h"
 #include "PCapWrapper.h"
 
 /**
  * This class contains the necessary components to read a PCap file.
  **/
-class PCapReader : public IPCapDevice, public IConnector
+class PCapReader : public PCapDeviceBase, public IConnector
 {
 public:
     /**
@@ -28,28 +28,27 @@ public:
      * @param aMonitorOutput - Tells the PCapReader whether the output should be 802.11 or 802.3.
      * @param aWrapper - Wrapper for the PCap functions
      */
-    explicit PCapReader(bool aMonitorCapture, bool aMonitorOutput, bool aTimeAccurate, std::shared_ptr<IPCapWrapper> aWrapper = std::make_shared<PCapWrapper>());
+    explicit PCapReader(bool                          aMonitorCapture,
+                        bool                          aMonitorOutput,
+                        bool                          aTimeAccurate,
+                        std::shared_ptr<IPCapWrapper> aWrapper = std::make_shared<PCapWrapper>());
+
     ~PCapReader() = default;
 
     /**
-     * Adds a MAC address to the blacklist.
-     * @param aMAC - MAC address to blacklist.
+     * Adds a Mac address to the blacklist.
+     * @param aMac - Mac address to blacklist.
      */
-    void BlackList(uint64_t aMAC);
+    void BlackList(uint64_t aMac) override;
 
-    void        Close() override;
-    bool        Connect(std::string_view aESSID) override;
-    std::string DataToString(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
+    void Close() override;
+    bool Connect(std::string_view aESSID) override;
 
     /**
      * Obtains BSSID, from monitor capture or previously given.
      * @return uint64_t with the BSSID obtained.
      */
     [[nodiscard]] uint64_t GetBSSID() const;
-
-    const unsigned char* GetData() override;
-
-    const pcap_pkthdr* GetHeader() override;
 
     /**
      * Obtains 80211 data packet parameters, from monitor capture or previously given .
@@ -68,13 +67,11 @@ public:
     bool               Open(std::string_view aArgument) override;
     bool               Open(std::string_view aName, std::vector<std::string>& aSSIDFilter) override;
     // PCapReader should still be able to manually read next data, way too useful to private.
-    bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader);
+    bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader) override;
     bool ReadNextData() override;
     bool Send(std::string_view aCommand, std::string_view aData) override;
     bool Send(std::string_view aData) override;
     void SetAcknowledgePackets(bool aAcknowledge);
-    void SetConnector(std::shared_ptr<IConnector> aDevice) override;
-    void SetHosting(bool aHosting) override;
     void SetIncomingConnection(std::shared_ptr<IPCapDevice> aDevice) override;
 
     /**
@@ -89,22 +86,16 @@ public:
      */
     void SetParameters(std::shared_ptr<RadioTapReader::PhysicalDeviceParameters> aParameters);
 
-    void SetSourceMACToFilter(uint64_t aMac);
+    void SetSourceMacToFilter(uint64_t aMac);
     // In this case tries to simulate a real device
     bool StartReceiverThread() override;
 
 private:
-    void ShowPacketStatistics(const pcap_pkthdr* aHeader) const;
-
     bool                                                      mAcknowledgePackets{false};
     uint64_t                                                  mBSSID{0};
     bool                                                      mConnected{false};
-    std::shared_ptr<IConnector>                               mConnector{nullptr};
-    const unsigned char*                                      mData{nullptr};
     std::shared_ptr<RadioTapReader::PhysicalDeviceParameters> mParameters{nullptr};
     std::shared_ptr<IPCapWrapper>                             mWrapper{nullptr};
-    pcap_pkthdr*                                              mHeader{nullptr};
-    bool                                                      mHosting{false};
     std::shared_ptr<IPCapDevice>                              mIncomingConnection{nullptr};
     bool                                                      mDoneReceiving{false};
     bool                                                      mMonitorCapture{false};
@@ -113,5 +104,4 @@ private:
     std::shared_ptr<IHandler>                                 mPacketHandler{nullptr};
     std::shared_ptr<std::thread>                              mReplayThread{nullptr};
     std::vector<std::string>                                  mSSIDFilter{};
-    unsigned int                                              mPacketCount{0};
 };

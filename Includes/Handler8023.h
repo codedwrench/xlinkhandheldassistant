@@ -21,25 +21,26 @@
 class Handler8023 : public IHandler
 {
 public:
-    void AddToMACBlackList(uint64_t aMAC) override;
-    void AddToMACWhiteList(uint64_t aMAC) override;
-    void ClearMACBlackList() override;
-    void ClearMACWhiteList() override;
-
     /**
-     * This function converts a monitor mode packet to a monitor mode packet, adding the radiotap and
+     * This function converts a promiscuous mode packet to a monitor mode packet, adding the radiotap and
      * 802.11 header and removing the 802.3 header.
      * @param aBSSID - BSSID to use when inserting the 80211 header.
      * @param aParameters - Parameters to use to convert to 80211.
      * @return converted packet data, empty string if failed.
      */
-    std::string ConvertPacket(uint64_t aBSSID, RadioTapReader::PhysicalDeviceParameters aParameters);
+    std::string ConvertPacketOut(uint64_t aBSSID, RadioTapReader::PhysicalDeviceParameters aParameters);
 
-    [[nodiscard]] uint64_t GetDestinationMAC() const override;
-    std::string_view       GetPacket() override;
-    [[nodiscard]] uint64_t GetSourceMAC() const override;
-    [[nodiscard]] bool     IsMACBlackListed(uint64_t aMAC) const override;
-    bool                   IsMACAllowed(uint64_t aMAC) override;
+    MacBlackList& GetBlackList() override;
+
+    [[nodiscard]] uint64_t GetDestinationMac() const override;
+
+    [[nodiscard]] uint16_t GetEtherType() const override;
+
+    std::string_view GetPacket() override;
+
+    [[nodiscard]] uint64_t GetSourceMac() const override;
+
+    [[nodiscard]] bool IsBroadcastPacket() const override;
 
     /**
      * Preloads data from 802.3 header into this object.
@@ -48,10 +49,10 @@ public:
     void Update(std::string_view aPacket) override;
 
 private:
-    std::string mLastReceivedData{};
-    uint64_t    mSourceMAC{0};
-    uint64_t    mDestinationMAC{0};
-
-    std::vector<uint64_t> mBlackList{};
-    std::vector<uint64_t> mWhiteList{};
+    MacBlackList mBlackList{};
+    uint16_t     mEtherType{};
+    bool         mIsBroadcastPacket{};
+    std::string  mLastReceivedData{};
+    uint64_t     mSourceMac{0};
+    uint64_t     mDestinationMac{0};
 };

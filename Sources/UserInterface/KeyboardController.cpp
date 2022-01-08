@@ -1,12 +1,11 @@
-#include "../../Includes/UserInterface/KeyboardController.h"
-
 /* Copyright (c) 2021 [Rick de Bondt] - KeyboardController.cpp */
 
+#include "../../Includes/UserInterface/KeyboardController.h"
+
 #include <chrono>
-#include <iostream> 
+#include <iostream>
 #include <thread>
 #include <utility>
-#include <vector>
 
 #define PDC_WIDE
 #include <curses.h>
@@ -40,9 +39,9 @@ void KeyboardController::StartThread()
             if (lKey == cKeyEsc) {
                 lNumCyclesSinceComboKeyPressed++;
                 lComboKeyPressed = true;
-            // I should probably differentiate between these two, but whatever
-            } else if (lComboKeyPressed && (lKey == cKeypadArrowCombo) ||
-                       lComboKeyPressed && (lKey == cKeypadCenterCombo)) {
+                // I should probably differentiate between these two, but whatever
+            } else if ((lComboKeyPressed && (lKey == cKeypadArrowCombo)) ||
+                       (lComboKeyPressed && (lKey == cKeypadCenterCombo))) {
                 lNumCyclesSinceComboKeyPressed++;
                 lKeyIsKeypad = true;
             } else if (lComboKeyPressed) {

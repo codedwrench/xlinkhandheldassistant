@@ -1,3 +1,5 @@
+/* Copyright (c) 2021 [Rick de Bondt] - WifiInterfaceWindows.cpp */
+
 #include "../Includes/WifiInterfaceWindows.h"
 
 #include <codecvt>
@@ -254,7 +256,7 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
     return mLastReceivedScanInformation;
 }
 
-uint64_t WifiInterface::GetAdapterMACAddress()
+uint64_t WifiInterface::GetAdapterMacAddress()
 {
     uint64_t lReturn{0};
 

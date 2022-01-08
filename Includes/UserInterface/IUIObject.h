@@ -5,6 +5,7 @@
  * This file contains an interface for a userinterface object.
  *
  **/
+
 class IUIObject
 {
 public:

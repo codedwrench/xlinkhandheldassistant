@@ -1,14 +1,16 @@
+/* Copyright (c) 2021 [Rick de Bondt] - WizardController.cpp */
+
 #include "../../../Includes/UserInterface/Wizard/WizardController.h"
 
 #include "../../../Includes/PCapWrapper.h"
 #include "../../../Includes/UserInterface/Wizard/MonitorDeviceStep.h"
 #include "../../../Includes/UserInterface/Wizard/PluginOptionsStep.h"
+#include "../../../Includes/UserInterface/Wizard/PromiscuousOptionsStep.h"
 #include "../../../Includes/UserInterface/Wizard/WizardSelectorStep.h"
 #include "../../../Includes/UserInterface/Wizard/XLinkOptionsStep.h"
 
 #undef MOUSE_MOVED
 
-/* Copyright (c) 2021 [Rick de Bondt] - WizardController.cpp */
 
 using namespace WizardController_Constants;
 
@@ -118,8 +120,8 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
                     int lError    = aPcapWrapper->Activate();
                     int lLinkType = aPcapWrapper->GetDatalink();
                     // It seems to be EN10MB when the network is down on Linux :/
-                    if (lError == 0 && lLinkType == DLT_IEEE802_11 || lLinkType == DLT_EN10MB ||
-                        lLinkType == DLT_IEEE802_11_RADIO) {
+                    if (lError == 0 &&
+                        (lLinkType == DLT_IEEE802_11 || lLinkType == DLT_EN10MB || lLinkType == DLT_IEEE802_11_RADIO)) {
                         std::pair<std::string, std::string> lWifiInformation{};
                         lWifiInformation.first = lDevice->name;
                         if (lDevice->description != nullptr) {
@@ -145,7 +147,6 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
         aPcapWrapper->FreeAllDevices(lDevices);
     }
 }
-
 #endif
 
 void WizardController::HandleConnectionMethod()
@@ -159,6 +160,18 @@ void WizardController::HandleConnectionMethod()
 
             // Add the Plugin wizard step
             ReplaceWindow<PluginOptionsStep>(GetWindows(), GetWindowModel(), "Plugin options", [&] {
+                return ScaleWizard(GetHeightReference(), GetWidthReference());
+            });
+
+            break;
+        case WindowModel_Constants::ConnectionMethod::Promiscuous:
+            mWizardStep = PromiscuousOptions;
+
+            // We are going to fill the WiFi-adapter list now, since we need it here
+            FillWifiAdapters(GetWindowModel().mWifiAdapterList);
+
+            // Add the Promiscuous wizard step
+            ReplaceWindow<PromiscuousOptionsStep>(GetWindows(), GetWindowModel(), "Promiscuous options", [&] {
                 return ScaleWizard(GetHeightReference(), GetWidthReference());
             });
 
@@ -225,6 +238,16 @@ bool WizardController::Process()
                 });
                 break;
             case PluginOptions:
+                // Convert the wifi adapter selection to a string
+                GetWindowModel().mWifiAdapter =
+                    GetWindowModel().mWifiAdapterList.at(GetWindowModel().mWifiAdapterSelection).first;
+
+                mWizardStep = XLinkKaiOptions;
+                ReplaceWindow<XLinkOptionsStep>(GetWindows(), GetWindowModel(), "XLink Kai options", [&] {
+                    return ScaleWizard(GetHeightReference(), GetWidthReference());
+                });
+                break;
+            case PromiscuousOptions:
                 // Convert the wifi adapter selection to a string
                 GetWindowModel().mWifiAdapter =
                     GetWindowModel().mWifiAdapterList.at(GetWindowModel().mWifiAdapterSelection).first;

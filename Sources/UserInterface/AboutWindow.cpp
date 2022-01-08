@@ -1,16 +1,14 @@
-#include "../../Includes/UserInterface/AboutWindow.h"
+/* Copyright (c) 2021 [Rick de Bondt] - AboutWindow.cpp */
 
-#include <cmath>
-#include <utility>
+#include "../../Includes/UserInterface/AboutWindow.h"
 
 #include "../../Includes/UserInterface/Button.h"
 #include "../../Includes/UserInterface/DefaultElements.h"
 
-/* Copyright (c) 2021 [Rick de Bondt] - AboutWindow.cpp */
 
 namespace
 {
-    static constexpr std::string_view cAboutText{R"(___   ___  __       __    __       ___
+    constexpr std::string_view cAboutText{R"(___   ___  __       __    __       ___
 \  \ /  / |  |     |  |  |  |     /   \
  \  V  /  |  |     |  |__|  |    /  ^  \
   >   <   |  |     |   __   |   /  /_\  \
@@ -20,16 +18,16 @@ namespace
           XLink Handheld Assistant
               Version: )"};
 
-    static constexpr std::string_view cVersion{GIT_VERSION};
+    constexpr std::string_view cVersion{GIT_VERSION};
 
-    static constexpr std::string_view cAboutFinisher{R"(
+    constexpr std::string_view cAboutFinisher{R"(
 
                by CodedWrench
 
          Made for use with XLink Kai
         <https://www.teamxlink.co.uk>)"};
 
-    static Dimensions ScaleAboutText(const int& aMaxHeight, const int& aMaxWidth)
+    Dimensions ScaleAboutText(const int& aMaxHeight, const int& aMaxWidth)
     {
         // About texts need to have the right amount of spaces
         // For height \n characters get counted and divided by 2
@@ -51,7 +49,7 @@ namespace
             0};
     }
 
-    static Dimensions ScaleReturnButton(const int& aMaxHeight, const int& aMaxWidth)
+    Dimensions ScaleReturnButton(const int& aMaxHeight, const int& aMaxWidth)
     {
         return {aMaxHeight - 2, static_cast<int>(aMaxWidth - 2 - std::string("[ Return to HUD ]").length()), 0, 0};
     }

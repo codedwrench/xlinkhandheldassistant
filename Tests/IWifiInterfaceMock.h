@@ -9,6 +9,6 @@ class IWifiInterfaceMock : public IWifiInterface
 public:
     MOCK_METHOD(bool, Connect, (const WifiInformation& aConnection));
     MOCK_METHOD(bool, LeaveIBSS, ());
-    MOCK_METHOD(uint64_t, GetAdapterMACAddress, ());
+    MOCK_METHOD(uint64_t, GetAdapterMacAddress, ());
     MOCK_METHOD(std::vector<WifiInformation>&, GetAdhocNetworks, ());
 };

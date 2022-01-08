@@ -1,13 +1,13 @@
-#include "../Includes/Logger.h"
-
-#include "../Includes/WindowModel.h"
-
 /* Copyright (c) 2020 [Rick de Bondt] - Logger.cpp */
+
+#include "../Includes/Logger.h"
 
 #include <chrono>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+
+#include "../Includes/WindowModel.h"
 
 Logger::~Logger()
 {
@@ -75,7 +75,7 @@ void Logger::SetLogToScreen(bool aLoggingToScreenEnabled)
     mLogToScreen = aLoggingToScreenEnabled;
 }
 
-#if defined(__GNUC__) || defined(__GNUG__)
+#if not defined(__APPLE__) && (defined(__GNUC__) || defined(__GNUG__))
 void Logger::Log(const std::string& aText, Level aLevel, const std::experimental::source_location& aLocation)
 #else
 void Logger::Log(const std::string& aText, Level aLevel)
@@ -88,7 +88,7 @@ void Logger::Log(const std::string& aText, Level aLevel)
         auto lTimeAsTimeT = std::chrono::system_clock::to_time_t(lTime);
         auto lTimeMs      = std::chrono::duration_cast<std::chrono::milliseconds>(lTime.time_since_epoch()) % 1000;
 
-#if defined(__GNUC__) || defined(__GNUG__)
+#if not defined(__APPLE__) && (defined(__GNUC__) || defined(__GNUG__))
         lLogEntry << std::put_time(std::gmtime(&lTimeAsTimeT), "%H:%M:%S:") << std::setfill('0') << std::setw(3)
                   << lTimeMs.count() << ": " << cLevelTexts.at(static_cast<unsigned long>(aLevel)) << ": "
                   << aLocation.file_name() << ":" << aLocation.line() << ":" << aText;

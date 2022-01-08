@@ -1,3 +1,5 @@
+/* Copyright (c) 2020 [Rick de Bondt] - XLinkWindow.cpp */
+
 #include "../../Includes/UserInterface/XLinkWindow.h"
 
 #include <cmath>
@@ -7,8 +9,6 @@
 #include "../../Includes/UserInterface/CheckBox.h"
 #include "../../Includes/UserInterface/String.h"
 #include "../../Includes/UserInterface/TextField.h"
-
-/* Copyright (c) 2020 [Rick de Bondt] - XLinkWindow.cpp */
 
 Dimensions ScaleSearchXLinkCheckBox(const int& /*aMaxHeight*/, const int& /*aMaxWidth*/)
 {

@@ -33,10 +33,10 @@ class IPCapDevice
 {
 public:
     /**
-     * Adds a MAC address to the blacklist.
-     * @param aMAC - MAC address to blacklist.
+     * Adds a Mac address to the blacklist.
+     * @param aMac - Mac address to blacklist.
      */
-    virtual void BlackList(uint64_t aMAC) = 0;
+    virtual void BlackList(uint64_t aMac) = 0;
 
     /**
      * Closes the PCAP device.
@@ -97,8 +97,22 @@ public:
     virtual void SetHosting(bool aHosting) = 0;
 
     /**
+     * Prints some fancy statistics about a packet.
+     * @param aHeader - Header of the packet to show statistics of.
+     */
+    virtual void ShowPacketStatistics(const pcap_pkthdr* aHeader) const = 0;
+
+    /**
      * Starts receiving on device.
      * @return true if successful (for a file based device this will start replaying the capture).
      */
     virtual bool StartReceiverThread() = 0;
+
+    /**
+     * Pcap Dispatch should be using this function to send data to.
+     * @param aData The data to process.
+     * @param aHeader The header to process.
+     * @return True if successful.
+     */
+    virtual bool ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader) = 0;
 };

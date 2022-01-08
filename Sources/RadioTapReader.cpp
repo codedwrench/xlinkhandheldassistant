@@ -1,15 +1,8 @@
-#include "../Includes/RadioTapReader.h"
-
-#include <iostream>
-
 /* Copyright (c) 2020 [Rick de Bondt] - RadioTapReader.cpp */
 
+#include "../Includes/RadioTapReader.h"
 
-// Helper function to get raw data more easily
-template<typename Type> Type GetRawData(std::string_view aData, unsigned int aIndex)
-{
-    return (*reinterpret_cast<const Type*>(aData.data() + aIndex));
-}
+#include "../Includes/NetConversionFunctions.h"
 
 RadioTapReader::PhysicalDeviceParameters RadioTapReader::ExportRadioTapParameters()
 {

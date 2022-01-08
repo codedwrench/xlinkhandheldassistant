@@ -1,6 +1,6 @@
-#include "../Includes/UserInterface/WindowControllerBase.h"
-
 /* Copyright (c) 2020 [Rick de Bondt] - WindowControllerBase.cpp **/
+
+#include "../Includes/UserInterface/WindowControllerBase.h"
 
 WindowControllerBase::WindowControllerBase(WindowModel& aWindowModel) : mWindowModel(aWindowModel) {}
 

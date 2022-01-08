@@ -1,11 +1,11 @@
+/* Copyright (c) 2020 [Rick de Bondt] - CheckBox.cpp */
+
 #include "../../Includes/UserInterface/CheckBox.h"
 
 #include <string>
 #include <utility>
 
 #include "../../Includes/UserInterface/NCursesKeys.h"
-
-/* Copyright (c) 2020 [Rick de Bondt] - CheckBox.cpp */
 
 CheckBox::CheckBox(IWindow&                    aWindow,
                    std::string_view            aName,

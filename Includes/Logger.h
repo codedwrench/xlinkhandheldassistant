@@ -5,14 +5,15 @@
  * This file contains the header for a Logger class which will be used to log
  * things happening in the applications based on different levels.
  *
- * */
+ **/
 
 #include <array>
 #include <fstream>
 
 // Does not exist in Visual Studio yet,
 // https://github.com/microsoft/STL/pull/664
-#if defined(__GNUC__) || defined(__GNUG__)
+// Also fix stupid apple compiler
+#if not defined(__APPLE__) && (defined(__GNUC__) || defined(__GNUG__))
 #include <experimental/source_location>
 #endif
 
@@ -72,7 +73,7 @@ public:
      * @param aLevel - Loglevel to use.
      * @param aLocation - Source location (keep empty).
      */
-#if defined(__GNUC__) || defined(__GNUG__)
+#if not defined(__APPLE__) && (defined(__GNUC__) || defined(__GNUG__))
     void Log(const std::string&                        aText,
              Level                                     aLevel,
              const std::experimental::source_location& aLocation = std::experimental::source_location::current());

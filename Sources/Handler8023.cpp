@@ -1,35 +1,11 @@
-#include "../Includes/Handler8023.h"
-
 /* Copyright (c) 2020 [Rick de Bondt] - Handler8023.cpp */
+
+#include "../Includes/Handler8023.h"
 
 #include "../Includes/Logger.h"
 #include "../Includes/NetConversionFunctions.h"
 
-void Handler8023::AddToMACBlackList(uint64_t aMAC)
-{
-    if (!IsMACBlackListed(aMAC)) {
-        Logger::GetInstance().Log("Added: " + IntToMac(aMAC) + " to blacklist.", Logger::Level::TRACE);
-        mBlackList.push_back(aMAC);
-    }
-}
-
-void Handler8023::AddToMACWhiteList(uint64_t aMAC)
-{
-    Logger::GetInstance().Log("Added: " + IntToMac(aMAC) + " to whitelist.", Logger::Level::TRACE);
-    mWhiteList.push_back(aMAC);
-}
-
-void Handler8023::ClearMACBlackList()
-{
-    mBlackList.clear();
-}
-
-void Handler8023::ClearMACWhiteList()
-{
-    mWhiteList.clear();
-}
-
-std::string Handler8023::ConvertPacket(uint64_t aBSSID, RadioTapReader::PhysicalDeviceParameters aParameters)
+std::string Handler8023::ConvertPacketOut(uint64_t aBSSID, RadioTapReader::PhysicalDeviceParameters aParameters)
 {
     std::string lReturn;
     if (mLastReceivedData.size() > Net_8023_Constants::cHeaderLength) {
@@ -54,17 +30,14 @@ std::string Handler8023::ConvertPacket(uint64_t aBSSID, RadioTapReader::Physical
         lFullPacket.resize(lReserveSize + lRadioTapSize);
 
         // IEEE80211 Header
-        InsertIEEE80211Header(&lFullPacket[0], mSourceMAC, mDestinationMAC, aBSSID, lIndex);
+        InsertIEEE80211Header(&lFullPacket[0], mSourceMac, mDestinationMac, aBSSID, lIndex);
         lIndex += lIeee80211HeaderSize;
 
         // Logical Link Control (LLC) header
         uint64_t lLLC = Net_80211_Constants::cSnapLLC;
 
         // Set EtherType from ethernet frame
-        uint64_t lEtherType =
-            *reinterpret_cast<const uint16_t*>(&mLastReceivedData.at(Net_8023_Constants::cEtherTypeIndex));
-
-        lLLC |= lEtherType << 48LLU;
+        lLLC |= static_cast<uint64_t>(mEtherType) << 48LLU;
 
         memcpy(&lFullPacket[0] + lIndex, &lLLC, sizeof(lLLC));
         lIndex += lLLCHeaderSize;
@@ -83,9 +56,19 @@ std::string Handler8023::ConvertPacket(uint64_t aBSSID, RadioTapReader::Physical
     return lReturn;
 }
 
-uint64_t Handler8023::GetDestinationMAC() const
+MacBlackList& Handler8023::GetBlackList()
 {
-    return mDestinationMAC;
+    return mBlackList;
+}
+
+uint64_t Handler8023::GetDestinationMac() const
+{
+    return mDestinationMac;
+}
+
+[[nodiscard]] uint16_t Handler8023::GetEtherType() const
+{
+    return mEtherType;
 }
 
 std::string_view Handler8023::GetPacket()
@@ -93,38 +76,14 @@ std::string_view Handler8023::GetPacket()
     return mLastReceivedData;
 }
 
-uint64_t Handler8023::GetSourceMAC() const
+uint64_t Handler8023::GetSourceMac() const
 {
-    return mSourceMAC;
+    return mSourceMac;
 }
 
-
-bool Handler8023::IsMACAllowed(uint64_t aMAC)
+bool Handler8023::IsBroadcastPacket() const
 {
-    bool lReturn{false};
-
-    if (mWhiteList.empty()) {
-        if (std::find(mBlackList.begin(), mBlackList.end(), aMAC) == mBlackList.end()) {
-            lReturn = true;
-        }
-    } else {
-        if (std::find(mWhiteList.begin(), mWhiteList.end(), aMAC) != mWhiteList.end()) {
-            lReturn = true;
-        }
-    }
-
-    return lReturn;
-}
-
-bool Handler8023::IsMACBlackListed(uint64_t aMAC) const
-{
-    bool lReturn{false};
-
-    if (std::find(mBlackList.begin(), mBlackList.end(), aMAC) != mBlackList.end()) {
-        lReturn = true;
-    }
-
-    return lReturn;
+    return mIsBroadcastPacket;
 }
 
 void Handler8023::Update(std::string_view aPacket)
@@ -132,14 +91,17 @@ void Handler8023::Update(std::string_view aPacket)
     // Save data in object and fill RadioTap parameters.
     mLastReceivedData = aPacket;
 
-    auto lSourceMAC = GetRawData<uint64_t>(mLastReceivedData, Net_8023_Constants::cSourceAddressIndex);
-    lSourceMAC &= static_cast<uint64_t>(static_cast<uint64_t>(1LLU << 48U) - 1);  // it's actually a uint48.
+    auto lSourceMac = GetRawData<uint64_t>(mLastReceivedData, Net_8023_Constants::cSourceAddressIndex);
+    lSourceMac &= Net_Constants::cBroadcastMac;  // it's actually a uint48.
 
     // Clean extranous data as well
-    mSourceMAC = lSourceMAC;
+    mSourceMac = lSourceMac;
 
-    auto lDestinationMAC = GetRawData<uint64_t>(mLastReceivedData, Net_8023_Constants::cDestinationAddressIndex);
-    lDestinationMAC &= static_cast<uint64_t>(static_cast<uint64_t>(1LLU << 48U) - 1);  // it's actually a uint48.
+    auto lDestinationMac = GetRawData<uint64_t>(mLastReceivedData, Net_8023_Constants::cDestinationAddressIndex);
+    lDestinationMac &= Net_Constants::cBroadcastMac;  // it's actually a uint48.
 
-    mDestinationMAC = lDestinationMAC;
+    mDestinationMac    = lDestinationMac;
+    mIsBroadcastPacket = mDestinationMac == Net_Constants::cBroadcastMac;
+
+    mEtherType = GetRawData<uint16_t>(mLastReceivedData, Net_8023_Constants::cEtherTypeIndex);
 }

@@ -1,3 +1,5 @@
+/* Copyright (c) 2021 [Rick de Bondt] - MonitorDeviceStep.cpp */
+
 #include "../../../Includes/UserInterface/Wizard/MonitorDeviceStep.h"
 
 #include <cmath>
@@ -10,7 +12,6 @@
 #include "../../../Includes/UserInterface/String.h"
 #include "../../../Includes/UserInterface/TextField.h"
 
-/* Copyright (c) 2021 [Rick de Bondt] - MonitorDeviceStep.cpp */
 
 namespace
 {
@@ -51,7 +52,7 @@ void MonitorDeviceStep::SetUp()
                                          GetModel().mAcknowledgeDataFrames));
 
     AddObject(std::make_shared<TextField>(*this,
-                                          "Only allow packets from the following MAC-address",
+                                          "Only allow packets from the following Mac-address",
                                           ScaleOnlyAcceptFromMac,
                                           GetModel().mOnlyAcceptFromMac,
                                           17,
