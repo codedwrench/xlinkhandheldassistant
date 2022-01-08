@@ -14,7 +14,6 @@ It requires the following packages to be installed:
 - libnl-genl-3-dev
 - libnl-nf-3-dev
 - libnl-route-3-dev
-- libpthread-stubs0-dev
 
 ### Arch Linux
 - libnl
