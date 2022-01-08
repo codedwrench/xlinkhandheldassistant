@@ -222,7 +222,7 @@ if(WIN32)
   if(MSYS)
     set_property(TARGET xlinkhandheldassistant APPEND PROPERTY LINK_FLAGS "/DELAYLOAD:wpcap.dll")
   endif()
-  target_sources(xlinkhandheldassistant PRIVATE Sources/WifiInterfaceWindows.cpp Includes/WifiInterfaceWindows.h)
+  target_sources(xlinkhandheldassistant PRIVATE Resources/xlinkhandheldassistant.rc Sources/WifiInterfaceWindows.cpp Includes/WifiInterfaceWindows.h)
 elseif (APPLE)
   set_property (TARGET xlinkhandheldassistant APPEND_STRING PROPERTY
     COMPILE_FLAGS "-fobjc-arc")
