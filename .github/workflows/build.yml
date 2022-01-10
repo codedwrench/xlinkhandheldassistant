@@ -38,3 +38,31 @@ jobs:
           name: XLHA-Debian
           path: build/xlinkhandheldassistant
           if-no-files-found: error
+          
+  windows:
+    name: Windows
+    runs-on: self-hosted
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: mingw32
+          update: true
+      - name: Clone Tree
+        uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+          pacman -S bison mingw-w64-i686-cmake mingw-w64-i686-gcc mingw-w64-i686-make mingw-w64-i686-tools-git --noconfirm
+      - name: Build
+        run: |
+          mkdir build 
+          cd build 
+          cmake .. -G "MinGW Makefiles" -DBUILD_X32=1
+          mingw32-make
+      - uses: actions/upload-artifact@v2
+        with:
+          name: XLHA-Windows
+          path: build/xlinkhandheldassistant.exe
