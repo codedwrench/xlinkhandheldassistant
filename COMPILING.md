@@ -56,8 +56,18 @@ The following libraries are needed:
   - ./bootstrap.bat mingw
   - cp b2 ../..
   - cd ../..
-  - ./tools/build/b2.exe --build-type=minimal --toolset=gcc variant=release link=static runtime-link=static
+  - For 64-bit:
+    ```
+    ./tools/build/b2.exe --build-type=minimal --toolset=gcc variant=release link=static runtime-link=static
+    threading=multi --with-system --with-program_options stage
+    ```
+    
+    Or for 32-bit:
+    ```
+    ./tools/build/b2.exe --build-type=minimal --toolset=gcc variant=release link=static runtime-link=static
     address-model=32 threading=multi --with-system --with-program_options stage
+    ```
+    
 - PDCurses or other ncurses compatible library (only pdcurses tested) https://github.com/Bill-Gray/PDCursesMod
   Commands used (from root of pdcurses dir)
   - cd wincon
@@ -78,7 +88,23 @@ For MSYS2 you should be able to run the following commands:
 ```batch
 mkdir build 
 cd build 
+```
+
+For 64-bit:
+
+```
 cmake .. -G "MinGW Makefiles"
+```
+
+Or for 32-bit:
+
+```
+cmake .. -G "MinGW Makefiles" -DBUILD_X32=1
+```
+
+And lastly:
+
+```
 mingw32-make
 ``` 
 
