@@ -226,7 +226,7 @@ add_executable(xlinkhandheldassistant main.cpp
 	Includes/UserInterface/Wizard/XLinkOptionsStep.h)
 
 if(WIN32)
-	if(MSYS)
+	if(MSVC)
 		set_property(TARGET xlinkhandheldassistant APPEND PROPERTY LINK_FLAGS "/DELAYLOAD:wpcap.dll")
 		# Doesnt work in mingw
 		target_sources(xlinkhandheldassistant PRIVATE Resources/xlinkhandheldassistant.rc)
