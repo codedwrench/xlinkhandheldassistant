@@ -7,6 +7,7 @@
  **/
 
 #define PDC_WIDE
+#define CHTYPE_32
 #include <curses.h>
 
 #include "IWindow.h"
