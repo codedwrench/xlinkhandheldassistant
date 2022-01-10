@@ -64,5 +64,5 @@ jobs:
           mingw32-make
       - uses: actions/upload-artifact@v2
         with:
-          name: XLHA-Windows
+          name: XLHA-WindowsX32
           path: build/xlinkhandheldassistant.exe
