@@ -27,6 +27,7 @@ endif ()
 option(BUILD_DOC "Build doxygen" OFF)
 option(ENABLE_TESTS "Build unittests" OFF)
 option(BUILD_STATIC "Statically link all libraries that can be statically linked" OFF)
+option(BUILD_X32 "Cross compile the x32 variant for Windows" OFF)
 
 include_directories(Sources)
 include_directories(Tests)
@@ -73,7 +74,10 @@ if (MSVC OR MSYS OR MINGW)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/Resources/xlinkhandheldassistant.o -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
 
 		# Needed because otherwise the libraries cannot be found.
-		set(Boost_ARCHITECTURE "-x64")
+		if (BUILD_X32)
+			set(Boost_ARCHITECTURE "-x32")
+		else ()
+			set(Boost_ARCHITECTURE "-x64")
 	else()
 		string(APPEND PLATFORM_SPECIFIC_LIBRARIES "delayimp.lib")
 	endif ()
@@ -110,7 +114,7 @@ if (BUILD_STATIC)
 	set(Boost_USE_STATIC_RUNTIME ON)
 	set(BOOST_INCLUDEDIR "c:/boost/include")
 
-	if (NOT MSYS AND NOT MINGW)
+	if (NOT MSVC AND NOT MSYS AND NOT MINGW)
 		set(PCAP_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/../libpcap/libpcap.a")
 		set(PCAP_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libpcap/")
 
