@@ -71,6 +71,10 @@ jobs:
     name: MacOS10_15
     runs-on: self-macOS
     steps:
+      - name: Clone Tree
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - name: Build
         run: |
           mkdir build 
