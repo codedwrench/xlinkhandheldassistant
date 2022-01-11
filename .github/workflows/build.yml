@@ -55,12 +55,12 @@ jobs:
         uses: actions/checkout@v2
       - name: Install Dependencies
         run: |
-          pacman -S bison mingw-w64-i686-cmake mingw-w64-i686-gcc mingw-w64-i686-make mingw-w64-i686-tools-git --noconfirm
+          pacman -S bison mingw-w64-i686-cmake mingw-w64-i686-gcc mingw-w64-i686-make mingw-w64-i686-tools-git mingw-w64-i686-gtest --noconfirm
       - name: Build
         run: |
           mkdir build 
           cd build 
-          cmake .. -G "MinGW Makefiles" -DBUILD_X32=1
+          cmake .. -G "MinGW Makefiles" -DBUILD_X32=1 -DENABLE_TESTS=1
           mingw32-make
       - uses: actions/upload-artifact@v2
         with:
