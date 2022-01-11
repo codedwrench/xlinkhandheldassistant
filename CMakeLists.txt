@@ -108,12 +108,9 @@ if (BUILD_STATIC)
 	message("Static linking enabled")
 	add_definitions(-DBUILD_STATIC)
 	set(BUILD_STATIC ON)
-
-	set(Boost_USE_STATIC_LIBS ON)
-	set(BOOST_ROOT "c:/boost")
-	set(BOOST_LIBRARYDIR "c:/boost/stage/lib")
-	set(Boost_USE_STATIC_RUNTIME ON)
-	set(BOOST_INCLUDEDIR "c:/boost/include")
+ 
+  set(Boost_USE_STATIC_LIBS ON)
+  set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../boost")
 
 	if (NOT MSVC AND NOT MSYS AND NOT MINGW)
 		set(PCAP_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/../libpcap/libpcap.a")
