@@ -33,7 +33,7 @@ void WizardSelectorStep::SetUp()
 
     lSelector->AddRadioBox("Plugin Device");
     lSelector->AddRadioBox("Vita Device");
-#if not defined(_WIN32) && not defined(_WIN64)
+#if not defined(_WIN32) && not defined(_WIN64) && not defined(__APPLE__)
     lSelector->AddRadioBox("Monitor Device");
 #endif
 
