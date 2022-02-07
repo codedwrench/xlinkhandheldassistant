@@ -1,6 +1,10 @@
 # XLHA - XLink Handheld Assistant
 Helps handheld devices connect to XLink Kai using a variety of methods.
 
+[![Build Status](https://github.com/codedwrench/xlinkhandheldassistant/actions/workflows/build.yml/badge.svg)](https://github.com/codedwrench/xlinkhandheldassistant/actions)
+[![Release](https://img.shields.io/github/release/codedwrench/xlinkhandheldassistant.svg)](https://github.com/codedwrench/xlinkhandheldassistant/release)
+[![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/XUS9n73KSP)
+
 At this point receive and send PSP traffic succesfully through XLink Kai using the following methods:
 - Monitor mode
 - Plugin mode
