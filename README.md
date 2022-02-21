@@ -55,6 +55,7 @@ On Windows it has been found that some drivers will not allow for selecting a ch
 ### Intel
 - Intel Pro Wireless 5100 AGN (iwlwifi)
   (Needs Windows 7 drivers on Windows 10)
+- Intel Centrino Advanced-N 6205 (iwlwifi)
   
 ### Ralink
 - WTXUP Ralink RT3070 (Ralink rt2800usb)
@@ -63,6 +64,7 @@ On Windows it has been found that some drivers will not allow for selecting a ch
 - Asus USB-N13 rev b. (Realtek rtl8192cu)
 - Hercules Guillemot HWGUm-54 (Realtek rtl8192su (linux: codedwrench/rtl8192su))
 - TP-Link TL-WN823N V2 (Realtek rtl8192eu (linux: kimocoder/rtl8192eu))
+- NETIS USB (Realtek rtl8188eu) (Needs Windows 7 drivers on Windows 10)
 
 ## How to compile
 See [Compiling](COMPILING.md)
