@@ -11,12 +11,15 @@ std::string HandlerPSPPlugin::ConvertPacketOut()
 {
     std::string lReturn{mLastReceivedData.data(), mLastReceivedData.size()};
 
-    // With the plugin the destination mac is kept at the end of the packet
-    memcpy(lReturn.data() + Net_8023_Constants::cDestinationAddressIndex,
-           &mDestinationMac,
-           Net_8023_Constants::cDestinationAddressLength);
+    // Broadcast packets don't get modified
+    if (!mIsBroadcastPacket) {
+        // With the plugin the destination mac is kept at the end of the packet
+        memcpy(lReturn.data() + Net_8023_Constants::cDestinationAddressIndex,
+               &mDestinationMac,
+               Net_8023_Constants::cDestinationAddressLength);
 
-    lReturn.resize(lReturn.size() - Net_8023_Constants::cDestinationAddressLength);
+        lReturn.resize(lReturn.size() - Net_8023_Constants::cDestinationAddressLength);
+    }
 
     return lReturn;
 }
@@ -25,13 +28,17 @@ std::string HandlerPSPPlugin::ConvertPacketIn(std::string_view aData, uint64_t a
 {
     std::string lData{aData.data(), aData.size()};
 
-    std::string lActualSourceMac{
-        lData.substr(Net_8023_Constants::cSourceAddressIndex, Net_8023_Constants::cSourceAddressLength)};
+    // Broadcast packets don't get modified
+    if (!mIsBroadcastPacket) {
+        std::string lActualSourceMac{
+            lData.substr(Net_8023_Constants::cSourceAddressIndex, Net_8023_Constants::cSourceAddressLength)};
 
-    memcpy(
-        lData.data() + Net_8023_Constants::cSourceAddressIndex, &aAdapterMac, Net_8023_Constants::cSourceAddressLength);
+        memcpy(lData.data() + Net_8023_Constants::cSourceAddressIndex,
+               &aAdapterMac,
+               Net_8023_Constants::cSourceAddressLength);
 
-    lData.append(lActualSourceMac);
+        lData.append(lActualSourceMac);
+    }
 
     return lData;
 }
