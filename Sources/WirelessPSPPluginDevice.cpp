@@ -35,7 +35,13 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
     mPacketHandler->Update(lData);
 
     if (!mPacketHandler->GetBlackList().IsMacBlackListed(mPacketHandler->GetSourceMac())) {
-        if (mPacketHandler->IsBroadcastPacket() && mPacketHandler->GetEtherType() == Net_Constants::cPSPEtherType) {
+        // If the packet is a handshake packet from the psp, go ahead and handshake back
+        if (mPacketHandler->IsBroadcastPacket() &&
+            mPacketHandler->GetEtherType() == Net_Constants::cPSPEtherType &&
+            mPacketHandler->GetPacket().substr(Net_8023_Constants::cDataIndex,
+                                               Net_Constants::cHandshakeToken.length()) ==
+                Net_Constants::cHandshakeToken) {
+
             // Reset the timer so it will not time out
             GetReadWatchdog() = std::chrono::system_clock::now();
 
