@@ -28,8 +28,14 @@ std::string HandlerPSPPlugin::ConvertPacketIn(std::string_view aData, uint64_t a
 {
     std::string lData{aData.data(), aData.size()};
 
+
+    auto lDestinationMac = GetRawData<uint64_t>(lData,
+                                             Net_8023_Constants::cDestinationAddressIndex);
+
+    lDestinationMac &= Net_Constants::cBroadcastMac;  // it's actually a uint48.
+
     // Broadcast packets don't get modified
-    if (!mIsBroadcastPacket) {
+    if (lDestinationMac != Net_Constants::cBroadcastMac) {
         std::string lActualSourceMac{
             lData.substr(Net_8023_Constants::cSourceAddressIndex, Net_8023_Constants::cSourceAddressLength)};
 
