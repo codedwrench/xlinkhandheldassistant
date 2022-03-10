@@ -15,16 +15,12 @@ on:
 jobs:
   ubuntu:
     name: Ubuntu
-    runs-on: ubuntu-latest
+    runs-on: self-linux
     steps:
       - name: Clone Tree
         uses: actions/checkout@v2
         with:
           submodules: recursive
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake gcc-10 g++-10 libboost-dev libboost-program-options-dev libncurses5-dev libpcap-dev libpthread-stubs0-dev libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev libgtest-dev libgmock-dev
       - name: Build
         run: |
           mkdir build && cd build && cmake .. -DENABLE_TESTS=1 && cmake --build . -- -j`nproc`
@@ -41,7 +37,7 @@ jobs:
           
   windows:
     name: Windows
-    runs-on: self-hosted
+    runs-on: self-windows
     defaults:
       run:
         shell: msys2 {0}
