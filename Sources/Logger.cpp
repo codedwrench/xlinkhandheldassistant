@@ -1,13 +1,13 @@
 /* Copyright (c) 2020 [Rick de Bondt] - Logger.cpp */
 
-#include "../Includes/Logger.h"
+#include "Logger.h"
 
 #include <chrono>
 #include <ctime>
 #include <iomanip>
 #include <iostream>
 
-#include "../Includes/WindowModel.h"
+#include "WindowModel.h"
 
 Logger::~Logger()
 {

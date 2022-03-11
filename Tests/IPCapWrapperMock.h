@@ -2,7 +2,7 @@
  * This file contains a mock for IPCapWrapper.
  **/
 
-#include "../Includes/IPCapWrapper.h"
+#include "IPCapWrapper.h"
 
 class IPCapWrapperMock : public IPCapWrapper
 {

@@ -1,11 +1,11 @@
 /* Copyright (c) 2021 [Rick de Bondt] - WirelessPSPPluginDevice.cpp */
 
-#include "../Includes/WirelessPSPPluginDevice.h"
+#include "WirelessPSPPluginDevice.h"
 
 #include <chrono>
 #include <string>
 
-#include "../Includes/NetConversionFunctions.h"
+#include "NetConversionFunctions.h"
 
 using namespace std::chrono;
 

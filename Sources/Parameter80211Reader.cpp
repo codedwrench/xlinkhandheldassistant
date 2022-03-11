@@ -1,10 +1,10 @@
 /* Copyright (c) 2020 [Rick de Bondt] - Parameter80211Reader.cpp */
 
-#include "../Includes/Parameter80211Reader.h"
+#include "Parameter80211Reader.h"
 
 #include <utility>
 
-#include "../Includes/NetConversionFunctions.h"
+#include "NetConversionFunctions.h"
 
 Parameter80211Reader::Parameter80211Reader(std::shared_ptr<RadioTapReader> aPhysicalDeviceHeaderReader) :
     mPhysicalDeviceHeaderReader(std::move(aPhysicalDeviceHeaderReader))

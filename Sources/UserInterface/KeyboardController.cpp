@@ -1,6 +1,6 @@
 /* Copyright (c) 2021 [Rick de Bondt] - KeyboardController.cpp */
 
-#include "../../Includes/UserInterface/KeyboardController.h"
+#include "UserInterface/KeyboardController.h"
 
 #include <chrono>
 #include <iostream>
@@ -11,8 +11,8 @@
 #define CHTYPE_32
 #include <curses.h>
 
-#include "../../Includes/Logger.h"
-#include "../../Includes/UserInterface/NCursesKeys.h"
+#include "Logger.h"
+#include "UserInterface/NCursesKeys.h"
 
 KeyboardController::KeyboardController(std::function<void(unsigned int)> aCallback) : mCallback(std::move(aCallback)) {}
 

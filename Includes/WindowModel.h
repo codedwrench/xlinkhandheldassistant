@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-#include "../Includes/Logger.h"
+#include "Logger.h"
 
 namespace WindowModel_Constants
 {

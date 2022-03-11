@@ -2,7 +2,7 @@
  * This file contains a mock for IPCapDevice.
  **/
 
-#include "../Includes/IPCapDevice.h"
+#include "IPCapDevice.h"
 
 class IPCapDeviceMock : public IPCapDevice
 {

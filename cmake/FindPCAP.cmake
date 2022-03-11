@@ -20,6 +20,29 @@
 #  HAVE_PF_RING              If a found version of libpcap supports PF_RING
 #  HAVE_PCAP_IMMEDIATE_MODE  If the version of libpcap found supports immediate mode
 
+# Modifications:
+# MIT License
+#
+# Copyright © 2022 Rick de Bondt
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 find_path(PCAP_ROOT_DIR
     NAMES include/pcap.h
 )
@@ -37,12 +60,33 @@ if (${CMAKE_SIZEOF_VOID_P} EQUAL 8 AND WIN32)
     set (HINT_DIR ${PCAP_ROOT_DIR}/lib/x64/ ${HINT_DIR})
 endif ()
 
-find_library(PCAP_LIBRARY
-    NAMES pcap wpcap
-    HINTS 
-    ${CMAKE_CURRENT_SOURCE_DIR}/Objects
-    ${HINT_DIR}
-)
+if (NOT BUILD_STATIC)
+    find_library(PCAP_LIBRARY
+        NAMES pcap wpcap
+        HINTS 
+        ${CMAKE_CURRENT_SOURCE_DIR}/Objects
+        ${PCAP_ROOT_DIR}
+        ${HINT_DIR}
+    )
+else()
+    if(MSVC)
+        find_library(PCAP_LIBRARY
+            NAMES libpcap.lib wpcap.lib
+            HINTS 
+            ${CMAKE_CURRENT_SOURCE_DIR}/Objects
+            ${PCAP_ROOT_DIR}
+            ${HINT_DIR}
+        )
+    else()
+        find_library(PCAP_LIBRARY
+            NAMES libpcap.a wpcap.a
+            HINTS 
+            ${CMAKE_CURRENT_SOURCE_DIR}/Objects
+            ${PCAP_ROOT_DIR}
+            ${HINT_DIR}
+        )
+    endif()
+endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(PCAP DEFAULT_MSG

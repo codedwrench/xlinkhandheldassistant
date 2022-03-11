@@ -1,6 +1,6 @@
 /* Copyright (c) 2021 [Rick de Bondt] - WifiInterfaceWindows.cpp */
 
-#include "../Includes/WifiInterfaceWindows.h"
+#include "WifiInterfaceWindows.h"
 
 #include <codecvt>
 #include <locale>
@@ -40,8 +40,8 @@ typedef struct _WLAN_CALLBACK_INFO
 #pragma comment(lib, "ole32.lib")
 #pragma comment(lib, "IPHLPAPI.lib")
 
-#include "../Includes/Logger.h"
-#include "../Includes/NetConversionFunctions.h"
+#include "Logger.h"
+#include "NetConversionFunctions.h"
 
 WifiInterface::WifiInterface(std::string_view aAdapter)
 {

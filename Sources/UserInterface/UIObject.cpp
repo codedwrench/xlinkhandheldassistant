@@ -1,6 +1,6 @@
 /* Copyright (c) 2020 [Rick de Bondt] - UIObject.cpp */
 
-#include "../../Includes/UserInterface/UIObject.h"
+#include "UserInterface/UIObject.h"
 
 #include <string>
 #include <utility>

@@ -1,6 +1,6 @@
 /* Copyright (c) 2020 [Rick de Bondt] - WindowModel.cpp */
 
-#include "../Includes/WindowModel.h"
+#include "WindowModel.h"
 
 #include <iostream>
 

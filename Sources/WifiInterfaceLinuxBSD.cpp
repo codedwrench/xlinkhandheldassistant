@@ -1,6 +1,6 @@
 /* Copyright (c) 2021 [Rick de Bondt] - WifiInterfaceBSD.cpp */
 
-#include "../Includes/WifiInterfaceLinuxBSD.h"
+#include "WifiInterfaceLinuxBSD.h"
 
 #include <cerrno>
 #include <chrono>
@@ -8,8 +8,8 @@
 #include <ifaddrs.h>
 #include <net/if.h>
 
-#include "../Includes/Logger.h"
-#include "../Includes/NetConversionFunctions.h"
+#include "Logger.h"
+#include "NetConversionFunctions.h"
 
 #ifdef __linux__
 #include <netpacket/packet.h>

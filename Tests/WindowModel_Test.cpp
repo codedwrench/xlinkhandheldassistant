@@ -2,7 +2,7 @@
  * This file contains tests for loading or saving WindowModel members.
  **/
 
-#include "../Includes/WindowModel.h"
+#include "WindowModel.h"
 
 #include <fstream>
 

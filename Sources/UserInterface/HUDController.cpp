@@ -1,13 +1,11 @@
 /* Copyright (c) 2020 [Rick de Bondt] - HUDController.cpp **/
 
-#include "../Includes/UserInterface/HUDController.h"
+#include "UserInterface/HUDController.h"
 
-#include <iostream>
-
-#include "../Includes/UserInterface/AboutWindow.h"
-#include "../Includes/UserInterface/HUDWindow.h"
-#include "../Includes/UserInterface/OptionsWindow.h"
-#include "../Includes/UserInterface/ThemeWindow.h"
+#include "UserInterface/AboutWindow.h"
+#include "UserInterface/HUDWindow.h"
+#include "UserInterface/OptionsWindow.h"
+#include "UserInterface/ThemeWindow.h"
 
 Dimensions ScaleHUD(const int& aHeight, const int& aWidth)
 {

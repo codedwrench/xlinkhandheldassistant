@@ -1,10 +1,9 @@
 /* Copyright (c) 2021 [Rick de Bondt] - AboutWindow.cpp */
 
-#include "../../Includes/UserInterface/AboutWindow.h"
+#include "UserInterface/AboutWindow.h"
 
-#include "../../Includes/UserInterface/Button.h"
-#include "../../Includes/UserInterface/DefaultElements.h"
-
+#include "UserInterface/Button.h"
+#include "UserInterface/DefaultElements.h"
 
 namespace
 {

@@ -1,11 +1,10 @@
 /* Copyright (c) 2020 [Rick de Bondt] - Window.cpp */
 
-#include "../../Includes/UserInterface/Window.h"
+#include "UserInterface/Window.h"
 
 #include <codecvt>
-#include <locale>
 
-#include "../../Includes/UserInterface/NCursesKeys.h"
+#include "UserInterface/NCursesKeys.h"
 
 Window::Window(WindowModel&                aModel,
                std::string_view            aTitle,

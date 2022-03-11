@@ -1,11 +1,11 @@
 /* Copyright (c) 2020 [Rick de Bondt] - RadioBox.cpp */
 
-#include "../../Includes/UserInterface/RadioBox.h"
+#include "UserInterface/RadioBox.h"
 
 #include <string>
 #include <utility>
 
-#include "../../Includes/UserInterface/NCursesKeys.h"
+#include "UserInterface/NCursesKeys.h"
 
 RadioBox::RadioBox(IWindow&                    aWindow,
                    std::string_view            aName,

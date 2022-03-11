@@ -1,10 +1,10 @@
 /* Copyright (c) 2021 [Rick de Bondt] - OptionsWindow.cpp */
 
-#include "../../Includes/UserInterface/OptionsWindow.h"
+#include "UserInterface/OptionsWindow.h"
 
-#include "../../Includes/UserInterface/Button.h"
-#include "../../Includes/UserInterface/DefaultElements.h"
-#include "../../Includes/UserInterface/RadioBoxGroup.h"
+#include "UserInterface/Button.h"
+#include "UserInterface/DefaultElements.h"
+#include "UserInterface/RadioBoxGroup.h"
 
 namespace
 {

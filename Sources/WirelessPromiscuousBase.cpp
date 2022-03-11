@@ -1,14 +1,14 @@
 /* Copyright (c) 2021 [Rick de Bondt] - WirelessPromiscuousBase.cpp */
 
-#include "../Includes/WirelessPromiscuousBase.h"
+#include "WirelessPromiscuousBase.h"
 
 #include <chrono>
 #include <functional>
 #include <string>
 #include <thread>
 
-#include "../Includes/NetConversionFunctions.h"
-#include "../Includes/XLinkKaiConnection.h"
+#include "NetConversionFunctions.h"
+#include "XLinkKaiConnection.h"
 
 using namespace std::chrono;
 using namespace WirelessPromiscuousBase_Constants;

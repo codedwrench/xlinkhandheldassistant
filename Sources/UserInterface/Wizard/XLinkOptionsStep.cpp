@@ -1,16 +1,10 @@
 /* Copyright (c) 2020 [Rick de Bondt] - MonitorDeviceStep.cpp */
 
-#include "../../../Includes/UserInterface/Wizard/XLinkOptionsStep.h"
+#include "UserInterface/Wizard/XLinkOptionsStep.h"
 
-#include <cmath>
-#include <utility>
-
-#include "../../../Includes/UserInterface/Button.h"
-#include "../../../Includes/UserInterface/CheckBox.h"
-#include "../../../Includes/UserInterface/DefaultElements.h"
-#include "../../../Includes/UserInterface/String.h"
-#include "../../../Includes/UserInterface/TextField.h"
-
+#include "UserInterface/Button.h"
+#include "UserInterface/DefaultElements.h"
+#include "UserInterface/TextField.h"
 
 namespace
 {

@@ -1,9 +1,9 @@
 /* Copyright (c) 2021 [Rick de Bondt] - PCapDeviceBase.cpp */
 
-#include "../Includes/PCapDeviceBase.h"
+#include "PCapDeviceBase.h"
 
-#include "../Includes/Logger.h"
-#include "../Includes/PCapWrapper.h"
+#include "Logger.h"
+#include "PCapWrapper.h"
 
 void PCapDeviceBase::SetConnector(std::shared_ptr<IConnector> aDevice)
 {

@@ -1,6 +1,6 @@
 /* Copyright (c) 2020 [Rick de Bondt] - String.cpp */
 
-#include "../../Includes/UserInterface/String.h"
+#include "UserInterface/String.h"
 
 String::String(IWindow&                    aWindow,
                std::string_view            aName,

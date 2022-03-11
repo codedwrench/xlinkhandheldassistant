@@ -5,9 +5,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "../Includes/NetConversionFunctions.h"
-#include "../Includes/PCapReader.h"
-#include "../Includes/WirelessPromiscuousDevice.h"
+#include "NetConversionFunctions.h"
+#include "PCapReader.h"
+#include "WirelessPromiscuousDevice.h"
 #include "IConnectorMock.h"
 #include "IPCapWrapperMock.h"
 #include "IWifiInterfaceMock.h"

@@ -1,11 +1,11 @@
 /* Copyright (c) 2020 [Rick de Bondt] - MainWindowController.cpp **/
 
-#include "../Includes/UserInterface/MainWindowController.h"
+#include "UserInterface/MainWindowController.h"
 
 #include <iostream>
 
-#include "../../Includes/UserInterface/HUDController.h"
-#include "../Includes/UserInterface/Wizard/WizardController.h"
+#include "UserInterface/HUDController.h"
+#include "UserInterface/Wizard/WizardController.h"
 
 MainWindowController::MainWindowController(WindowModel& aWindowModel, bool aSkipWizard) :
     WindowControllerBase(aWindowModel), mSkipWizard(aSkipWizard)

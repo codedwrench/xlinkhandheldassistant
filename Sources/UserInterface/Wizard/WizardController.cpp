@@ -1,16 +1,15 @@
 /* Copyright (c) 2021 [Rick de Bondt] - WizardController.cpp */
 
-#include "../../../Includes/UserInterface/Wizard/WizardController.h"
+#include "UserInterface/Wizard/WizardController.h"
 
-#include "../../../Includes/PCapWrapper.h"
-#include "../../../Includes/UserInterface/Wizard/MonitorDeviceStep.h"
-#include "../../../Includes/UserInterface/Wizard/PluginOptionsStep.h"
-#include "../../../Includes/UserInterface/Wizard/PromiscuousOptionsStep.h"
-#include "../../../Includes/UserInterface/Wizard/WizardSelectorStep.h"
-#include "../../../Includes/UserInterface/Wizard/XLinkOptionsStep.h"
+#include "PCapWrapper.h"
+#include "UserInterface/Wizard/MonitorDeviceStep.h"
+#include "UserInterface/Wizard/PluginOptionsStep.h"
+#include "UserInterface/Wizard/PromiscuousOptionsStep.h"
+#include "UserInterface/Wizard/WizardSelectorStep.h"
+#include "UserInterface/Wizard/XLinkOptionsStep.h"
 
 #undef MOUSE_MOVED
-
 
 using namespace WizardController_Constants;
 

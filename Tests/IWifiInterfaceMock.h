@@ -2,7 +2,7 @@
  * This file contains a mock for IWifiInterface.
  **/
 
-#include "../Includes/IWifiInterface.h"
+#include "IWifiInterface.h"
 
 class IWifiInterfaceMock : public IWifiInterface
 {

@@ -1,14 +1,10 @@
 /* Copyright (c) 2021 [Rick de Bondt] - HUDWindow.cpp */
 
-#include "../../Includes/UserInterface/HUDWindow.h"
+#include "UserInterface/HUDWindow.h"
 
-#include <cmath>
-#include <utility>
-
-#include "../../Includes/UserInterface/Button.h"
-#include "../../Includes/UserInterface/CheckBox.h"
-#include "../../Includes/UserInterface/DefaultElements.h"
-#include "../../Includes/UserInterface/TextField.h"
+#include "UserInterface/Button.h"
+#include "UserInterface/CheckBox.h"
+#include "UserInterface/DefaultElements.h"
 
 namespace
 {

@@ -1,11 +1,11 @@
 /* Copyright (c) 2021 [Rick de Bondt] - WirelessPromiscuousDevice.cpp */
 
-#include "../Includes/WirelessPromiscuousDevice.h"
+#include "WirelessPromiscuousDevice.h"
 
 #include <chrono>
 #include <string>
 
-#include "../Includes/NetConversionFunctions.h"
+#include "NetConversionFunctions.h"
 
 using namespace std::chrono;
 

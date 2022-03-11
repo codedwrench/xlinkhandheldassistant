@@ -1,11 +1,11 @@
 /* Copyright (c) 2021 [Rick de Bondt] - HandlerPSPPlugin.cpp */
 
-#include "../Includes/HandlerPSPPlugin.h"
+#include "HandlerPSPPlugin.h"
 
 #include <climits>
 
-#include "../Includes/Logger.h"
-#include "../Includes/NetConversionFunctions.h"
+#include "Logger.h"
+#include "NetConversionFunctions.h"
 
 std::string HandlerPSPPlugin::ConvertPacketOut()
 {

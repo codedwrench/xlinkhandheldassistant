@@ -1,6 +1,6 @@
 /* Copyright (c) 2020 [Rick de Bondt] - TextField.cpp */
 
-#include "../../Includes/UserInterface/TextField.h"
+#include "UserInterface/TextField.h"
 
 #include <string>
 #include <utility>

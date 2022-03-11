@@ -1,14 +1,14 @@
 /* Copyright (c) 2020 [Rick de Bondt] - MonitorDevice.cpp */
 
-#include "../Includes/MonitorDevice.h"
+#include "MonitorDevice.h"
 
 #include <chrono>
 #include <functional>
 #include <string>
 #include <thread>
 
-#include "../Includes/NetConversionFunctions.h"
-#include "../Includes/XLinkKaiConnection.h"
+#include "NetConversionFunctions.h"
+#include "XLinkKaiConnection.h"
 
 using namespace std::chrono;
 

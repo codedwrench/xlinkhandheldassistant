@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-#include "../Includes/WifiInterfaceApple.h"
+#include "WifiInterfaceApple.h"
 
 @class CWWiFiClient;
 @class CWInterface;
