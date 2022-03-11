@@ -23,7 +23,7 @@ jobs:
           submodules: recursive
       - name: Build
         run: |
-          mkdir build && cd build && cmake .. -DENABLE_TESTS=1 && cmake --build . -- -j`nproc`
+          mkdir build && cd build && cmake .. -DENABLE_TESTS=1 -DAUTO_FORMAT=0 && cmake --build . -- -j`nproc`
       - name: Unit Tests
         run: |
           cd build

@@ -36,6 +36,6 @@ endif ()
 # Concepts seems to break on a bunch of compilers, see: https://github.com/chriskohlhoff/asio/issues/738
 add_definitions(-DBOOST_ASIO_DISABLE_CONCEPTS)
 
-find_package(Boost 1.76 REQUIRED COMPONENTS program_options)
+find_package(Boost 1.71 REQUIRED COMPONENTS program_options)
 
 

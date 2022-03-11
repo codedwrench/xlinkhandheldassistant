@@ -36,9 +36,11 @@ foreach (target IN ITEMS ${targets})
     add_dependencies(${target} ${${target}_DEPENDENCIES})
   endif ()
 
-  # Fix formatting
-  include(runclangformat)
-  target_clangformat_setup(${target})
+  if (AUTO_FORMAT)
+    # Fix formatting
+    include(runclangformat)
+    target_clangformat_setup(${target})
+  endif()
 
   # Testing stuff
   if (${target}_TEST_SOURCES AND ENABLE_TESTS)
@@ -60,7 +62,10 @@ foreach (target IN ITEMS ${targets})
       add_dependencies(${target}_tests ${${target}_DEPENDENCIES})
     endif ()
 
-    target_clangformat_setup(${target}_tests)
+    if (AUTO_FORMAT)
+      target_clangformat_setup(${target}_tests)
+    endif()
+
     gtest_discover_tests(${target}_tests)
 
     if (AUTO_FORMAT)

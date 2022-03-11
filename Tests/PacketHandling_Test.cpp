@@ -5,11 +5,11 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "IConnectorMock.h"
+#include "IPCapDeviceMock.h"
 #include "NetConversionFunctions.h"
 #include "PCapReader.h"
 #include "XLinkKaiConnection.h"
-#include "IConnectorMock.h"
-#include "IPCapDeviceMock.h"
 
 using ::testing::_;
 using ::testing::DoAll;

@@ -28,6 +28,7 @@ project(xlinkhandheldassistant DESCRIPTION "Helps XLink Kai bring handhelds onli
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+option(AUTO_FORMAT "Automatically format code" ON)
 option(BUILD_DOC "Build doxygen" OFF)
 option(ENABLE_TESTS "Build unittests" OFF)
 option(BUILD_STATIC "Statically link all libraries that can be statically linked" OFF)

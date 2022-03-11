@@ -5,12 +5,12 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "NetConversionFunctions.h"
-#include "PCapReader.h"
-#include "WirelessPSPPluginDevice.h"
 #include "IConnectorMock.h"
 #include "IPCapWrapperMock.h"
 #include "IWifiInterfaceMock.h"
+#include "NetConversionFunctions.h"
+#include "PCapReader.h"
+#include "WirelessPSPPluginDevice.h"
 
 using ::testing::_;
 using ::testing::DoAll;
