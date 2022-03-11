@@ -101,7 +101,14 @@ set(CMAKE_REQUIRED_LIBRARIES)
 
 # check if linking against libpcap also needs to link against a thread library
 if (NOT PCAP_LINKS_SOLO)
-    find_package(Threads)
+    set(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES "CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED")
+    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO")
+
+    find_package(Threads REQUIRED)
+
+    unset(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES)
+    unset(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED)
+
     if (THREADS_FOUND)
         set(CMAKE_REQUIRED_LIBRARIES ${PCAP_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
         check_cxx_source_compiles("int main() { return 0; }" PCAP_NEEDS_THREADS)

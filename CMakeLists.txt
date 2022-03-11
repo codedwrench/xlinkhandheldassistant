@@ -136,7 +136,16 @@ else()
 	find_package(Curses REQUIRED)
 endif()
 
+# Otherwise macOS tries to sign try_compile in FindThreads
+set(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES "CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED")
+set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO")
+
 find_package(Threads REQUIRED)
+
+# We want to sign everything else
+unset(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES)
+unset(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED)
+
 include(wrapfindboost)
 
 set(TARGET_NAME ${CMAKE_PROJECT_NAME})
