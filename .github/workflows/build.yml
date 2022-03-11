@@ -75,7 +75,7 @@ jobs:
         run: |
           mkdir build 
           cd build 
-          cmake .. -G "Xcode"
+          cmake .. -G "Xcode" -DBUILD_STATIC=1
           xcodebuild -configuration Release
       - uses: actions/upload-artifact@v2
         with:
