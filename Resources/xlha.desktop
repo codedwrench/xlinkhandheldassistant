@@ -2,6 +2,7 @@
 Type=Application
 Name=XLink Handheld Assistant
 Comment=Starts XLink Handheld Assistant
-Exec=$HOME/xlinkhandheldassistant/linux_scripts/start-xlinkhandheldassistant.sh
-Icon=$HOME/xlinkhandheldassistant/Resources/icon.svg
+Terminal=true
+Exec=/opt/xlinkhandheldassistant/linux_scripts/start-xlinkhandheldassistant-cli.sh
+Icon=/opt/xlinkhandheldassistant/Resources/icon.svg
 Categories=Utility;Network;Game
