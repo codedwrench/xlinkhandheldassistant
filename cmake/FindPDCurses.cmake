@@ -43,22 +43,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
-set(CURSES_INCLUDE_DIRS ${PDCURSES_ROOT_DIR})
-
-# Within XLHA we use wincon
-set(CURSES_LIBRARIES ${PDCURSES_ROOT_DIR}/wincon)
-
-find_path(CURSES_INCLUDE_DIRS curses.h)
+find_path(CURSES_INCLUDE_DIRS curses.h HINTS ${PDCURSES_ROOT_DIR})
 
 if (NOT BUILD_STATIC)
-    find_library(CURSES_LIBRARIES NAMES pdcurses)
+    find_library(CURSES_LIBRARIES NAMES pdcurses HINTS ${PDCURSES_ROOT_DIR})
 else()
   if(MSVC)
     # Visual Studio does not use .a files
-    find_library(CURSES_LIBRARIES NAMES pdcurses.lib)
+    find_library(CURSES_LIBRARIES NAMES pdcurses.lib HINTS ${PDCURSES_ROOT_DIR}/wincon ${PDCURSES_ROOT_DIR}/wincon/static)
   else()
-    find_library(CURSES_LIBRARIES NAMES pdcurses.a)
+    find_library(CURSES_LIBRARIES NAMES pdcurses.a HINTS ${PDCURSES_ROOT_DIR}/wincon ${PDCURSES_ROOT_DIR}/wincon/static)
   endif()
 endif()
 

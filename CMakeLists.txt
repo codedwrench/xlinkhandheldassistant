@@ -48,9 +48,14 @@ if (BUILD_DOC)
 	include(adddoxygen)
 endif ()
 
+if (BUILD_STATIC)
+	message("Static linking enabled")
+	add_definitions(-DBUILD_STATIC)
+	set(BUILD_STATIC ON)
+endif ()
+
 # Windows specific options
 if (WIN32)
-	message("You're running Windows! Make sure your paths are set correctly.")
 	set(BUILD_STATIC ON)
 
 	if (MSYS OR MINGW)
@@ -84,69 +89,68 @@ if (WIN32)
 	set(PCAP_ROOT_DIR "c:/npcapsdk" CACHE STRING "Where the npcap sdk is located")
 	set(PDCURSES_ROOT_DIR "c:/pdcurses/" CACHE STRING "Where the pdcurses directory is located")
 
-	find_package(PDCurses REQUIRED)
-	
-elseif (UNIX AND NOT APPLE)     
-	# Linux uses LibNL to connect to adhoc networks
-	find_package(LibNL REQUIRED)
-	list(APPEND PLATFORM_SPECIFIC_LIBRARIES ${LibNL_LIBRARIES})
-	list(APPEND PLATFORM_SPECIFIC_INCLUDES ${LibNL_INCLUDE_DIR})
-	
-elseif(APPLE)
-	# Use automatic reference counting for Objective-C portions
-	add_compile_options(-fobjc-arc)
+elseif (UNIX)
+	if (BUILD_STATIC)
+		set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../boost" CACHE STRING "Boost location")
 
-	find_library(CoreW CoreWLAN)
-	list(APPEND PLATFORM_SPECIFIC_LIBRARIES ${CoreW})
-	list(APPEND ${CMAKE_PROJECT_NAME}_SOURCES ${CoreW} ${CoreL})
+		# PCAP and Curses already dealt with for Windows
+		set(PCAP_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libpcap/" CACHE STRING "LibPCAP location")
+		set(NCURSES_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ncurses/" CACHE STRING "NCurses location")
 
-	# HomeBrew installs libpcap here
-	set(PCAP_ROOT_DIR "/usr/local/opt/libpcap")
+		if (NOT APPLE)
+			set(LibNL_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libnl/" CACHE STRING "LibNL location")
+		endif ()
+	endif ()
 
-	# Make it search for HomeBrew ncurses locations as well, the macOS version is not good enough
-	set(Curses_ROOT "/usr/local/opt/ncurses") 
+	if (APPLE)
+		# Use automatic reference counting for Objective-C portions
+		add_compile_options(-fobjc-arc)
+
+		find_library(CoreW CoreWLAN)
+		list(APPEND PLATFORM_SPECIFIC_LIBRARIES ${CoreW})
+		list(APPEND ${CMAKE_PROJECT_NAME}_SOURCES ${CoreW} ${CoreL})
+
+		# HomeBrew installs libpcap here
+		set(PCAP_ROOT_DIR "/usr/local/opt/libpcap")
+
+		# Make it search for HomeBrew ncurses locations as well, the macOS version is not good enough
+		set(NCURSES_ROOT_DIR "/usr/local/opt/ncurses")
+	else ()
+
+		# Linux uses LibNL to connect to adhoc networks
+		find_package(LibNL REQUIRED)
+		list(APPEND PLATFORM_SPECIFIC_LIBRARIES ${LibNL_LIBRARIES})
+		list(APPEND PLATFORM_SPECIFIC_INCLUDES ${LibNL_INCLUDE_DIR})
+	endif ()
 endif()
 
+
 if (BUILD_STATIC)
-	message("Static linking enabled")
-	add_definitions(-DBUILD_STATIC)
-	set(BUILD_STATIC ON)
- 
-	set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../boost")
+	set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../boost" CACHE STRING "Boost location")
 
 	# PCAP and Curses already dealt with for Windows
 	if (NOT WIN32)
-		set(PCAP_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libpcap/")
-		
-		find_package(PCAP REQUIRED)
+		set(PCAP_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libpcap/" CACHE STRING "LibPCAP location")
+		set(NCURSES_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ncurses/" CACHE STRING "NCurses location")
 
-		set(CURSES_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../ncurses/include")
-		set(CURSES_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/../ncurses/lib/libncursesw.a
-			${CMAKE_CURRENT_SOURCE_DIR}/../ncurses/lib/libformw.a)
-			
-		find_package(Curses REQUIRED)
+		if (UNIX AND NOT APPLE)
+			set(LibNL_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libnl/" CACHE STRING "LibNL location")
+		endif()
 	endif()
-	
-	find_package(PCAP REQUIRED)
-	
-else()
-	find_package(PCAP REQUIRED)
-	set(CURSES_NEED_WIDE TRUE)
-	set(CURSES_NEED_NCURSES TRUE)
-	find_package(Curses REQUIRED)
 endif()
 
-# Otherwise macOS tries to sign try_compile in FindThreads
-set(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES "CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED")
-set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO")
+if (WIN32)
+	find_package(PDCurses REQUIRED)
 
-find_package(Threads REQUIRED)
-
-# We want to sign everything else
-unset(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES)
-unset(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED)
+else ()
+	set(CURSES_NEED_WIDE TRUE)
+	set(CURSES_NEED_NCURSES TRUE)
+	find_package(PCAP REQUIRED)
+	find_package(Curses REQUIRED)
+endif ()
 
 include(wrapfindboost)
+include(wrapfindthreads)
 
 set(TARGET_NAME ${CMAKE_PROJECT_NAME})
 set(${TARGET_NAME}_SOURCES main.cpp)

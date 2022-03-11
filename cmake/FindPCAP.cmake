@@ -101,27 +101,19 @@ set(CMAKE_REQUIRED_LIBRARIES)
 
 # check if linking against libpcap also needs to link against a thread library
 if (NOT PCAP_LINKS_SOLO)
-    set(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES "CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED")
-    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "NO")
+    # We need threads in XLHA anyway so don't do the check here
 
-    find_package(Threads REQUIRED)
+    set(CMAKE_REQUIRED_LIBRARIES ${PCAP_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+    check_cxx_source_compiles("int main() { return 0; }" PCAP_NEEDS_THREADS)
+    set(CMAKE_REQUIRED_LIBRARIES)
 
-    unset(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES)
-    unset(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED)
-
-    if (THREADS_FOUND)
-        set(CMAKE_REQUIRED_LIBRARIES ${PCAP_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
-        check_cxx_source_compiles("int main() { return 0; }" PCAP_NEEDS_THREADS)
-        set(CMAKE_REQUIRED_LIBRARIES)
-    endif (THREADS_FOUND)
-    if (THREADS_FOUND AND PCAP_NEEDS_THREADS)
+    if (PCAP_NEEDS_THREADS)
         set(_tmp ${PCAP_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
         list(REMOVE_DUPLICATES _tmp)
         set(PCAP_LIBRARY ${_tmp}
             CACHE STRING "Libraries needed to link against libpcap" FORCE)
-    else (THREADS_FOUND AND PCAP_NEEDS_THREADS)
-        message(FATAL_ERROR "Couldn't determine how to link against libpcap")
-    endif (THREADS_FOUND AND PCAP_NEEDS_THREADS)
+    endif()
+
 endif (NOT PCAP_LINKS_SOLO)
 
 include(CheckFunctionExists)

@@ -41,7 +41,12 @@ else()
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
     set(PROJECT_COMPILE_WARNING_FLAGS -Wall -Wextra -Wshadow -Wconversion -Weffc++)
     # Static libstdc++
-    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ ${CMAKE_EXE_LINKER_FLAGS}")
+    if (NOT APPLE)
+        set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ ${CMAKE_EXE_LINKER_FLAGS}")
+    else ()
+        set(CMAKE_EXE_LINKER_FLAGS "-static-libstdc++ ${CMAKE_EXE_LINKER_FLAGS}")
+    endif()
+
 endif()
 
 if (MSYS OR MINGW)

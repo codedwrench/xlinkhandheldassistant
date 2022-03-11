@@ -23,7 +23,11 @@ jobs:
           submodules: recursive
       - name: Build
         run: |
-          mkdir build && cd build && cmake .. -DENABLE_TESTS=1 -DAUTO_FORMAT=0 && cmake --build . -- -j`nproc`
+          mkdir build
+          cd build 
+          cmake .. -DENABLE_TESTS=1 \
+                   -DAUTO_FORMAT=0
+          cmake --build . -- -j`nproc`
       - name: Unit Tests
         run: |
           cd build
@@ -56,7 +60,10 @@ jobs:
         run: |
           mkdir build 
           cd build 
-          cmake .. -G "MinGW Makefiles" -DBUILD_X32=1
+          cmake .. -G "MinGW Makefiles" -DAUTO_FORMAT=0 \
+                                        -DBUILD_X32=1 \
+                                        -DBOOST_ROOT="c:/boost"
+                                        
           mingw32-make
       - uses: actions/upload-artifact@v2
         with:
@@ -75,7 +82,11 @@ jobs:
         run: |
           mkdir build 
           cd build 
-          cmake .. -G "Xcode" -DBUILD_STATIC=1
+          cmake .. -G "Xcode" -DAUTO_FORMAT=0 \
+                              -DBUILD_STATIC=1 \
+                              -DPCAP_ROOT_DIR="$HOME/source/libpcap" \
+                              -DBOOST_ROOT="$HOME/source/boost" \
+                              -DNCURSES_ROOT_DIR="$HOME/source/ncurses"
           xcodebuild -configuration Release
       - uses: actions/upload-artifact@v2
         with:
