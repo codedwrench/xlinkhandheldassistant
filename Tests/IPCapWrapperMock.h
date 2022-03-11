@@ -24,7 +24,7 @@ public:
     MOCK_METHOD(pcap_t*, OpenOffline, (const char* fname, char* errbuf));
     MOCK_METHOD(int, NextEx, (pcap_pkthdr * *header, const unsigned char** pkt_data));
     MOCK_METHOD(int, SendPacket, (std::string_view buffer));
-    MOCK_METHOD(int, SetDirection, (pcap_direction_t direction));
+    MOCK_METHOD(int, SetDirection, (PcapDirection::Direction direction));
     MOCK_METHOD(int, SetImmediateMode, (int mode));
     MOCK_METHOD(int, SetSnapLen, (int snaplen));
     MOCK_METHOD(int, SetTimeOut, (int timeout));

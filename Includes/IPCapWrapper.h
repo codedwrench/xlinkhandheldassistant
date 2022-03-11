@@ -9,6 +9,29 @@
 /**
  * Interface for pcapwrapper.
  */
+
+struct pcap;
+struct pcap_dumper;
+struct pcap_if;
+struct pcap_addr;
+
+using pcap_t        = struct pcap;
+using pcap_dumper_t = struct pcap_dumper;
+using pcap_if_t     = struct pcap_if;
+using pcap_addr_t   = struct pcap_addr;
+
+typedef void (*pcap_handler)(u_char*, const struct pcap_pkthdr*, const u_char*);
+
+namespace PcapDirection
+{
+    enum Direction
+    {
+        INOUT = 0,
+        IN,
+        OUT
+    };
+}  // namespace PcapDirection
+
 class IPCapWrapper
 {
 public:
@@ -29,7 +52,7 @@ public:
     virtual pcap_t*        OpenOffline(const char* fname, char* errbuf)                           = 0;
     virtual int            NextEx(pcap_pkthdr** header, const unsigned char** pkt_data)           = 0;
     virtual int            SendPacket(std::string_view buffer)                                    = 0;
-    virtual int            SetDirection(pcap_direction_t direction)                               = 0;
+    virtual int            SetDirection(PcapDirection::Direction direction)                       = 0;
     virtual int            SetImmediateMode(int mode)                                             = 0;
     virtual int            SetSnapLen(int snaplen)                                                = 0;
     virtual int            SetTimeOut(int timeout)                                                = 0;
