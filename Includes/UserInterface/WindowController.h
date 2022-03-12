@@ -20,19 +20,14 @@
 
 #include "Window.h"
 
-namespace WindowController_Constants
-{
-    using WindowList = std::vector<std::shared_ptr<IWindow>>;
-}  // namespace WindowController_Constants
-
-using namespace WindowController_Constants;
-
 /**
  * This class will setup our window layout and basically handle everything
  * around the user interface.
  */
 class WindowController
 {
+    using WindowList = std::vector<std::shared_ptr<IWindow>>;
+
 public:
     /**
      * Constructor of WindowController, handles everything around the user
@@ -40,7 +35,7 @@ public:
      * @param aModel - A model where the window can leave its data for the rest of
      * the program.
      */
-    WindowController(WindowModel& aModel);
+    explicit WindowController(WindowModel& aModel);
     ~WindowController();
 
     WindowController(const WindowController& aWindowController) = delete;
@@ -64,7 +59,7 @@ public:
 private:
     void AdvanceWindow();
 
-    NCursesWindow                            mMainCanvas;
+    Window::NCursesWindow                    mMainCanvas;
     int                                      mHeight;
     int                                      mWidth;
     bool                                     mDimensionsChanged;

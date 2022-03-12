@@ -1,14 +1,14 @@
 /* Copyright (c) 2021 [Rick de Bondt] - WirelessPromiscuousBase.cpp */
 
-#include "../Includes/WirelessPromiscuousBase.h"
+#include "WirelessPromiscuousBase.h"
 
 #include <chrono>
 #include <functional>
 #include <string>
 #include <thread>
 
-#include "../Includes/NetConversionFunctions.h"
-#include "../Includes/XLinkKaiConnection.h"
+#include "NetConversionFunctions.h"
+#include "XLinkKaiConnection.h"
 
 using namespace std::chrono;
 using namespace WirelessPromiscuousBase_Constants;
@@ -52,7 +52,7 @@ bool WirelessPromiscuousBase::Open(std::string_view                aName,
     mWrapper->Create(aName.data(), lErrorBuffer.data());
     mWrapper->SetSnapLen(cSnapshotLength);
     mWrapper->SetTimeOut(cPCAPTimeoutMs);
-    mWrapper->SetDirection(PCAP_D_IN);
+    mWrapper->SetDirection(PcapDirection::DIR_IN);
     mWrapper->SetImmediateMode(1);
 
     int lStatus{mWrapper->Activate()};

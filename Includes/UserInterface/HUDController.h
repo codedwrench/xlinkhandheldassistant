@@ -11,7 +11,7 @@
 class HUDController : public WindowControllerBase
 {
 public:
-    HUDController(WindowModel& aWindowModel);
+    explicit HUDController(WindowModel& aWindowModel);
     bool SetUp() override;
     bool KeyAction(unsigned int aAction) override;
     bool Process() override;

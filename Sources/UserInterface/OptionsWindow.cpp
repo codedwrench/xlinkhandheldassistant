@@ -1,22 +1,24 @@
 /* Copyright (c) 2021 [Rick de Bondt] - OptionsWindow.cpp */
 
-#include "../../Includes/UserInterface/OptionsWindow.h"
+#include "UserInterface/OptionsWindow.h"
 
-#include "../../Includes/UserInterface/Button.h"
-#include "../../Includes/UserInterface/DefaultElements.h"
-#include "../../Includes/UserInterface/RadioBoxGroup.h"
+#include "UserInterface/Button.h"
+#include "UserInterface/DefaultElements.h"
+#include "UserInterface/RadioBoxGroup.h"
 
 namespace
 {
-    Dimensions ScaleStartWizardButton() { return {2, 4, 0, 0}; }
-    Dimensions ScaleAboutButton() { return {3, 4, 0, 0}; }
-    Dimensions ScaleThemeButton() { return {4, 4, 0, 0}; }
-    Dimensions ScaleLogLevelSelector() { return {6, 4, 0, 0}; }
-    Dimensions ScaleDoneButton() { return {13, 4, 0, 0}; }
-    Dimensions ScaleExitButton() { return {14, 4, 0, 0}; }
+    Window::Dimensions ScaleStartWizardButton() { return {2, 4, 0, 0}; }
+    Window::Dimensions ScaleAboutButton() { return {3, 4, 0, 0}; }
+    Window::Dimensions ScaleThemeButton() { return {4, 4, 0, 0}; }
+    Window::Dimensions ScaleLogLevelSelector() { return {6, 4, 0, 0}; }
+    Window::Dimensions ScaleDoneButton() { return {13, 4, 0, 0}; }
+    Window::Dimensions ScaleExitButton() { return {14, 4, 0, 0}; }
 }  // namespace
 
-OptionsWindow::OptionsWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation) :
+OptionsWindow::OptionsWindow(WindowModel&                        aModel,
+                             std::string_view                    aTitle,
+                             std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

@@ -1,19 +1,19 @@
 /* Copyright (c) 2020 [Rick de Bondt] - Button.cpp */
 
-#include "../../Includes/UserInterface/Button.h"
+#include "UserInterface/Button.h"
 
 #include <string>
 #include <utility>
 
-#include "../Includes/UserInterface/NCursesKeys.h"
+#include "UserInterface/NCursesKeys.h"
 
-Button::Button(IWindow&                    aWindow,
-               std::string_view            aName,
-               std::function<Dimensions()> aCalculation,
-               std::function<bool()>       aAction,
-               bool                        aSelected,
-               bool                        aVisible,
-               bool                        aSelectable) :
+Button::Button(IWindow&                            aWindow,
+               std::string_view                    aName,
+               std::function<Window::Dimensions()> aCalculation,
+               std::function<bool()>               aAction,
+               bool                                aSelected,
+               bool                                aVisible,
+               bool                                aSelectable) :
     UIObject(aWindow, aName, std::move(aCalculation), aVisible, aSelectable),
     mSelected(aSelected), mAction{std::move(aAction)}
 {}
@@ -22,7 +22,7 @@ void Button::Draw()
 {
     if (IsVisible()) {
         std::string lButtonString{std::string("[ ") + GetName().data() + " ]"};
-        int         lColorPair{mSelected ? 7 : 1};
+        auto        lColorPair{static_cast<unsigned int>(mSelected ? 7 : 1)};
         GetWindow().DrawString(GetYCoord(), GetXCoord(), lColorPair, lButtonString);
     }
 }

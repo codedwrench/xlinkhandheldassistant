@@ -5,12 +5,12 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "../Includes/NetConversionFunctions.h"
-#include "../Includes/PCapReader.h"
-#include "../Includes/WirelessPromiscuousDevice.h"
 #include "IConnectorMock.h"
 #include "IPCapWrapperMock.h"
 #include "IWifiInterfaceMock.h"
+#include "NetConversionFunctions.h"
+#include "PCapReader.h"
+#include "WirelessPromiscuousDevice.h"
 
 using ::testing::_;
 using ::testing::DoAll;
@@ -308,7 +308,8 @@ TEST_F(PromiscuousPacketHandlingTest, ReplaceMacArpReplyXLinkSide)
     lPromiscuousDevice->Close();
 }
 
-// This test should prove that the VRRP Mac sent by XLink Kai would be replaced by the adapter Mac on DDS on arp requests
+// This test should prove that the VRRP Mac sent by XLink Kai would be replaced by the adapter Mac on DDS on arp
+// requests
 TEST_F(PromiscuousPacketHandlingTest, ReplaceMacArpRequestXLinkSide)
 {
     std::shared_ptr<IWifiInterface> lWifiInterface{std::make_shared<IWifiInterfaceMock>()};

@@ -15,12 +15,12 @@
 class RadioBox : public UIObject
 {
 public:
-    RadioBox(IWindow&                    aWindow,
-             std::string_view            aName,
-             std::function<Dimensions()> aCalculation,
-             bool                        aSelected   = false,
-             bool                        aVisible    = true,
-             bool                        aSelectable = true);
+    RadioBox(IWindow&                            aWindow,
+             std::string_view                    aName,
+             std::function<Window::Dimensions()> aCalculation,
+             bool                                aSelected   = false,
+             bool                                aVisible    = true,
+             bool                                aSelectable = true);
 
     void Draw() override;
     bool HandleKey(unsigned int aKeyCode) override;

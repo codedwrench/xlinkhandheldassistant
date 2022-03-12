@@ -1,22 +1,21 @@
 /* Copyright (c) 2021 [Rick de Bondt] - WizardController.cpp */
 
-#include "../../../Includes/UserInterface/Wizard/WizardController.h"
+#include "UserInterface/Wizard/WizardController.h"
 
-#include "../../../Includes/PCapWrapper.h"
-#include "../../../Includes/UserInterface/Wizard/MonitorDeviceStep.h"
-#include "../../../Includes/UserInterface/Wizard/PluginOptionsStep.h"
-#include "../../../Includes/UserInterface/Wizard/PromiscuousOptionsStep.h"
-#include "../../../Includes/UserInterface/Wizard/WizardSelectorStep.h"
-#include "../../../Includes/UserInterface/Wizard/XLinkOptionsStep.h"
+#include "PCapWrapper.h"
+#include "UserInterface/Wizard/MonitorDeviceStep.h"
+#include "UserInterface/Wizard/PluginOptionsStep.h"
+#include "UserInterface/Wizard/PromiscuousOptionsStep.h"
+#include "UserInterface/Wizard/WizardSelectorStep.h"
+#include "UserInterface/Wizard/XLinkOptionsStep.h"
 
 #undef MOUSE_MOVED
 
-
 using namespace WizardController_Constants;
 
-Dimensions ScaleWizard(const int& aHeight, const int& aWidth)
+Window::Dimensions ScaleWizard(const int& aHeight, const int& aWidth)
 {
-    Dimensions lDimensions{};
+    Window::Dimensions lDimensions{};
 
     lDimensions.at(2) = aHeight;
     lDimensions.at(3) = aWidth;
@@ -27,7 +26,7 @@ Dimensions ScaleWizard(const int& aHeight, const int& aWidth)
 template<class WindowType> void ReplaceWindow(std::vector<std::shared_ptr<IWindow>>& aWindows,
                                               WindowModel&                           aModel,
                                               std::string_view                       aTitle,
-                                              std::function<Dimensions()>            aDimensions)
+                                              std::function<Window::Dimensions()>    aDimensions)
 {
     if (!aWindows.empty()) {
         aWindows.pop_back();
@@ -39,7 +38,7 @@ template<class WindowType> void ReplaceWindow(std::vector<std::shared_ptr<IWindo
     aWindows.back()->SetUp();
 }
 
-WizardController::WizardController(WindowModel& aModel) : WindowControllerBase(aModel) {}
+WizardController::WizardController(WindowModel& aWindowModel) : WindowControllerBase(aWindowModel) {}
 
 // Windows does not do well with the standard pcap approach
 #if defined(_WIN32) || defined(_WIN64)
@@ -112,7 +111,7 @@ static void FillWifiAdapters(std::vector<std::pair<std::string, std::string>>& a
         aWifiAdapterList.clear();
         for (pcap_if_t* lDevice = lDevices; lDevice != nullptr; lDevice = lDevice->next) {
             // Only show wifi adapters that are wireless and up
-            int lMask = PCAP_IF_WIRELESS;
+            unsigned int lMask = PCAP_IF_WIRELESS;
             if (lMask == (static_cast<unsigned int>(lDevice->flags) & lMask)) {
                 aPcapWrapper->Create(lDevice->name, lErrorBuffer.data());
                 if (aPcapWrapper->IsActivated()) {

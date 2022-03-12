@@ -14,10 +14,10 @@
 class OptionsWindow : public Window
 {
 public:
-    OptionsWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
+    OptionsWindow(WindowModel& aModel, std::string_view aTitle, std::function<Window::Dimensions()> aCalculation);
 
-    virtual void SetUp() final;
-    void         Draw() override;
+    void SetUp() final;
+    void Draw() override;
 
 private:
 };

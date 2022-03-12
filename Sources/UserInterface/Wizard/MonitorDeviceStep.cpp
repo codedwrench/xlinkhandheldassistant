@@ -1,31 +1,26 @@
 /* Copyright (c) 2021 [Rick de Bondt] - MonitorDeviceStep.cpp */
 
-#include "../../../Includes/UserInterface/Wizard/MonitorDeviceStep.h"
+#include "UserInterface/Wizard/MonitorDeviceStep.h"
 
-#include <cmath>
-#include <utility>
-
-#include "../../../Includes/UserInterface/Button.h"
-#include "../../../Includes/UserInterface/CheckBox.h"
-#include "../../../Includes/UserInterface/DefaultElements.h"
-#include "../../../Includes/UserInterface/RadioBoxGroup.h"
-#include "../../../Includes/UserInterface/String.h"
-#include "../../../Includes/UserInterface/TextField.h"
-
+#include "UserInterface/Button.h"
+#include "UserInterface/CheckBox.h"
+#include "UserInterface/DefaultElements.h"
+#include "UserInterface/RadioBoxGroup.h"
+#include "UserInterface/TextField.h"
 
 namespace
 {
-    Dimensions ScaleAutoConnectCheckBox() { return {1, 4, 0, 0}; }
-    Dimensions ScaleSearchPSPNetworks() { return {2, 4, 0, 0}; }
-    Dimensions ScaleAcknowledgeDataFrames() { return {3, 4, 0, 0}; }
-    Dimensions ScaleOnlyAcceptFromMac() { return {4, 4, 0, 0}; }
-    Dimensions ScaleSetChannel() { return {5, 4, 0, 0}; }
-    Dimensions ScaleUseWifiAdapterRadioBoxGroup() { return {6, 4, 0, 0}; }
+    Window::Dimensions ScaleAutoConnectCheckBox() { return {1, 4, 0, 0}; }
+    Window::Dimensions ScaleSearchPSPNetworks() { return {2, 4, 0, 0}; }
+    Window::Dimensions ScaleAcknowledgeDataFrames() { return {3, 4, 0, 0}; }
+    Window::Dimensions ScaleOnlyAcceptFromMac() { return {4, 4, 0, 0}; }
+    Window::Dimensions ScaleSetChannel() { return {5, 4, 0, 0}; }
+    Window::Dimensions ScaleUseWifiAdapterRadioBoxGroup() { return {6, 4, 0, 0}; }
 }  // namespace
 
-MonitorDeviceStep::MonitorDeviceStep(WindowModel&                aModel,
-                                     std::string_view            aTitle,
-                                     std::function<Dimensions()> aCalculation) :
+MonitorDeviceStep::MonitorDeviceStep(WindowModel&                        aModel,
+                                     std::string_view                    aTitle,
+                                     std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

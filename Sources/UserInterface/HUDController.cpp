@@ -1,17 +1,15 @@
 /* Copyright (c) 2020 [Rick de Bondt] - HUDController.cpp **/
 
-#include "../Includes/UserInterface/HUDController.h"
+#include "UserInterface/HUDController.h"
 
-#include <iostream>
+#include "UserInterface/AboutWindow.h"
+#include "UserInterface/HUDWindow.h"
+#include "UserInterface/OptionsWindow.h"
+#include "UserInterface/ThemeWindow.h"
 
-#include "../Includes/UserInterface/AboutWindow.h"
-#include "../Includes/UserInterface/HUDWindow.h"
-#include "../Includes/UserInterface/OptionsWindow.h"
-#include "../Includes/UserInterface/ThemeWindow.h"
-
-Dimensions ScaleHUD(const int& aHeight, const int& aWidth)
+Window::Dimensions ScaleHUD(const int& aHeight, const int& aWidth)
 {
-    Dimensions lDimensions{};
+    Window::Dimensions lDimensions{};
 
     lDimensions.at(2) = aHeight;
     lDimensions.at(3) = aWidth;
@@ -23,7 +21,7 @@ Dimensions ScaleHUD(const int& aHeight, const int& aWidth)
 template<class WindowType> void ReplaceWindow(std::vector<std::shared_ptr<IWindow>>& aWindows,
                                               WindowModel&                           aModel,
                                               std::string_view                       aTitle,
-                                              std::function<Dimensions()>            aDimensions)
+                                              std::function<Window::Dimensions()>    aDimensions)
 {
     if (!aWindows.empty()) {
         aWindows.pop_back();

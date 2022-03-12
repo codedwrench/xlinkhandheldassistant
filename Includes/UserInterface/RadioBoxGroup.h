@@ -19,13 +19,13 @@
 class RadioBoxGroup : public UIObject
 {
 public:
-    RadioBoxGroup(IWindow&                    aWindow,
-                  std::string_view            aName,
-                  std::function<Dimensions()> aCalculation,
-                  int&                        aSelectionReference,
-                  bool                        aSelected   = false,
-                  bool                        aVisible    = true,
-                  bool                        aSelectable = true);
+    RadioBoxGroup(IWindow&                            aWindow,
+                  std::string_view                    aName,
+                  std::function<Window::Dimensions()> aCalculation,
+                  int&                                aSelectionReference,
+                  bool                                aSelected   = false,
+                  bool                                aVisible    = true,
+                  bool                                aSelectable = true);
 
     void Draw() override;
     bool HandleKey(unsigned int aKeyCode) override;
@@ -57,6 +57,10 @@ public:
     void ClearRadioBoxes();
 
 private:
+    void HandleUp();
+    void HandleDown();
+    void HandleSelect();
+
     std::vector<RadioBox> mRadioBoxes;
     bool                  mSelected;
     int                   mSelectionIndex{-1};

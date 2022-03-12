@@ -1,20 +1,20 @@
 /* Copyright (c) 2020 [Rick de Bondt] - UIObject.cpp */
 
-#include "../../Includes/UserInterface/UIObject.h"
+#include "UserInterface/UIObject.h"
 
 #include <string>
 #include <utility>
 
-UIObject::UIObject(IWindow&                    aWindow,
-                   std::string_view            aName,
-                   std::function<Dimensions()> aCalculation,
-                   bool                        aVisible,
-                   bool                        aSelectable) :
+UIObject::UIObject(IWindow&                            aWindow,
+                   std::string_view                    aName,
+                   std::function<Window::Dimensions()> aCalculation,
+                   bool                                aVisible,
+                   bool                                aSelectable) :
     mWindow(aWindow),
     mName(aName), mSelectable(aSelectable), mVisible(aVisible), mYCoord(0), mXCoord(0),
     mScaleCalculation(std::move(aCalculation))
 {
-    Dimensions lParameters{mScaleCalculation()};
+    Window::Dimensions lParameters{mScaleCalculation()};
     mYCoord = lParameters.at(0);
     mXCoord = lParameters.at(1);
 }
@@ -47,7 +47,7 @@ void UIObject::SetHasUpAction(bool aHasAction)
 
 void UIObject::Scale()
 {
-    Dimensions lParameters{mScaleCalculation()};
+    Window::Dimensions lParameters{mScaleCalculation()};
     mYCoord = lParameters.at(0);
     mXCoord = lParameters.at(1);
 }

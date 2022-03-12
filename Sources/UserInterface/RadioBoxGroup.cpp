@@ -1,30 +1,30 @@
 /* Copyright (c) 2020 [Rick de Bondt] - RadioBoxGroup.cpp */
 
-#include "../../Includes/UserInterface/RadioBoxGroup.h"
+#include "UserInterface/RadioBoxGroup.h"
 
 #include <functional>
 #include <string>
 #include <utility>
 
-#include "../../Includes/UserInterface/NCursesKeys.h"
+#include "UserInterface/NCursesKeys.h"
 
-RadioBoxGroup::RadioBoxGroup(IWindow&                    aWindow,
-                             std::string_view            aName,
-                             std::function<Dimensions()> aCalculation,
-                             int&                        aSelectionReference,
-                             bool                        aSelected,
-                             bool                        aVisible,
-                             bool                        aSelectable) :
+RadioBoxGroup::RadioBoxGroup(IWindow&                            aWindow,
+                             std::string_view                    aName,
+                             std::function<Window::Dimensions()> aCalculation,
+                             int&                                aSelectionReference,
+                             bool                                aSelected,
+                             bool                                aVisible,
+                             bool                                aSelectable) :
     UIObject(aWindow, aName, std::move(aCalculation), aVisible, aSelectable),
     mSelected(aSelected), mSelectionReference(aSelectionReference)
 {}
 
 void RadioBoxGroup::AddRadioBox(std::string_view aName)
 {
-    Dimensions lDimensions{};
-    lDimensions.at(0) = GetYCoord() + mRadioBoxes.size() + 1;
+    Window::Dimensions lDimensions{};
+    lDimensions.at(0) = static_cast<int>(GetYCoord() + mRadioBoxes.size() + 1);
     lDimensions.at(1) = GetXCoord();
-    std::function<Dimensions()> lCalculation{[&]() { return lDimensions; }};
+    std::function<Window::Dimensions()> lCalculation{[&]() { return lDimensions; }};
 
     mRadioBoxes.emplace_back(GetWindow(), aName, lCalculation);
 
@@ -61,56 +61,81 @@ void RadioBoxGroup::Draw()
     }
 }
 
+void RadioBoxGroup::HandleUp()
+{
+    if (mSelectionIndex > 0) {
+        mRadioBoxes.at(mSelectionIndex).SetSelected(false);
+        mSelectionIndex--;
+        mRadioBoxes.at(mSelectionIndex).SetSelected(true);
+
+        if (mSelectionIndex < static_cast<int>(mRadioBoxes.size() - 1)) {
+            SetHasDownAction(true);
+        }
+
+        // Min reached
+        if (mSelectionIndex == 0) {
+            SetHasUpAction(false);
+        }
+    }
+}
+
+void RadioBoxGroup::HandleDown()
+{
+    if (mSelectionIndex < static_cast<int>(mRadioBoxes.size() - 1)) {
+        // When first entered, this index is set to -1
+        if (mSelectionIndex >= 0) {
+            mRadioBoxes.at(mSelectionIndex).SetSelected(false);
+        }
+        mSelectionIndex++;
+        mRadioBoxes.at(mSelectionIndex).SetSelected(true);
+
+        if (mSelectionIndex > 0) {
+            SetHasUpAction(true);
+        }
+
+        // Max reached
+        if (mSelectionIndex == mRadioBoxes.size() - 1) {
+            SetHasDownAction(false);
+        }
+    }
+}
+
+void RadioBoxGroup::HandleSelect()
+{
+    if (mSelectionIndex >= 0 && !mRadioBoxes.at(mSelectionIndex).IsChecked()) {
+        for (auto& lRadioBox : mRadioBoxes) {
+            lRadioBox.SetChecked(false);
+        }
+        mRadioBoxes.at(mSelectionIndex).SetChecked(true);
+        mSelectionReference = mSelectionIndex;
+    }
+}
+
 bool RadioBoxGroup::HandleKey(unsigned int aKeyCode)
 {
     bool lReturn{false};
 
     if (!mRadioBoxes.empty()) {
-        if (aKeyCode == KEY_UP || aKeyCode == cCombinedKeypadUp) {
-            if (mSelectionIndex > 0) {
-                mRadioBoxes.at(mSelectionIndex).SetSelected(false);
-                mSelectionIndex--;
-                mRadioBoxes.at(mSelectionIndex).SetSelected(true);
-
-                if (mSelectionIndex < static_cast<int>(mRadioBoxes.size() - 1)) {
-                    SetHasDownAction(true);
-                }
-
-                // Min reached
-                if (mSelectionIndex == 0) {
-                    SetHasUpAction(false);
-                }
-            }
-        } else if (aKeyCode == KEY_DOWN || aKeyCode == cCombinedKeypadDown) {
-            if (mSelectionIndex < static_cast<int>(mRadioBoxes.size() - 1)) {
-                // When first entered, this index is set to -1
-                if (mSelectionIndex >= 0) {
-                    mRadioBoxes.at(mSelectionIndex).SetSelected(false);
-                }
-                mSelectionIndex++;
-                mRadioBoxes.at(mSelectionIndex).SetSelected(true);
-
-                if (mSelectionIndex > 0) {
-                    SetHasUpAction(true);
-                }
-
-                // Max reached
-                if (mSelectionIndex == mRadioBoxes.size() - 1) {
-                    SetHasDownAction(false);
-                }
-            }
-        } else if (aKeyCode == ' ' || aKeyCode == '\n' || aKeyCode == '\r' || aKeyCode == cCombinedKeypadCenter) {
-            if (mSelectionIndex >= 0 && !mRadioBoxes.at(mSelectionIndex).IsChecked()) {
-                for (auto& lRadioBox : mRadioBoxes) {
-                    lRadioBox.SetChecked(false);
-                }
-                mRadioBoxes.at(mSelectionIndex).SetChecked(true);
-                mSelectionReference = mSelectionIndex;
-            }
-            lReturn = true;
+        switch (aKeyCode) {
+            case KEY_UP:
+            case cCombinedKeypadUp:
+                HandleUp();
+                break;
+            case KEY_DOWN:
+            case cCombinedKeypadDown:
+                HandleDown();
+                break;
+            case ' ':
+            case '\n':
+            case '\r':
+            case cCombinedKeypadCenter:
+                HandleSelect();
+                break;
+            default:;  // Do nothing
         }
-    }
 
+        lReturn = true;
+    }
     return lReturn;
 }
 

@@ -1,12 +1,12 @@
 /* Copyright (c) 2020 [Rick de Bondt] - PCapReader.cpp */
 
-#include "../Includes/PCapReader.h"
+#include "PCapReader.h"
 
 #include <chrono>
 #include <thread>
 
-#include "../Includes/Logger.h"
-#include "../Includes/NetConversionFunctions.h"
+#include "Logger.h"
+#include "NetConversionFunctions.h"
 
 using namespace std::chrono;
 

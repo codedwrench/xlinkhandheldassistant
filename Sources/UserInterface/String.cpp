@@ -1,13 +1,13 @@
 /* Copyright (c) 2020 [Rick de Bondt] - String.cpp */
 
-#include "../../Includes/UserInterface/String.h"
+#include "UserInterface/String.h"
 
-String::String(IWindow&                    aWindow,
-               std::string_view            aName,
-               std::function<Dimensions()> aCalculation,
-               bool                        aVisible,
-               bool                        aSelectable,
-               int                         aColorPair) :
+String::String(IWindow&                            aWindow,
+               std::string_view                    aName,
+               std::function<Window::Dimensions()> aCalculation,
+               bool                                aVisible,
+               bool                                aSelectable,
+               unsigned int                        aColorPair) :
     UIObject(aWindow, aName, std::move(aCalculation), aVisible, aSelectable),
     mColorPair{aColorPair}
 {}

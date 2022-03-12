@@ -7,6 +7,7 @@
  **/
 
 #include <cstdint>
+#include <string_view>
 
 #ifdef __GNUC__
 // Aligns to 1 byte
@@ -159,8 +160,6 @@ namespace Net_Constants
         static constexpr uint64_t cNoTargetMac{0x000000000000};
     }  // namespace Arp
 
-    // Own packet type used to tell PSP what mac to use
-    static constexpr uint16_t         cSetMacType{0x636D};
     static constexpr uint16_t         cPSPEtherType{0xC888};
     static constexpr uint8_t          cMacAddressLength{6};
     static constexpr uint64_t         cBroadcastMac{0xFFFFFFFFFFFF};

@@ -1,6 +1,6 @@
 /* Copyright (c) 2021 [Rick de Bondt] - PCapWrapper.cpp */
 
-#include "../Includes/PCapWrapper.h"
+#include "PCapWrapper.h"
 
 int PCapWrapper::Activate()
 {
@@ -92,12 +92,13 @@ int PCapWrapper::NextEx(pcap_pkthdr** header, const unsigned char** pkt_data)
 
 int PCapWrapper::SendPacket(std::string_view buffer)
 {
-    return pcap_sendpacket(mHandler, reinterpret_cast<const unsigned char*>(buffer.data()), buffer.size());
+    return pcap_sendpacket(
+        mHandler, reinterpret_cast<const unsigned char*>(buffer.data()), static_cast<int>(buffer.size()));
 }
 
-int PCapWrapper::SetDirection(pcap_direction_t direction)
+int PCapWrapper::SetDirection(PcapDirection::Direction direction)
 {
-    return pcap_setdirection(mHandler, direction);
+    return pcap_setdirection(mHandler, static_cast<pcap_direction_t>(direction));
 }
 
 int PCapWrapper::SetImmediateMode(int mode)

@@ -1,6 +1,6 @@
 /* Copyright (c) 2020 [Rick de Bondt] - XLinkKaiConnection.cpp */
 
-#include "../Includes/XLinkKaiConnection.h"
+#include "XLinkKaiConnection.h"
 
 #include <chrono>
 #include <cstring>
@@ -10,11 +10,10 @@
 #include <boost/bind/bind.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 
-#include "../Includes/IPCapDevice.h"
-#include "../Includes/Logger.h"
-#include "../Includes/MonitorDevice.h"
-#include "../Includes/NetConversionFunctions.h"
-
+#include "IPCapDevice.h"
+#include "Logger.h"
+#include "MonitorDevice.h"
+#include "NetConversionFunctions.h"
 
 using namespace boost::asio;
 using namespace boost::placeholders;

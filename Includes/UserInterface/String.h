@@ -12,15 +12,15 @@
 class String : public UIObject
 {
 public:
-    String(IWindow&                    aWindow,
-           std::string_view            aName,
-           std::function<Dimensions()> aCalculation,
-           bool                        aVisible    = true,
-           bool                        aSelectable = false,
-           int                         aColorPair  = 1);
+    String(IWindow&                            aWindow,
+           std::string_view                    aName,
+           std::function<Window::Dimensions()> aCalculation,
+           bool                                aVisible    = true,
+           bool                                aSelectable = false,
+           unsigned int                        aColorPair  = 1);
     void Draw() override;
     void SetColorPair(int aPair);
 
 private:
-    int mColorPair{1};
+    unsigned int mColorPair{1};
 };

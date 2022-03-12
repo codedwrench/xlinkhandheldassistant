@@ -1,9 +1,9 @@
 /* Copyright (c) 2020 [Rick de Bondt] - Handler8023.cpp */
 
-#include "../Includes/Handler8023.h"
+#include "Handler8023.h"
 
-#include "../Includes/Logger.h"
-#include "../Includes/NetConversionFunctions.h"
+#include "Logger.h"
+#include "NetConversionFunctions.h"
 
 std::string Handler8023::ConvertPacketOut(uint64_t aBSSID, RadioTapReader::PhysicalDeviceParameters aParameters)
 {

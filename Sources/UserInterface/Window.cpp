@@ -1,18 +1,18 @@
 /* Copyright (c) 2020 [Rick de Bondt] - Window.cpp */
 
-#include "../../Includes/UserInterface/Window.h"
+#include "UserInterface/Window.h"
 
 #include <codecvt>
 #include <locale>
 
-#include "../../Includes/UserInterface/NCursesKeys.h"
+#include "UserInterface/NCursesKeys.h"
 
-Window::Window(WindowModel&                aModel,
-               std::string_view            aTitle,
-               std::function<Dimensions()> aCalculation,
-               bool                        aDrawBorder,
-               bool                        aExclusive,
-               bool                        aVisible) :
+Window::Window(WindowModel&                        aModel,
+               std::string_view                    aTitle,
+               std::function<Window::Dimensions()> aCalculation,
+               bool                                aDrawBorder,
+               bool                                aExclusive,
+               bool                                aVisible) :
     mModel{aModel},
     mTitle{aTitle}, mScaleCalculation(aCalculation), mNCursesWindow{nullptr}, mHeight{0}, mWidth{0},
     mDrawBorder(aDrawBorder), mExclusive{aExclusive}, mVisible{aVisible}, mSelectedObject{-1}
@@ -80,7 +80,7 @@ void Window::ClearLine(int aYCoord, int aXCoord, int aLength)
     DrawString(aYCoord, aXCoord, 1, lEmptySpace);
 }
 
-void Window::DrawString(int aYCoord, int aXCoord, int aColorPair, std::string_view aString)
+void Window::DrawString(int aYCoord, int aXCoord, unsigned int aColorPair, std::string_view aString)
 {
     wattrset(mNCursesWindow.get(), COLOR_PAIR(aColorPair));
     std::stringstream lStream{aString.data()};
@@ -382,7 +382,7 @@ const int& Window::GetWidthReference() const
     return mWidth;
 }
 
-ObjectList& Window::GetObjects()
+Window::ObjectList& Window::GetObjects()
 {
     return mObjects;
 }

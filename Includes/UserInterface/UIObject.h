@@ -15,11 +15,11 @@
 class UIObject : public IUIObject
 {
 public:
-    UIObject(IWindow&                    aWindow,
-             std::string_view            aName,
-             std::function<Dimensions()> aCalculation,
-             bool                        aVisible    = true,
-             bool                        aSelectable = false);
+    UIObject(IWindow&                            aWindow,
+             std::string_view                    aName,
+             std::function<Window::Dimensions()> aCalculation,
+             bool                                aVisible    = true,
+             bool                                aSelectable = false);
 
     void Scale() override;
 
@@ -36,20 +36,20 @@ public:
     [[nodiscard]] int  GetYCoord() const override;
     [[nodiscard]] int  GetXCoord() const override;
     std::string_view   GetName() override;
-    void               SetName(std::string_view) override;
+    void               SetName(std::string_view aName) override;
     bool               HandleKey(unsigned int aKeyCode) override;
 
 protected:
     IWindow& GetWindow();
 
 private:
-    IWindow&                    mWindow;
-    bool                        mHasUpAction{false};
-    bool                        mHasDownAction{false};
-    std::string                 mName;
-    bool                        mSelectable;
-    bool                        mVisible;
-    int                         mYCoord;
-    int                         mXCoord;
-    std::function<Dimensions()> mScaleCalculation;
+    IWindow&                            mWindow;
+    bool                                mHasUpAction{false};
+    bool                                mHasDownAction{false};
+    std::string                         mName;
+    bool                                mSelectable;
+    bool                                mVisible;
+    int                                 mYCoord;
+    int                                 mXCoord;
+    std::function<Window::Dimensions()> mScaleCalculation;
 };

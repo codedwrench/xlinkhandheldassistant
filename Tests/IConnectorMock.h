@@ -2,7 +2,7 @@
  * This file contains a mock for IConnector.
  **/
 
-#include "../Includes/IConnector.h"
+#include "IConnector.h"
 
 class IConnectorMock : public IConnector
 {

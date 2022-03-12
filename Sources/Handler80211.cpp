@@ -1,9 +1,9 @@
 /* Copyright (c) 2020 [Rick de Bondt] - Handler80211.cpp */
 
-#include "../Includes/Handler80211.h"
+#include "Handler80211.h"
 
-#include "../Includes/Logger.h"
-#include "../Includes/NetConversionFunctions.h"
+#include "Logger.h"
+#include "NetConversionFunctions.h"
 
 Handler80211::Handler80211(PhysicalDeviceHeaderType aType)
 {

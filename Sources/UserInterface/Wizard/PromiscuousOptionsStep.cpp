@@ -1,27 +1,26 @@
 /* Copyright (c) 2021 [Rick de Bondt] - PromiscuousOptionsStep.cpp */
 
-#include "../../../Includes/UserInterface/Wizard/PromiscuousOptionsStep.h"
+#include "UserInterface/Wizard/PromiscuousOptionsStep.h"
 
-#include "../../../Includes/UserInterface/Button.h"
-#include "../../../Includes/UserInterface/CheckBox.h"
-#include "../../../Includes/UserInterface/DefaultElements.h"
-#include "../../../Includes/UserInterface/RadioBoxGroup.h"
-#include "../../../Includes/UserInterface/TextField.h"
-
+#include "UserInterface/Button.h"
+#include "UserInterface/CheckBox.h"
+#include "UserInterface/DefaultElements.h"
+#include "UserInterface/RadioBoxGroup.h"
+#include "UserInterface/TextField.h"
 
 namespace
 {
-    Dimensions ScaleAutoConnectCheckBox() { return {2, 4, 0, 0}; }
-    Dimensions ScaleReConnectionTimeOutTextField() { return {3, 4, 0, 0}; }
-    Dimensions ScaleXLinkSSIDCheckBox() { return {4, 4, 0, 0}; }
-    Dimensions ScaleHostSSIDCheckBox() { return {4, 4, 0, 0}; }
-    Dimensions ScaleUseWifiAdapterRadioBoxGroup() { return {5, 4, 0, 0}; }
+    Window::Dimensions ScaleAutoConnectCheckBox() { return {2, 4, 0, 0}; }
+    Window::Dimensions ScaleReConnectionTimeOutTextField() { return {3, 4, 0, 0}; }
+    Window::Dimensions ScaleXLinkSSIDCheckBox() { return {4, 4, 0, 0}; }
+    Window::Dimensions ScaleHostSSIDCheckBox() { return {4, 4, 0, 0}; }
+    Window::Dimensions ScaleUseWifiAdapterRadioBoxGroup() { return {5, 4, 0, 0}; }
 
 }  // namespace
 
-PromiscuousOptionsStep::PromiscuousOptionsStep(WindowModel&                aModel,
-                                               std::string_view            aTitle,
-                                               std::function<Dimensions()> aCalculation) :
+PromiscuousOptionsStep::PromiscuousOptionsStep(WindowModel&                        aModel,
+                                               std::string_view                    aTitle,
+                                               std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

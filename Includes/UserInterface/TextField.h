@@ -16,17 +16,17 @@
 class TextField : public UIObject
 {
 public:
-    TextField(IWindow&                    aWindow,
-              std::string_view            aName,
-              std::function<Dimensions()> aCalculation,
-              std::string&                aTextReference,
-              int                         aLength,
-              bool                        aAcceptNumbers = true,
-              bool                        aAcceptLetters = true,
-              std::vector<char>           aAcceptSymbols = {'.', ' '},
-              bool                        aSelected      = false,
-              bool                        aVisible       = true,
-              bool                        aSelectable    = true);
+    TextField(IWindow&                            aWindow,
+              std::string_view                    aName,
+              std::function<Window::Dimensions()> aCalculation,
+              std::string&                        aTextReference,
+              int                                 aLength,
+              bool                                aAcceptNumbers = true,
+              bool                                aAcceptLetters = true,
+              std::vector<char>                   aAcceptSymbols = {'.', ' '},
+              bool                                aSelected      = false,
+              bool                                aVisible       = true,
+              bool                                aSelectable    = true);
 
     void Draw() override;
     bool HandleKey(unsigned int aKeyCode) override;

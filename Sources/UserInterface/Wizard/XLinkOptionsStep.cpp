@@ -1,26 +1,27 @@
 /* Copyright (c) 2020 [Rick de Bondt] - MonitorDeviceStep.cpp */
 
-#include "../../../Includes/UserInterface/Wizard/XLinkOptionsStep.h"
+#include "UserInterface/Wizard/XLinkOptionsStep.h"
 
-#include <cmath>
-#include <utility>
-
-#include "../../../Includes/UserInterface/Button.h"
-#include "../../../Includes/UserInterface/CheckBox.h"
-#include "../../../Includes/UserInterface/DefaultElements.h"
-#include "../../../Includes/UserInterface/String.h"
-#include "../../../Includes/UserInterface/TextField.h"
-
+#include "UserInterface/Button.h"
+#include "UserInterface/DefaultElements.h"
+#include "UserInterface/TextField.h"
 
 namespace
 {
-    Dimensions ScaleIpAddressTextField(const int& /*aMaxHeight*/, const int& /*aMaxWidth*/) { return {2, 2, 0, 0}; }
-    Dimensions ScalePortTextField(const int& /*aMaxHeight*/, const int& /*aMaxWidth*/) { return {3, 2, 0, 0}; }
+    constexpr std::string_view cAutoSearchXLinkInstancesMessage{"Automatically search for XLink Kai instances"};
+    constexpr std::string_view cIPAddressMessage{"XLink IP address"};
+    constexpr std::string_view cPortMessage{"XLink Port"};
+
+    Window::Dimensions ScaleIpAddressTextField(const int& /*aMaxHeight*/, const int& /*aMaxWidth*/)
+    {
+        return {2, 2, 0, 0};
+    }
+    Window::Dimensions ScalePortTextField(const int& /*aMaxHeight*/, const int& /*aMaxWidth*/) { return {3, 2, 0, 0}; }
 }  // namespace
 
-XLinkOptionsStep::XLinkOptionsStep(WindowModel&                aModel,
-                                   std::string_view            aTitle,
-                                   std::function<Dimensions()> aCalculation) :
+XLinkOptionsStep::XLinkOptionsStep(WindowModel&                        aModel,
+                                   std::string_view                    aTitle,
+                                   std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

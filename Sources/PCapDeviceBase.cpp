@@ -1,9 +1,9 @@
 /* Copyright (c) 2021 [Rick de Bondt] - PCapDeviceBase.cpp */
 
-#include "../Includes/PCapDeviceBase.h"
+#include "PCapDeviceBase.h"
 
-#include "../Includes/Logger.h"
-#include "../Includes/PCapWrapper.h"
+#include "Logger.h"
+#include "PCapWrapper.h"
 
 void PCapDeviceBase::SetConnector(std::shared_ptr<IConnector> aDevice)
 {
@@ -72,7 +72,7 @@ std::string PCapDeviceBase::DataToString(const unsigned char* aData, const pcap_
     if ((aData != nullptr) && (aHeader != nullptr)) {
         lData.resize(aHeader->caplen);
         for (unsigned int lCount = 0; lCount < aHeader->caplen; lCount++) {
-            lData.at(lCount) = aData[lCount];
+            lData.at(lCount) = static_cast<char>(aData[lCount]);
         }
     }
 

@@ -1,10 +1,9 @@
 /* Copyright (c) 2021 [Rick de Bondt] - AboutWindow.cpp */
 
-#include "../../Includes/UserInterface/AboutWindow.h"
+#include "UserInterface/AboutWindow.h"
 
-#include "../../Includes/UserInterface/Button.h"
-#include "../../Includes/UserInterface/DefaultElements.h"
-
+#include "UserInterface/Button.h"
+#include "UserInterface/DefaultElements.h"
 
 namespace
 {
@@ -27,7 +26,7 @@ namespace
          Made for use with XLink Kai
         <https://www.teamxlink.co.uk>)"};
 
-    Dimensions ScaleAboutText(const int& aMaxHeight, const int& aMaxWidth)
+    Window::Dimensions ScaleAboutText(const int& aMaxHeight, const int& aMaxWidth)
     {
         // About texts need to have the right amount of spaces
         // For height \n characters get counted and divided by 2
@@ -49,14 +48,16 @@ namespace
             0};
     }
 
-    Dimensions ScaleReturnButton(const int& aMaxHeight, const int& aMaxWidth)
+    Window::Dimensions ScaleReturnButton(const int& aMaxHeight, const int& aMaxWidth)
     {
         return {aMaxHeight - 2, static_cast<int>(aMaxWidth - 2 - std::string("[ Return to HUD ]").length()), 0, 0};
     }
 
 }  // namespace
 
-AboutWindow::AboutWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation) :
+AboutWindow::AboutWindow(WindowModel&                        aModel,
+                         std::string_view                    aTitle,
+                         std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

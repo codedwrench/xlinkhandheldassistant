@@ -1,9 +1,9 @@
 /* Copyright (c) 2021 [Rick de Bondt] - MacBlackList.cpp */
 
-#include "../Includes/MacBlackList.h"
+#include "MacBlackList.h"
 
-#include "../Includes/Logger.h"
-#include "../Includes/NetConversionFunctions.h"
+#include "Logger.h"
+#include "NetConversionFunctions.h"
 
 void MacBlackList::AddToMacBlackList(uint64_t aMac)
 {

@@ -15,10 +15,10 @@
 class ThemeWindow : public Window
 {
 public:
-    ThemeWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
+    ThemeWindow(WindowModel& aModel, std::string_view aTitle, std::function<Window::Dimensions()> aCalculation);
 
-    virtual void SetUp() final;
-    void         Draw() override;
+    void SetUp() final;
+    void Draw() override;
 
 private:
     void GetThemes(std::string_view aPath, std::shared_ptr<RadioBoxGroup> aThemeSelector);

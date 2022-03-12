@@ -1,6 +1,6 @@
 /* Copyright (c) 2021 [Rick de Bondt] - WifiInterfaceBSD.cpp */
 
-#include "../Includes/WifiInterfaceLinuxBSD.h"
+#include "WifiInterfaceLinuxBSD.h"
 
 #include <cerrno>
 #include <chrono>
@@ -8,8 +8,8 @@
 #include <ifaddrs.h>
 #include <net/if.h>
 
-#include "../Includes/Logger.h"
-#include "../Includes/NetConversionFunctions.h"
+#include "Logger.h"
+#include "NetConversionFunctions.h"
 
 #ifdef __linux__
 #include <netpacket/packet.h>
@@ -150,7 +150,7 @@ static int FamilyHandler(nl_msg* aMessage, void* aArgument)
                     static_cast<size_t>(nla_len(lMulticastGroupIndices.at(CTRL_ATTR_MCAST_GRP_NAME)) - 1)};
 
                 if (lCurrentGroup == lGroup->group) {
-                    lGroup->id = nla_get_u32(lMulticastGroupIndices.at(CTRL_ATTR_MCAST_GRP_ID));
+                    lGroup->id = static_cast<int>(nla_get_u32(lMulticastGroupIndices.at(CTRL_ATTR_MCAST_GRP_ID)));
                     // No other solution than calling break here sadly
                     break;
                 }
@@ -312,7 +312,7 @@ static int DumpResults(nl_msg* aMessage, void* aArgument)
 
                     // Grab the frequency
                     if (lBSS.at(NL80211_BSS_FREQUENCY) != nullptr) {
-                        lInformation.frequency = nla_get_u32(lBSS.at(NL80211_BSS_FREQUENCY));
+                        lInformation.frequency = static_cast<int>(nla_get_u32(lBSS.at(NL80211_BSS_FREQUENCY)));
                     }
 
                     // Using the Capability field, index 0, field ESS, if this is 0, the network is an adhoc
@@ -562,7 +562,7 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
         // Interface, what ssid to connect to, what bssid to connect to and frequency
         nla_put_u32(
             lMessage, NL80211_ATTR_IFINDEX, mNetworkAdapterIndex);  // Add message attribute, which interface to use.
-        nla_put(lMessage, NL80211_ATTR_SSID, aConnection.ssid.length(), aConnection.ssid.data());
+        nla_put(lMessage, NL80211_ATTR_SSID, static_cast<int>(aConnection.ssid.length()), aConnection.ssid.data());
         nla_put_flag(lMessage, NL80211_ATTR_FREQ_FIXED);
         nla_put_u32(lMessage,
                     NL80211_ATTR_WIPHY_FREQ,

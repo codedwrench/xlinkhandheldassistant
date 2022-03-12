@@ -1,24 +1,19 @@
 /* Copyright (c) 2021 [Rick de Bondt] - WizardSelectorStep.cpp */
 
-#include "../../../Includes/UserInterface/Wizard/WizardSelectorStep.h"
+#include "UserInterface/Wizard/WizardSelectorStep.h"
 
-#include <cmath>
-#include <utility>
-
-#include "../../../Includes/UserInterface/Button.h"
-#include "../../../Includes/UserInterface/DefaultElements.h"
-#include "../../../Includes/UserInterface/RadioBoxGroup.h"
-#include "../../../Includes/UserInterface/String.h"
-
+#include "UserInterface/Button.h"
+#include "UserInterface/DefaultElements.h"
+#include "UserInterface/RadioBoxGroup.h"
 
 namespace
 {
-    Dimensions ScaleSelectorBoxes() { return {2, 4, 0, 0}; }
+    Window::Dimensions ScaleSelectorBoxes() { return {2, 4, 0, 0}; }
 }  // namespace
 
-WizardSelectorStep::WizardSelectorStep(WindowModel&                aModel,
-                                       std::string_view            aTitle,
-                                       std::function<Dimensions()> aCalculation) :
+WizardSelectorStep::WizardSelectorStep(WindowModel&                        aModel,
+                                       std::string_view                    aTitle,
+                                       std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 
