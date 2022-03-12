@@ -146,3 +146,30 @@ The libraries should be statically compiled and put in the parent folder above X
 Then compiling should be done in the same way as described above for your Operating System.
 
 The Windows version is always statically compiled!
+
+### Compiler flags used for building statically
+#### Linux
+
+- NCurses
+```bash
+./configure --with-terminfo-dirs="/etc/terminfo:/lib/terminfo:/usr/share/terminfo:/usr/lib/terminfo" --without-debug --enable-widec
+make -j`nproc`
+```
+
+- Boost 
+```bash
+./bootstrap.sh 
+./b2 link=static variant=release threading=multi runtime-link=static --with-system --with-program_options
+```
+
+- LibPCAP 
+```bash
+./configure --enable-ipv6 --disable-usb --disable-dbus --without-libnl --disable-universal
+make -j`nproc`
+```
+
+- LibNL 
+```bash
+./configure
+make -j`nproc`
+```
