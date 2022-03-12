@@ -82,10 +82,9 @@ jobs:
         run: |
           mkdir build 
           cd build 
-          export CFLAGS="-isysroot $HOME/source/MacOSX10.10.sdk -arch x86_64"
-          export CXXFLAGS="-isysroot $HOME/source/MacOSX10.10.sdk -arch x86_64"
           export MACOSX_DEPLOYMENT_TARGET=10.10
-          cmake .. -G "Xcode" -DAUTO_FORMAT=0 \
+          cmake .. -G "Xcode" -DCMAKE_OSX_SYSROOT="$HOME/source/MacOSX10.10.sdk" \
+                              -DAUTO_FORMAT=0 \
                               -DBUILD_STATIC=1 \
                               -DPCAP_ROOT_DIR="$HOME/source/libpcap" \
                               -DBOOST_ROOT="$HOME/source/boost" \
