@@ -43,8 +43,6 @@ else()
     # Static libstdc++
     if (NOT APPLE)
         set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ ${CMAKE_EXE_LINKER_FLAGS}")
-    else()
-        set(CMAKE_EXE_LINKER_FLAGS "-Xlinker -U -Xlinker _objc_loadClassref ${CMAKE_EXE_LINKER_FLAGS}")
     endif()
 
 endif()
