@@ -28,9 +28,9 @@ WifiInterface::WifiInterface(std::string_view aAdapterName) :
 
 WifiInterface::~WifiInterface()
 {
-    [mImplementation release];
     mImplementation = nullptr;
 }
+
 bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
 {
     return [mImplementation Connect:aConnection];
@@ -82,14 +82,6 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
     }
 
     return self;
-}
-
--(void)dealloc {
-    sharedWiFiClient  = nil;
-    wifiInterfaceName = @"";
-    wifiInterface     = nil;
-    networks          = nil;
-    [super dealloc];
 }
 
 - (bool)SetInterfaceWithName:(NSString*)wifiInterfaceName
