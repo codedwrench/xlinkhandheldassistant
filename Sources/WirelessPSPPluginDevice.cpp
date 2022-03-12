@@ -41,6 +41,8 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
             mPacketHandler->GetPacket().substr(Net_8023_Constants::cDataIndex,
                                                Net_Constants::cHandshakeToken.length()) ==
                 Net_Constants::cHandshakeToken) {
+            // Log
+            Logger::GetInstance().Log("Received: " + PrettyHexString(lData), Logger::Level::TRACE);
 
             // Reset the timer so it will not time out
             GetReadWatchdog() = std::chrono::system_clock::now();
