@@ -147,7 +147,7 @@ Then compiling should be done in the same way as described above for your Operat
 
 The Windows version is always statically compiled!
 
-### Compiler flags used for building statically
+### Compile instructions used for building statically
 #### Linux
 
 - NCurses
@@ -171,5 +171,28 @@ make -j`nproc`
 - LibNL 
 ```bash
 ./configure
+make -j`nproc`
+```
+
+#### MacOS
+
+- NCurses
+```bash
+export MACOSX_DEPLOYMENT_TARGET=10.11
+./configure CFLAGS="-isysroot /path/to/MacOSX10.11.sdk -arch x86_64" CXXFLAGS="-isysroot /path/to/MacOSX10.11.sdk -arch x86_64" --with-terminfo-dirs="/etc/terminfo:/lib/terminfo:/usr/share/terminfo:/usr/lib/terminfo" --without-debug --enable-widec
+make -j`nproc`
+```
+
+- Boost 
+```bash
+export MACOSX_DEPLOYMENT_TARGET=10.11
+./bootstrap.sh clang
+./b2 cxxflags="-stdlib=libc++ -std=c++11 -mmacosx-version-min=10.11 -isysroot /path/to/MacOSX10.11.sdk"  link=static variant=release threading=multi runtime-link=static --with-system --with-program_options
+```
+
+- LibPCAP 
+```bash
+export MACOSX_DEPLOYMENT_TARGET=10.11
+./configure CFLAGS="-isysroot /path/to/MacOSX10.11.sdk -arch x86_64" CXXFLAGS="-isysroot /path/to/MacOSX10.11.sdk -arch x86_64" --enable-ipv6 --disable-usb --disable-dbus --without-libnl --disable-universal
 make -j`nproc`
 ```
