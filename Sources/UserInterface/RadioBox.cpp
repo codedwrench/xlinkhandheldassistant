@@ -7,12 +7,12 @@
 
 #include "UserInterface/NCursesKeys.h"
 
-RadioBox::RadioBox(IWindow&                    aWindow,
-                   std::string_view            aName,
-                   std::function<Dimensions()> aCalculation,
-                   bool                        aSelected,
-                   bool                        aVisible,
-                   bool                        aSelectable) :
+RadioBox::RadioBox(IWindow&                            aWindow,
+                   std::string_view                    aName,
+                   std::function<Window::Dimensions()> aCalculation,
+                   bool                                aSelected,
+                   bool                                aVisible,
+                   bool                                aSelectable) :
     UIObject(aWindow, aName, std::move(aCalculation), aVisible, aSelectable),
     mSelected(aSelected)
 {}
@@ -21,7 +21,7 @@ void RadioBox::Draw()
 {
     std::string lRadioBoxString{std::string("(") + (mChecked ? std::string("o") : std::string(" ")) + ")  " +
                                 GetName().data()};
-    int         lColorPair{mSelected ? 7 : 1};
+    auto        lColorPair{static_cast<unsigned int>(mSelected ? 7 : 1)};
     GetWindow().DrawString(GetYCoord(), GetXCoord(), lColorPair, lRadioBoxString);
 }
 

@@ -19,7 +19,7 @@ KeyboardController::KeyboardController(std::function<void(unsigned int)> aCallba
 unsigned int KeyboardController::Process()
 {
     unsigned int lKey = 0;
-    lKey = getch();
+    lKey              = getch();
     return lKey;
 }
 

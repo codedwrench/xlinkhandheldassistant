@@ -14,14 +14,6 @@
 #include "PCapDeviceBase.h"
 #include "PCapWrapper.h"
 
-namespace WirelessMonitorDevice_Constants
-{
-    static constexpr unsigned int cSnapshotLength{65535};
-    static constexpr unsigned int cTimeout{1};
-}  // namespace WirelessMonitorDevice_Constants
-
-using namespace WirelessMonitorDevice_Constants;
-
 /**
  * Class which allows a wireless device in monitor mode to capture data and send wireless frames.
  */
@@ -35,10 +27,10 @@ public:
      * @param aCurrentlyConnectedNetwork - For use in the user interface, shows SSID.
      * @param aPcapWrapper - The libpcap wrapper to use, allows for mocks to be shoved in.
      */
-    MonitorDevice(uint64_t                      aSourceMacToFilter         = std::uint64_t(0),
-                  bool                          aAcknowledgeDataFrames     = false,
-                  std::string*                  aCurrentlyConnectedNetwork = nullptr,
-                  std::shared_ptr<IPCapWrapper> aPcapWrapper               = std::make_shared<PCapWrapper>());
+    explicit MonitorDevice(uint64_t                      aSourceMacToFilter         = std::uint64_t(0),
+                           bool                          aAcknowledgeDataFrames     = false,
+                           std::string*                  aCurrentlyConnectedNetwork = nullptr,
+                           std::shared_ptr<IPCapWrapper> aPcapWrapper               = std::make_shared<PCapWrapper>());
 
     void BlackList(uint64_t aMac) override;
     void Close() override;

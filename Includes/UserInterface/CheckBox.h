@@ -15,13 +15,13 @@
 class CheckBox : public UIObject
 {
 public:
-    CheckBox(IWindow&                    aWindow,
-             std::string_view            aName,
-             std::function<Dimensions()> aCalculation,
-             bool&                       aModelCheckBox,
-             bool                        aSelected   = false,
-             bool                        aVisible    = true,
-             bool                        aSelectable = true);
+    CheckBox(IWindow&                            aWindow,
+             std::string_view                    aName,
+             std::function<Window::Dimensions()> aCalculation,
+             bool&                               aModelCheckBox,
+             bool                                aSelected   = false,
+             bool                                aVisible    = true,
+             bool                                aSelectable = true);
 
     void Draw() override;
     bool HandleKey(unsigned int aKeyCode) override;

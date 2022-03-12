@@ -14,19 +14,19 @@
 class HUDWindow : public Window
 {
 public:
-    HUDWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
+    HUDWindow(WindowModel& aModel, std::string_view aTitle, std::function<Window::Dimensions()> aCalculation);
 
-    virtual void SetUp() final;
-    void         Draw() override;
+    void SetUp() final;
+    void Draw() override;
 
 private:
     // If you want nice ascii art, add on/off txt files
     std::string        mOffPicture{"    O    "};
     std::string        mOnPicture{"( ( O ) )"};
     const std::string* mActivePicture{&mOffPicture};
-    std::string        mOldConnected{""};
+    std::string        mOldConnected;
     bool               mOldHosting{false};
 
-    Dimensions ScaleHostingButton();
-    Dimensions ScaleReConnectionButton();
+    Window::Dimensions ScaleHostingButton();
+    Window::Dimensions ScaleReConnectionButton();
 };

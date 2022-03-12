@@ -9,17 +9,17 @@
 #include "Button.h"
 #include "String.h"
 
-static Dimensions ScaleQuitText(const int& aMaxHeight)
+static Window::Dimensions ScaleQuitText(const int& aMaxHeight)
 {
     return {aMaxHeight - 1, 1, 0, 0};
 }
 
-static Dimensions ScaleWizardStepText(const int& aMaxWidth)
+static Window::Dimensions ScaleWizardStepText(const int& aMaxWidth)
 {
     return {0, static_cast<int>(aMaxWidth - 1 - std::string("Step: */*").length()), 0, 0};
 }
 
-static Dimensions ScaleNextButton(const int& aMaxHeight, const int& aMaxWidth)
+static Window::Dimensions ScaleNextButton(const int& aMaxHeight, const int& aMaxWidth)
 {
     return {aMaxHeight - 2, static_cast<int>(aMaxWidth - 6 - std::string("Next").length()), 0, 0};
 }

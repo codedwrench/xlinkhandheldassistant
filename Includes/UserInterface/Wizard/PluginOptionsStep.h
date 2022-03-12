@@ -9,19 +9,14 @@
  *
  **/
 
-namespace PluginOptionsStep_Constants
-{}  // namespace PluginOptionsStep_Constants
-
-using namespace PluginOptionsStep_Constants;
-
 /**
  * Class that will setup and draw a plugin options window.
  **/
 class PluginOptionsStep : public Window
 {
 public:
-    PluginOptionsStep(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
+    PluginOptionsStep(WindowModel& aModel, std::string_view aTitle, std::function<Window::Dimensions()> aCalculation);
 
-    virtual void SetUp() final;
-    void         Draw() override;
+    void SetUp() final;
+    void Draw() override;
 };

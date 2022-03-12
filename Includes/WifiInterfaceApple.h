@@ -6,16 +6,17 @@
  *
  **/
 
+#include <chrono>
+
 #include "IWifiInterface.h"
 
-#include <chrono>
 #include <objc/objc-runtime.h>
 
 
 #ifdef __OBJC__
 @class WifiInterfaceAppleImplementation;
 #else
-typedef struct objc_object WifiInterfaceAppleImplementation;
+using WifiInterfaceAppleImplementation = struct objc_object;
 #endif
 
 /**
@@ -30,6 +31,13 @@ class WifiInterface : public IWifiInterface
 {
 public:
     explicit WifiInterface(std::string_view aAdapterName);
+
+    WifiInterface(WifiInterface const& aInterface)     = default;
+    WifiInterface(WifiInterface&& aInterface) noexcept = default;
+
+    WifiInterface& operator=(WifiInterface const& aInterface) = default;
+    WifiInterface& operator=(WifiInterface&& aInterface) = default;
+
     ~WifiInterface();
 
     // just placeholders for now

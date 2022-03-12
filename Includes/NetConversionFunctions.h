@@ -85,7 +85,7 @@ template<typename Type> static Type GetRawData(std::string_view aPacket, unsigne
 static std::string GetRawString(std::string_view aPacket, unsigned int aIndex, unsigned int aLength)
 {
     const char* lData{reinterpret_cast<const char*>(aPacket.data() + aIndex)};
-    return std::string(lData, aLength);
+    return {lData, aLength};
 }
 
 /**
@@ -173,7 +173,7 @@ static int InsertRadioTapHeader(char* aPacket, RadioTapReader::PhysicalDevicePar
     uint8_t lFlags{aParameters.mFlags};
 
     // If FCS at end set, reset
-    lFlags = (lFlags & ~uint8_t(0x10U));
+    lFlags = (lFlags & ~(0x10U));
 
     memcpy(aPacket + lIndex, &lFlags, sizeof(lFlags));
     lIndex += sizeof(lFlags);
@@ -224,7 +224,7 @@ static std::string IntToMac(uint64_t aMac)
 
     for (unsigned int lCount = 0; lCount < Net_80211_Constants::cSourceAddressLength; lCount++) {
         uint8_t lNibble{static_cast<uint8_t>(aMac >> (lCount * 8))};
-        lOutput << std::hex << std::setfill('0') << std::setw(2) << (0xFF & lNibble);
+        lOutput << std::hex << std::setfill('0') << std::setw(2) << (0xFFU & lNibble);
         if (lCount != Net_80211_Constants::cSourceAddressLength - 1) {
             lOutput << ":";
         }
@@ -352,7 +352,8 @@ static std::string PrettyHexString(std::string_view aData)
             lFormattedString << " ";
         }
 
-        lFormattedString << std::hex << std::setfill('0') << std::setw(2) << (0xFF & aData.at(lCount));
+        lFormattedString << std::hex << std::setfill('0') << std::setw(2)
+                         << (0xFFU & static_cast<uint8_t>(aData.at(lCount)));
     }
 
     return lFormattedString.str();

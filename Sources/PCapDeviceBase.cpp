@@ -72,7 +72,7 @@ std::string PCapDeviceBase::DataToString(const unsigned char* aData, const pcap_
     if ((aData != nullptr) && (aHeader != nullptr)) {
         lData.resize(aHeader->caplen);
         for (unsigned int lCount = 0; lCount < aHeader->caplen; lCount++) {
-            lData.at(lCount) = aData[lCount];
+            lData.at(lCount) = static_cast<char>(aData[lCount]);
         }
     }
 

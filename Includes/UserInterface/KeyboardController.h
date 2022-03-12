@@ -17,7 +17,13 @@ public:
      * Constructor of the keyboard controller.
      * @param aCallback - Where to send the obtained key events to.
      */
-    KeyboardController(std::function<void(unsigned int)> aCallback);
+    explicit KeyboardController(std::function<void(unsigned int)> aCallback);
+
+    KeyboardController(KeyboardController const& aController)     = delete;
+    KeyboardController(KeyboardController&& aController) noexcept = default;
+
+    KeyboardController& operator=(KeyboardController aController) = delete;
+    KeyboardController& operator=(KeyboardController&& aController) = default;
 
     ~KeyboardController();
 

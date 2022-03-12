@@ -42,7 +42,7 @@ public:
      * @param aColorPair - Color to draw the string with.
      * @param aString - String to draw on the screen.
      */
-    virtual void DrawString(int aYCoord, int aXCoord, int aColorPair, std::string_view aString) = 0;
+    virtual void DrawString(int aYCoord, int aXCoord, unsigned int aColorPair, std::string_view aString) = 0;
 
     /**
      * Refreshes window.

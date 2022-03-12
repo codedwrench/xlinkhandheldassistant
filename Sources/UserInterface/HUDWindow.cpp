@@ -8,7 +8,7 @@
 
 namespace
 {
-    Dimensions ScalePicture(const int& aMaxHeight, const int& aMaxWidth, const std::string& aPicture)
+    Window::Dimensions ScalePicture(const int& aMaxHeight, const int& aMaxWidth, const std::string& aPicture)
     {
         // Pictures need to have the right amount of spaces
         // For height \n characters get counted and divided by 2
@@ -26,12 +26,12 @@ namespace
                 0};
     }
 
-    Dimensions ScaleConnectedTo(const int& aMaxWidth, const std::string& aText)
+    Window::Dimensions ScaleConnectedTo(const int& aMaxWidth, const std::string& aText)
     {
         return {1, aMaxWidth - static_cast<int>(std::string("Connected to: ").length() + aText.length() + 1), 0, 0};
     }
 
-    Dimensions ScaleEngineStatus(const int& aMaxHeight, const int& aMaxWidth, std::string_view aText)
+    Window::Dimensions ScaleEngineStatus(const int& aMaxHeight, const int& aMaxWidth, std::string_view aText)
     {
         return {(aMaxHeight - 1),
                 (aMaxWidth / 2) - static_cast<int>((std::string("Status: ").length() + aText.length()) / 2),
@@ -39,7 +39,7 @@ namespace
                 0};
     }
 
-    Dimensions ScaleOptionsButton(const int& aMaxHeight, const int& aMaxWidth)
+    Window::Dimensions ScaleOptionsButton(const int& aMaxHeight, const int& aMaxWidth)
     {
         return {(aMaxHeight - 2),
                 (aMaxWidth - 2) - (static_cast<int>(std::string("[ Start Engine ]").length() + 2 +
@@ -48,7 +48,7 @@ namespace
                 0};
     }
 
-    Dimensions ScaleStartEngineButton(const int& aMaxHeight, const int& aMaxWidth)
+    Window::Dimensions ScaleStartEngineButton(const int& aMaxHeight, const int& aMaxWidth)
     {
         return {(aMaxHeight - 2), (aMaxWidth - 2) - static_cast<int>(std::string("[ Start Engine ]").length()), 0, 0};
     }
@@ -73,7 +73,7 @@ static inline std::string LoadPicture(std::string_view aFile)
     return lReturn;
 }
 
-Dimensions HUDWindow::ScaleReConnectionButton()
+Window::Dimensions HUDWindow::ScaleReConnectionButton()
 {
     // TODO: REALLY FUCKING FIX THIS ARRAY ACCESSING YOU'VE BEEN DOING
     return {GetHeightReference() - 2,
@@ -82,7 +82,7 @@ Dimensions HUDWindow::ScaleReConnectionButton()
             0};
 }
 
-Dimensions HUDWindow::ScaleHostingButton()
+Window::Dimensions HUDWindow::ScaleHostingButton()
 {
     return {GetHeightReference() - 2,
             GetObjects().at(4)->GetXCoord() - 2 - static_cast<int>(std::string("[ ]  Hosting").length()),
@@ -90,7 +90,7 @@ Dimensions HUDWindow::ScaleHostingButton()
             0};
 }
 
-HUDWindow::HUDWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation) :
+HUDWindow::HUDWindow(WindowModel& aModel, std::string_view aTitle, std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 
@@ -187,8 +187,9 @@ void HUDWindow::Draw()
         auto lStartStopButton = std::dynamic_pointer_cast<Button>(GetObjects().at(5));
 
         // Clear line so you won't get double text
-        ClearLine(
-            lStartStopButton->GetYCoord(), lStartStopButton->GetXCoord(), std::string("[ Start Engine ]").length());
+        ClearLine(lStartStopButton->GetYCoord(),
+                  lStartStopButton->GetXCoord(),
+                  static_cast<int>(std::string("[ Start Engine ]").length()));
 
         lStartStopButton->SetName("Stop Engine");
     }

@@ -25,7 +25,7 @@ namespace WizardController_Constants
 class WizardController : public WindowControllerBase
 {
 public:
-    WizardController(WindowModel& aWindowModel);
+    explicit WizardController(WindowModel& aWindowModel);
 
     bool SetUp() override;
     bool Process() override;

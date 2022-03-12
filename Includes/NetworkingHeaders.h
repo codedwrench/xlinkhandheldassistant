@@ -7,6 +7,7 @@
  **/
 
 #include <cstdint>
+#include <string_view>
 
 #ifdef __GNUC__
 // Aligns to 1 byte

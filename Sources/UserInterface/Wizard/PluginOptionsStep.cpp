@@ -10,17 +10,17 @@
 
 namespace
 {
-    Dimensions ScaleAutoConnectCheckBox() { return {2, 4, 0, 0}; }
-    Dimensions ScaleReConnectionTimeOutTextField() { return {3, 4, 0, 0}; }
-    Dimensions ScaleXLinkSSIDCheckBox() { return {4, 4, 0, 0}; }
-    Dimensions ScaleHostSSIDCheckBox() { return {4, 4, 0, 0}; }
-    Dimensions ScaleUseWifiAdapterRadioBoxGroup() { return {5, 4, 0, 0}; }
+    Window::Dimensions ScaleAutoConnectCheckBox() { return {2, 4, 0, 0}; }
+    Window::Dimensions ScaleReConnectionTimeOutTextField() { return {3, 4, 0, 0}; }
+    Window::Dimensions ScaleXLinkSSIDCheckBox() { return {4, 4, 0, 0}; }
+    Window::Dimensions ScaleHostSSIDCheckBox() { return {4, 4, 0, 0}; }
+    Window::Dimensions ScaleUseWifiAdapterRadioBoxGroup() { return {5, 4, 0, 0}; }
 
 }  // namespace
 
-PluginOptionsStep::PluginOptionsStep(WindowModel&                aModel,
-                                     std::string_view            aTitle,
-                                     std::function<Dimensions()> aCalculation) :
+PluginOptionsStep::PluginOptionsStep(WindowModel&                        aModel,
+                                     std::string_view                    aTitle,
+                                     std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

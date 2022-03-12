@@ -33,8 +33,6 @@ public:
                         bool                          aTimeAccurate,
                         std::shared_ptr<IPCapWrapper> aWrapper = std::make_shared<PCapWrapper>());
 
-    ~PCapReader() = default;
-
     /**
      * Adds a Mac address to the blacklist.
      * @param aMac - Mac address to blacklist.

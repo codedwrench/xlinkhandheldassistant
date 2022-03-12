@@ -5,17 +5,17 @@
 #include <string>
 #include <utility>
 
-TextField::TextField(IWindow&                    aWindow,
-                     std::string_view            aName,
-                     std::function<Dimensions()> aCalculation,
-                     std::string&                aTextReference,
-                     int                         aLength,
-                     bool                        aAcceptNumbers,
-                     bool                        aAcceptLetters,
-                     std::vector<char>           aAcceptSymbols,
-                     bool                        aSelected,
-                     bool                        aVisible,
-                     bool                        aSelectable) :
+TextField::TextField(IWindow&                            aWindow,
+                     std::string_view                    aName,
+                     std::function<Window::Dimensions()> aCalculation,
+                     std::string&                        aTextReference,
+                     int                                 aLength,
+                     bool                                aAcceptNumbers,
+                     bool                                aAcceptLetters,
+                     std::vector<char>                   aAcceptSymbols,
+                     bool                                aSelected,
+                     bool                                aVisible,
+                     bool                                aSelectable) :
     UIObject(aWindow, aName, std::move(aCalculation), aVisible, aSelectable),
     mTextReference{aTextReference}, mAcceptNumbers(aAcceptNumbers),
     mAcceptLetters(aAcceptLetters), mAcceptSymbols{std::move(aAcceptSymbols)}, mSelected(aSelected), mLength{aLength}
@@ -30,7 +30,7 @@ void TextField::Draw()
         lStringToDraw.resize(mLength, '_');
 
         std::string lTextFieldString{std::string(GetName().data()) + ": | " + lStringToDraw + " |"};
-        int         lColorPair{mSelected ? 7 : 1};
+        auto        lColorPair{static_cast<unsigned int>(mSelected ? 7 : 1)};
         GetWindow().DrawString(GetYCoord(), GetXCoord(), lColorPair, lTextFieldString);
     }
 }

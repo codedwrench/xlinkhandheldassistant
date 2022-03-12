@@ -10,17 +10,17 @@
 
 namespace
 {
-    Dimensions ScaleAutoConnectCheckBox() { return {1, 4, 0, 0}; }
-    Dimensions ScaleSearchPSPNetworks() { return {2, 4, 0, 0}; }
-    Dimensions ScaleAcknowledgeDataFrames() { return {3, 4, 0, 0}; }
-    Dimensions ScaleOnlyAcceptFromMac() { return {4, 4, 0, 0}; }
-    Dimensions ScaleSetChannel() { return {5, 4, 0, 0}; }
-    Dimensions ScaleUseWifiAdapterRadioBoxGroup() { return {6, 4, 0, 0}; }
+    Window::Dimensions ScaleAutoConnectCheckBox() { return {1, 4, 0, 0}; }
+    Window::Dimensions ScaleSearchPSPNetworks() { return {2, 4, 0, 0}; }
+    Window::Dimensions ScaleAcknowledgeDataFrames() { return {3, 4, 0, 0}; }
+    Window::Dimensions ScaleOnlyAcceptFromMac() { return {4, 4, 0, 0}; }
+    Window::Dimensions ScaleSetChannel() { return {5, 4, 0, 0}; }
+    Window::Dimensions ScaleUseWifiAdapterRadioBoxGroup() { return {6, 4, 0, 0}; }
 }  // namespace
 
-MonitorDeviceStep::MonitorDeviceStep(WindowModel&                aModel,
-                                     std::string_view            aTitle,
-                                     std::function<Dimensions()> aCalculation) :
+MonitorDeviceStep::MonitorDeviceStep(WindowModel&                        aModel,
+                                     std::string_view                    aTitle,
+                                     std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

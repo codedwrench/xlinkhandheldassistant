@@ -9,19 +9,14 @@
 
 #include "../Window.h"
 
-namespace WizardSelectorStep_Constants
-{}  // namespace WizardSelectorStep_Constants
-
-using namespace WizardSelectorStep_Constants;
-
 /**
  * Class that will setup and draw a wizard selector window.
  **/
 class WizardSelectorStep : public Window
 {
 public:
-    WizardSelectorStep(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation);
+    WizardSelectorStep(WindowModel& aModel, std::string_view aTitle, std::function<Window::Dimensions()> aCalculation);
 
-    virtual void SetUp() final;
-    void         Draw() override;
+    void SetUp() final;
+    void Draw() override;
 };

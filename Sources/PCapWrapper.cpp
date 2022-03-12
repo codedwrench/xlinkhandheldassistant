@@ -92,7 +92,8 @@ int PCapWrapper::NextEx(pcap_pkthdr** header, const unsigned char** pkt_data)
 
 int PCapWrapper::SendPacket(std::string_view buffer)
 {
-    return pcap_sendpacket(mHandler, reinterpret_cast<const unsigned char*>(buffer.data()), buffer.size());
+    return pcap_sendpacket(
+        mHandler, reinterpret_cast<const unsigned char*>(buffer.data()), static_cast<int>(buffer.size()));
 }
 
 int PCapWrapper::SetDirection(PcapDirection::Direction direction)

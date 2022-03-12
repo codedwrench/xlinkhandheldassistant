@@ -9,6 +9,11 @@
 
 #include "NetConversionFunctions.h"
 #include "XLinkKaiConnection.h"
+namespace
+{
+    constexpr unsigned int cSnapshotLength{65535};
+    constexpr unsigned int cTimeout{1};
+}  // namespace
 
 using namespace std::chrono;
 

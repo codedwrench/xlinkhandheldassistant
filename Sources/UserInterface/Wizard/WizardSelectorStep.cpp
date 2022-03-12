@@ -8,12 +8,12 @@
 
 namespace
 {
-    Dimensions ScaleSelectorBoxes() { return {2, 4, 0, 0}; }
+    Window::Dimensions ScaleSelectorBoxes() { return {2, 4, 0, 0}; }
 }  // namespace
 
-WizardSelectorStep::WizardSelectorStep(WindowModel&                aModel,
-                                       std::string_view            aTitle,
-                                       std::function<Dimensions()> aCalculation) :
+WizardSelectorStep::WizardSelectorStep(WindowModel&                        aModel,
+                                       std::string_view                    aTitle,
+                                       std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 

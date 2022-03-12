@@ -38,5 +38,5 @@ public:
     int            SetTimeOut(int timeout) override;
 
 private:
-    pcap_t* mHandler;
+    pcap_t* mHandler{};
 };

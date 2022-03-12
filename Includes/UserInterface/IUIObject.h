@@ -6,6 +6,7 @@
  *
  **/
 
+#include <string_view>
 class IUIObject
 {
 public:

@@ -7,14 +7,16 @@
 
 namespace
 {
-    Dimensions ScaleThemeSelector() { return {2, 4, 0, 0}; }
-    Dimensions ScaleDoneButton(const int& aMaxHeight, const int& aMaxWidth)
+    Window::Dimensions ScaleThemeSelector() { return {2, 4, 0, 0}; }
+    Window::Dimensions ScaleDoneButton(const int& aMaxHeight, const int& aMaxWidth)
     {
         return {(aMaxHeight - 2), (aMaxWidth - 2) - static_cast<int>(std::string("[ Save selection ]").length()), 0, 0};
     }
 }  // namespace
 
-ThemeWindow::ThemeWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation) :
+ThemeWindow::ThemeWindow(WindowModel&                        aModel,
+                         std::string_view                    aTitle,
+                         std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 
@@ -88,7 +90,7 @@ void ThemeWindow::GetThemes(std::string_view aPath, std::shared_ptr<RadioBoxGrou
         if (aThemeSelector != nullptr) {
             AddObject(aThemeSelector);
         }
-    } catch (std::filesystem::filesystem_error aException) {
+    } catch (std::filesystem::filesystem_error& aException) {
         Logger::GetInstance().Log(std::string("Could not open themes directory: ") + aException.what(),
                                   Logger::Level::WARNING);
     }

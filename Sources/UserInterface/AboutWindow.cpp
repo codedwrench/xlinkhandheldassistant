@@ -26,7 +26,7 @@ namespace
          Made for use with XLink Kai
         <https://www.teamxlink.co.uk>)"};
 
-    Dimensions ScaleAboutText(const int& aMaxHeight, const int& aMaxWidth)
+    Window::Dimensions ScaleAboutText(const int& aMaxHeight, const int& aMaxWidth)
     {
         // About texts need to have the right amount of spaces
         // For height \n characters get counted and divided by 2
@@ -48,14 +48,16 @@ namespace
             0};
     }
 
-    Dimensions ScaleReturnButton(const int& aMaxHeight, const int& aMaxWidth)
+    Window::Dimensions ScaleReturnButton(const int& aMaxHeight, const int& aMaxWidth)
     {
         return {aMaxHeight - 2, static_cast<int>(aMaxWidth - 2 - std::string("[ Return to HUD ]").length()), 0, 0};
     }
 
 }  // namespace
 
-AboutWindow::AboutWindow(WindowModel& aModel, std::string_view aTitle, std::function<Dimensions()> aCalculation) :
+AboutWindow::AboutWindow(WindowModel&                        aModel,
+                         std::string_view                    aTitle,
+                         std::function<Window::Dimensions()> aCalculation) :
     Window(aModel, aTitle, aCalculation)
 {}
 
