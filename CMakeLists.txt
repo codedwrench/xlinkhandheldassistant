@@ -103,18 +103,17 @@ elseif (UNIX)
 	endif ()
 
 	if (APPLE)
-		# Use automatic reference counting for Objective-C portions
-		add_compile_options(-fobjc-arc)
-
 		find_library(CoreW CoreWLAN)
 		list(APPEND PLATFORM_SPECIFIC_LIBRARIES ${CoreW})
 		list(APPEND ${CMAKE_PROJECT_NAME}_SOURCES ${CoreW} ${CoreL})
 
-		# HomeBrew installs libpcap here
-		set(PCAP_ROOT_DIR "/usr/local/opt/libpcap")
+		if (NOT BUILD_STATIC)
+			# HomeBrew installs libpcap here
+			set(PCAP_ROOT_DIR "/usr/local/opt/libpcap")
 
-		# Make it search for HomeBrew ncurses locations as well, the macOS version is not good enough
-		set(NCURSES_ROOT_DIR "/usr/local/opt/ncurses")
+			# Make it search for HomeBrew ncurses locations as well, the macOS version is not good enough
+			set(NCURSES_ROOT_DIR "/usr/local/opt/ncurses")
+		endif ()
 	else ()
 
 		# Linux uses LibNL to connect to adhoc networks
@@ -124,30 +123,16 @@ elseif (UNIX)
 	endif ()
 endif()
 
-
-if (BUILD_STATIC)
-	set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../boost" CACHE STRING "Boost location")
-
-	# PCAP and Curses already dealt with for Windows
-	if (NOT WIN32)
-		set(PCAP_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libpcap/" CACHE STRING "LibPCAP location")
-		set(NCURSES_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ncurses/" CACHE STRING "NCurses location")
-
-		if (UNIX AND NOT APPLE)
-			set(LibNL_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libnl/" CACHE STRING "LibNL location")
-		endif()
-	endif()
-endif()
-
 if (WIN32)
 	find_package(PDCurses REQUIRED)
 
 else ()
 	set(CURSES_NEED_WIDE TRUE)
 	set(CURSES_NEED_NCURSES TRUE)
-	find_package(PCAP REQUIRED)
 	find_package(Curses REQUIRED)
 endif ()
+
+find_package(PCAP REQUIRED)
 
 include(wrapfindboost)
 include(wrapfindthreads)

@@ -82,8 +82,8 @@ jobs:
         run: |
           mkdir build 
           cd build 
-          export MACOSX_DEPLOYMENT_TARGET=10.10
-          cmake .. -G "Xcode" -DCMAKE_OSX_SYSROOT="$HOME/source/MacOSX10.10.sdk" \
+          cmake .. -G "Xcode" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.10 \
+                              -DCMAKE_OSX_SYSROOT="$HOME/source/MacOSX10.10.sdk" \
                               -DAUTO_FORMAT=0 \
                               -DBUILD_STATIC=1 \
                               -DPCAP_ROOT_DIR="$HOME/source/libpcap" \

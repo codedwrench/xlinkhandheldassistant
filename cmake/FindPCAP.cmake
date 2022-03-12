@@ -48,9 +48,11 @@ find_path(PCAP_ROOT_DIR
 )
 
 find_path(PCAP_INCLUDE_DIR
-    NAMES pcap.h
-    HINTS ${PCAP_ROOT_DIR}/include
-)
+    NAMES pcap/pcap.h
+    HINTS
+        ${PCAP_ROOT_DIR}
+        ${PCAP_ROOT_DIR}/include
+    )
 
 set (HINT_DIR ${PCAP_ROOT_DIR}/lib)
 

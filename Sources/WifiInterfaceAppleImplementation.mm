@@ -26,8 +26,11 @@ WifiInterface::WifiInterface(std::string_view aAdapterName) :
                                                              encoding:[NSString defaultCStringEncoding]]];
 }
 
-WifiInterface::~WifiInterface() = default;
-
+WifiInterface::~WifiInterface()
+{
+    [mImplementation release];
+    mImplementation = nullptr;
+}
 bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
 {
     return [mImplementation Connect:aConnection];
@@ -67,7 +70,6 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
 }
 
 @implementation WifiInterfaceAppleImplementation
-
 - (id)init
 {
     self = [super init];
@@ -80,6 +82,14 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
     }
 
     return self;
+}
+
+-(void)dealloc {
+    sharedWiFiClient  = nil;
+    wifiInterfaceName = @"";
+    wifiInterface     = nil;
+    networks          = nil;
+    [super dealloc];
 }
 
 - (bool)SetInterfaceWithName:(NSString*)wifiInterfaceName

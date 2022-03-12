@@ -26,9 +26,9 @@ namespace PcapDirection
 {
     enum Direction
     {
-        INOUT = 0,
-        IN,
-        OUT
+        DIR_INOUT,
+        DIR_IN,
+        DIR_OUT
     };
 }  // namespace PcapDirection
 
