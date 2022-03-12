@@ -31,7 +31,7 @@ jobs:
       - name: Unit Tests
         run: |
           cd build
-          ./tests
+          ./xlinkhandheldassistant_tests
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
