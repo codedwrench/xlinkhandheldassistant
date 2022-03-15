@@ -76,6 +76,7 @@ See [Guide](Docs/README.md)
 - Monitor mode on Windows does not work.
 - Plugin mode fails to work on some Atheros cards without a custom plugin on Windows 10.
 - Packet injection fails when the packet is at an MTU of 1500 (max size), solved by setting a higher MTU in the WiFi card.
+- Npcap 1.60 is currently what is supported for XLHA use, however XLink Kai supports 1.31+
 
 ## Contributing
 See [Contributing](CONTRIBUTING.md)
