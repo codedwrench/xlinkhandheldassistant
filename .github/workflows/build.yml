@@ -38,7 +38,8 @@ jobs:
           name: XLHA-Debian
           path: build/xlinkhandheldassistant
           if-no-files-found: error
-          
+  
+  # Fix the speed issues under MSYS2, possibly don't setup the instance every build?
   windows:
     name: Windows
     runs-on: self-windows
@@ -49,7 +50,7 @@ jobs:
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
         with:
-          msystem: mingw32
+          msystem: mingw32 
           update: true
       - name: Clone Tree
         uses: actions/checkout@v2
