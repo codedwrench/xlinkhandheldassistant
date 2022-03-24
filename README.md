@@ -54,7 +54,7 @@ On Windows it has been found that some drivers will not allow for selecting a ch
 
 
 ### Broacom
-- Dell DW1501 (BCM43XNG20) (Windows driver: [here](https://cdn.teamxlink.co.uk/drivers/Broadcom_BCM43_Drivers_only_2022.03.22.7z))
+- Dell DW1504 (BCM43XNG20) (Windows driver: [here](https://cdn.teamxlink.co.uk/drivers/Broadcom_BCM43_Drivers_only_2022.03.22.7z))
 
 ### Intel
 - Intel Pro Wireless 5100 AGN (iwlwifi)
