@@ -23,8 +23,10 @@
 # wrapfindboost.cmake - Finds boost under our terms.
 # Usage: Set Boost_ARCHITECTURE if the default arch is not OK, set BOOST_ROOT as well.
 
-set(Boost_NO_SYSTEM_PATHS ON)
-set(Boost_USE_STATIC_LIBS ON)
+if (BUILD_STATIC)
+	set(Boost_NO_SYSTEM_PATHS ON)
+	set(Boost_USE_STATIC_LIBS ON)
+endif ()
 
 # Needed because otherwise the libraries cannot be found.
 if (BUILD_X32)
