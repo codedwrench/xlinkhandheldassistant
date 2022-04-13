@@ -149,7 +149,21 @@ The Windows version is always statically compiled!
 
 ### Compile instructions used for building statically
 #### Linux
+### Using Docker
+In Resources/Docker is a file name release-runner.Dockerfile.
+- Rename this file to Dockerfile
+```bash
+docker build -t xlha_release_builder ../Docker```
+docker run -it --name xlha_release_builder su -c /bin/bash runner```
+cd ~
+git clone git@github.com:codedwrench/xlinkhandheldassistant.git
+cd xlinkhandheldassistant
+mkdir build
+cd build
+cmake .. -DBUILD_STATIC=1
+```
 
+### Manually
 - NCurses
 ```bash
 ./configure --with-terminfo-dirs="/etc/terminfo:/lib/terminfo:/usr/share/terminfo:/usr/lib/terminfo" --without-debug --enable-widec
