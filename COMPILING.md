@@ -148,8 +148,10 @@ Then compiling should be done in the same way as described above for your Operat
 The Windows version is always statically compiled!
 
 ### Compile instructions used for building statically
-#### Linux
-### Using Docker
+
+### Linux
+
+#### Using Docker
 In Resources/Docker is a file name release-runner.Dockerfile.
 - Rename this file to Dockerfile
 ```bash
@@ -163,7 +165,7 @@ cd build
 cmake .. -DBUILD_STATIC=1
 ```
 
-### Manually
+#### Manually
 - NCurses
 ```bash
 ./configure --with-terminfo-dirs="/etc/terminfo:/lib/terminfo:/usr/share/terminfo:/usr/lib/terminfo" --without-debug --enable-widec
