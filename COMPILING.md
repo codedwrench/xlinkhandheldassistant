@@ -163,6 +163,7 @@ cd xlinkhandheldassistant
 mkdir build
 cd build
 cmake .. -DBUILD_STATIC=1
+make -j`nproc`
 ```
 
 #### Manually
