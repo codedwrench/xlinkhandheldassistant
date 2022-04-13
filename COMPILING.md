@@ -155,8 +155,8 @@ The Windows version is always statically compiled!
 In Resources/Docker is a file name release-runner.Dockerfile.
 - Rename this file to Dockerfile
 ```bash
-docker build -t xlha_release_builder ../Docker```
-docker run -it --name xlha_release_builder su -c /bin/bash runner```
+docker build -t xlha_release_builder ../Docker
+docker run -it --name xlha_release_builder su -c /bin/bash runner
 cd ~
 git clone git@github.com:codedwrench/xlinkhandheldassistant.git
 cd xlinkhandheldassistant
