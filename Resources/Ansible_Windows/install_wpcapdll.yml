@@ -23,3 +23,7 @@
     src: '{{ drive }}:\{{ install_dir }}\Npcap\wpcap.dll'
   when: (npcapsdk_download_result.msg is defined) and (npcapsdk_download_result.msg == "OK")
 
+- name: Remove NPCAP dir
+  win_file:
+    path: '{{ drive }}:\{{ install_dir }}\NPcap'
+    state: absent
