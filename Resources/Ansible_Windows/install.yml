@@ -17,8 +17,6 @@
 
     npcapsdk_version: "1.12"
     npcap_version: "1.31"
-    npcap_system32_files:
-      ["NpcapHelper.exe", "Packet.dll", "WlanHelper.exe", "wpcap.dll"]
 
     pdcurses_version: "4.3.2a"
 
@@ -97,17 +95,14 @@
         dest: '{{ drive }}:\{{ install_dir}}\npcapsdk'
       when: npcapsdk_download_result.msg is defined and npcapsdk_download_result.msg == "OK"
 
-    # TODO: Probably should do a version check at some point instead
-    - name: Check if NPCAP is installed
-      win_service:
-        name: npcap
-      register: npcap_service_exists
+    - name: Check if wpcap.dll exists
+      win_stat:
+        path: '{{ drive }}:\{{ install_dir }}\npcapsdk\wpcap.dll'
+      register: npcap_dll_exists
 
-    # Note: it's easy to break the license (install on 5 PCs) with this script, make sure you read the license properly
-    # https://github.com/nmap/npcap/blob/master/LICENSE
-    - name: Install NPCAP
-      import_tasks: install_npcap.yml
-      when: (npcap_service_exists is defined) and (not npcap_service_exists.exists)
+    - name: Install wpcap.dll
+      import_tasks: install_wpcapdll.yml
+      when: (npcap_dll_exists.stat.exists is defined) and (not npcap_dll_exists.stat.exists)
 
     # TODO: Probably should do a version check at some point instead
     - name: Check if PDCurses is installed
