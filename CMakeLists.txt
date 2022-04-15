@@ -61,7 +61,7 @@ if (WIN32)
 	if (MSYS OR MINGW)
 		# MSYS specific steps (specifically for pcap and rc-files)
 		set (NPCAP_DLL_PATH "" CACHE STRING  "Where the wpcap.dll is located")
-		if (not NPCAP_DLL_PATH STREQUAL "")
+		if (NOT ${NPCAP_DLL_PATH} STREQUAL "")
 			set (ENV{DLLPath} ${NPCAP_DLL_PATH})
 		endif ()
 
