@@ -71,7 +71,7 @@ The following libraries are needed:
 - PDCurses or other ncurses compatible library (only pdcurses tested) https://github.com/Bill-Gray/PDCursesMod
   Commands used (from root of pdcurses dir)
   - cd wincon
-  - mingw32-make
+  - mingw32-make -j3 WIDE=Y CHTYPE_32=Y
 - NPcap and NPcap SDK \
   https://nmap.org/npcap/dist/npcap-1.60.exe \
   https://nmap.org/npcap/dist/npcap-sdk-1.06.zip
