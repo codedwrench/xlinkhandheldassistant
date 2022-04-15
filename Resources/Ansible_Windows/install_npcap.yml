@@ -1,0 +1,220 @@
+---
+# NPCAP itself
+
+- name: Download NPCAP Installer
+  win_get_url:
+    dest: '{{ drive }}:\{{ install_dir}}\npcap.exe'
+    url: "https://npcap.com/dist/npcap-{{ npcap_version }}.exe"
+  register: npcapsdk_download_result
+
+- name: Install NPCAP, the installer does not allow for silent install so we are going to mess with it.
+  win_shell: '7z x npcap.exe -oNPcap -aoa'
+  args:
+    chdir: '{{ drive }}:\{{ install_dir }}'
+  register: extract_npcap_result
+  when: (npcapsdk_download_result.msg is defined) and (npcapsdk_download_result.msg == "OK")
+
+- name: Install NPCAP LWF driver
+  win_shell: '.\NPFInstall.exe -i'
+  args:
+    chdir: '{{ drive }}:\{{ install_dir }}\Npcap'
+  when: (extract_npcap_result.rc is defined) and (extract_npcap_result.rc == 0)
+
+- name: Install NPCAP WFP Callout driver
+  win_shell: '.\NPFInstall.exe -iw'
+  args:
+    chdir: '{{ drive }}:\{{ install_dir }}\Npcap'
+  when: (extract_npcap_result.rc is defined) and (extract_npcap_result.rc == 0)
+
+- name: Install NPCAP Loopback driver
+  win_shell: '.\NPFInstall.exe -il'
+  args:
+    chdir: '{{ drive }}:\{{ install_dir }}\Npcap'
+  when: (extract_npcap_result.rc is defined) and (extract_npcap_result.rc == 0)
+
+- name: Install NPCAP, Add regedit path key.
+  win_regedit:
+    path: 'HKLM:\SOFTWARE\WOW6432Node\Npcap'
+    data: '{{ drive }}:\{{ install_dir }}\Npcap'
+
+- name: Install NPCAP, Add regedit WinPcapCompatible key.
+  win_regedit:
+    path: 'HKLM:\SOFTWARE\WOW6432Node\Npcap'
+    name: "WinPcapCompatible"
+    type: "dword"
+    data: 0
+
+- name: Install NPCAP, Add regedit AdminOnly key.
+  win_regedit:
+    path: 'HKLM:\SOFTWARE\WOW6432Node\Npcap'
+    name: "AdminOnly"
+    type: "dword"
+    data: 0
+
+# NPCAP parameters registry keys
+
+- name: Npcap Registry Start.
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\Services\npcap'
+    name: "Start"
+    type: "dword"
+    data: 1
+
+- name: Npcap Registry LoopbackSupport.
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\Services\npcap\Parameters'
+    name: "LoopbackSupport"
+    type: "dword"
+    data: 1
+
+- name: Npcap Registry DltNull.
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\Services\npcap\Parameters'
+    name: "DltNull"
+    type: "dword"
+    data: 1
+
+- name: Npcap Registry Edition
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\Services\npcap\Parameters'
+    name: "Edition"
+    type: "string"
+    data: "Npcap"
+
+- name: Npcap Registry AdminOnly
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\Services\npcap\Parameters'
+    name: "AdminOnly"
+    type: "dword"
+    data: 0
+
+- name: Npcap Registry Dot11Support
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\Services\npcap\Parameters'
+    name: "Dot11Support"
+    type: "dword"
+    data: 0
+
+- name: Npcap Registry VlanSupport
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\Services\npcap\Parameters'
+    name: "VlanSupport"
+    type: "dword"
+    data: 0
+
+- name: Npcap Registry WinPcapCompatible
+  win_regedit:
+    path: 'HKLM:\SYSTEM\CurrentControlSet\Services\npcap\Parameters'
+    name: "WinPcapCompatible"
+    type: "dword"
+    data: 0
+
+- name: Ensure system32\NPCAP folder exists
+  win_file:
+    path: '%WINDIR%\System32\Npcap'
+    state: directory
+
+- name: Ensure SysWOW64\NPCAP folder exists
+  win_file:
+    path: '%WINDIR%\SysWOW64\Npcap'
+    state: directory
+
+- name: Copy system32\NPCAP files
+  win_copy:
+    dest: '%WINDIR%\System32\Npcap\'
+    operation: file_copy
+    remote_src: yes
+    src: '{{ drive }}:\{{ install_dir }}\Npcap\{{ item }}'
+  loop: "{{ npcap_system32_files }}"
+
+- name: Copy SysWOW64\NPCAP files
+  win_copy:
+    dest: '%WINDIR%\SysWOW64\Npcap\'
+    operation: file_copy
+    remote_src: yes
+    src: '{{ drive }}:\{{ install_dir }}\Npcap\{{ item }}'
+  loop: "{{ npcap_system32_files }}"
+
+- name: Run fix install to ensure its all good
+  win_shell: '.\FixInstall.bat'
+  args:
+    chdir: '{{ drive }}:\{{ install_dir }}\Npcap'
+  ignore_errors: yes
+  when: (extract_npcap_result.rc is defined) and (extract_npcap_result.rc == 0)
+
+# Uninstall information
+
+- name: Uninstall information (registry) UninstallString
+  win_regedit:
+    path: 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\NpcapInst'
+    name: "UninstallString"
+    type: "string"
+    data: '"{{ drive }}:\{{ install_dir }}\Npcap\uninstall.exe"'
+
+- name: Npcap Registry QuietUninstallString
+  win_regedit:
+    path: 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\NpcapInst'
+    name: "QuietUninstallString"
+    type: "string"
+    data: '"{{ drive }}:\{{ install_dir }}\Npcap\uninstall.exe" /S'
+
+- name: Npcap Registry DisplayIcon
+  win_regedit:
+    path: 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\NpcapInst'
+    name: "DisplayIcon"
+    type: "string"
+    data: '{{ drive }}:\{{ install_dir }}\Npcap\uninstall.exe'
+
+- name: Npcap Registry UninstallPath
+  win_regedit:
+    path: 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\NpcapInst'
+    name: "UninstallPath"
+    type: "string"
+    data: '{{ drive }}:\{{ install_dir }}\Npcap'
+
+- name: Npcap Registry DisplayName
+  win_regedit:
+    path: 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\NpcapInst'
+    name: "DisplayName"
+    type: "string"
+    data: 'Npcap'
+
+- name: Npcap Registry DisplayVersion
+  win_regedit:
+    path: 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\NpcapInst'
+    name: "DisplayVersion"
+    type: "string"
+    data: '{{ npcap_version }}'
+
+- name: Npcap Registry VersionMajor
+  win_regedit:
+    path: 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\NpcapInst'
+    name: "VersionMajor"
+    type: "string"
+    data: '{{ npcap_version.split(".")[0] }}'
+
+- name: Npcap Registry VersionMinor
+  win_regedit:
+    path: 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\NpcapInst'
+    name: "VersionMinor"
+    type: "string"
+    data: '{{ npcap_version.split(".")[1] }}'
+
+- name: Npcap Registry NoModify
+  win_regedit:
+    path: 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\NpcapInst'
+    name: "NoModify"
+    type: "dword"
+    data: 1
+
+- name: Npcap Registry NoRepair
+  win_regedit:
+    path: 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\NpcapInst'
+    name: "NoRepair"
+    type: "dword"
+    data: 1
+
+- name: Remove NPCAP installer
+  win_file:
+    path: '{{ drive }}:\{{ install_dir }}\npcap.exe'
+    state: absent

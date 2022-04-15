@@ -1,0 +1,36 @@
+---
+- name: Download PDCurses
+  win_get_url:
+    dest: '{{ drive }}:\{{ install_dir}}\pdcurses.zip'
+    url: "https://github.com/Bill-Gray/PDCursesMod/archive/refs/tags/v{{ pdcurses_version }}.zip"
+  register: pdcurses_download_result
+
+- name: Unzip PDCurses
+  win_unzip:
+    delete_archive: yes
+    src: '{{ drive }}:\{{ install_dir}}\pdcurses.zip'
+    dest: '{{ drive }}:\{{ install_dir}}'
+  when: pdcurses_download_result.msg is defined and pdcurses_download_result.msg == "OK"
+
+- name: Rename PDCurses
+  win_shell: "move PDCurses* pdcurses"
+  args:
+    chdir: '{{ drive }}:\{{ install_dir }}'
+  when: pdcurses_download_result.msg is defined and pdcurses_download_result.msg == "OK"
+
+- name: Build PDCurses
+  win_shell:
+    '{{ drive }}:\{{ install_dir }}\msys64\msys2_shell.cmd -mingw32 -defterm -no-start -here -c
+    "mingw32-make WIDE=Y CHTYPE_32=Y -j4" '
+  args:
+    chdir: '{{ drive }}:\{{ install_dir }}\pdcurses\wincon'
+  register: pdcurses_build_output
+  when: pdcurses_download_result.msg is defined and pdcurses_download_result.msg == "OK"
+
+- name: Log output to file
+  local_action: copy content={{ pdcurses_build_output.stdout }} dest=./pdcurses_output.log
+  when: pdcurses_build_output.stdout 
+
+- name: Log error output to file
+  local_action: copy content={{ pdcurses_build_output.stderr }} dest=./pdcurses_error_output.log
+  when: pdcurses_build_output.stderr 
