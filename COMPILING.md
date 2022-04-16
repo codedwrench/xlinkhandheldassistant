@@ -39,7 +39,12 @@ This script will update your computer and install all the required tools to buil
 on the root of your harddrive except for 7-zip and git, as those don't have configurable install paths using chocolatey.
 After the script has ran you should immediately be able to check out xlinknhandheldassistant using git, create a build folder and run in an MingW32 terminal:
 ```bash
-cmake .. -G "MinGW Makefiles" -DBOOST_ROOT=/c/build_tools/boost -DPDCURSES_ROOT_DIR=/c/build_tools/pdcurses -DPCAP_ROOT_DIR=/c/build_tools/npcapsdk -DNPCAP_DLL_PATH=/c/build_tools/npcapsdk -DBUILD_X32=ON
+cmake .. -G "MinGW Makefiles" \
+-DBOOST_ROOT=/c/build_tools/boost \
+-DPDCURSES_ROOT_DIR=/c/build_tools/pdcurses \
+-DPCAP_ROOT_DIR=/c/build_tools/npcapsdk \
+-DNPCAP_DLL_PATH=/c/build_tools/npcapsdk \
+-DBUILD_X32=ON
 ```
 
 If you are unfamiliar with ansible, information to use ansible at all can be found [here](https://docs.ansible.com/ansible/latest/user_guide/windows.html): 
