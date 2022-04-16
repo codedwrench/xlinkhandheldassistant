@@ -32,6 +32,19 @@ mkdir build && cd build && cmake .. && cmake --build . -- -j`nproc`
 ``` 
 
 ## Windows
+### Ansible
+There is an ansibile playbook `install.yml` avaiable in Resources/Ansible_Windows. 
+The playbook needs a vaulted ssh private key to be availabe as `id_rsa.vault`. 
+This script will update your computer and install all the required tools to build xlinkhandheldassistant. It will install everything in `build_tools`, 
+on the root of your harddrive except for 7-zip and git, as those don't have configurable install paths using chocolatey.
+After the script has ran you should immediately be able to check out xlinknhandheldassistant using git, create a build folder and run in an MingW32 terminal:
+```bash
+cmake .. -G "MinGW Makefiles" -DBOOST_ROOT=/c/build_tools/boost -DPDCURSES_ROOT_DIR=/c/build_tools/pdcurses -DPCAP_ROOT_DIR=/c/build_tools/npcapsdk -DNPCAP_DLL_PATH=/c/build_tools/npcapsdk -DBUILD_X32=ON
+```
+
+If you are unfamiliar with ansible, information to use ansible at all can be found [here](https://docs.ansible.com/ansible/latest/user_guide/windows.html): 
+
+### Manually
 Releases on Windows are compiled using MSYS2. Visual Studio should also work, but it might need some small fixing.
 
 **Note:** Monitor mode is not available on Windows. NPcap does not support packet injection, see: https://github.com/nmap/npcap/issues/85 .
