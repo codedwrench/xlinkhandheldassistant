@@ -71,6 +71,7 @@ jobs:
         with:
           name: XLHA-WindowsX32
           path: build/xlinkhandheldassistant.exe
+          if-no-files-found: error
           
   macos:
     name: MacOS10_15
@@ -96,3 +97,4 @@ jobs:
         with:
           name: XLHA-MacOS10.11
           path: build/Release/xlinkhandheldassistant
+          if-no-files-found: error
