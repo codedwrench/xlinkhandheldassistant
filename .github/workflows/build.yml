@@ -51,6 +51,7 @@ jobs:
         with:
           msystem: mingw32
           release: false
+          update: true
       - name: Clone Tree
         uses: actions/checkout@v2
       - name: Build
