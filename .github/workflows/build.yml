@@ -64,7 +64,7 @@ jobs:
                                         -DBUILD_X32=1 \
                                         -DBOOST_ROOT="c:/boost"
                                         
-          mingw32-make
+          mingw32-make -j`nproc`
       - uses: actions/upload-artifact@v2
         with:
           name: XLHA-WindowsX32
