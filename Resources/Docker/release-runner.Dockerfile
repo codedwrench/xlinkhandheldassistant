@@ -67,7 +67,7 @@ RUN                                                \
   cd ..                                                                                                     && \
                                                                                                                \
   mv *ncurses* ncurses                                                                                      && \
-  cd ncurses-${CURSES_VER_MAJOR}.${CURSES_VER_MINOR}                                                                                                && \
+  cd ncurses                                                                                               && \
   ./configure --with-terminfo-dirs="/etc/terminfo:/lib/terminfo:/usr/share/terminfo:/usr/lib/terminfo"         \
   --without-debug --enable-widec                                                                            && \
   make -j`nproc`                                                                                            && \
