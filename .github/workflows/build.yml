@@ -53,9 +53,6 @@ jobs:
           release: false
       - name: Clone Tree
         uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: |
-          pacman -S bison mingw-w64-i686-cmake mingw-w64-i686-gcc mingw-w64-i686-make mingw-w64-i686-tools-git --noconfirm
       - name: Build
         run: |
           mkdir build 
