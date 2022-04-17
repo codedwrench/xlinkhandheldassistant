@@ -26,7 +26,11 @@ jobs:
           mkdir build
           cd build 
           cmake .. -DENABLE_TESTS=1 \
-                   -DAUTO_FORMAT=0
+                   -DBUILD_STATIC=1 \
+                   -DAUTO_FORMAT=0 \
+                   -DPCAP_ROOT_DIR="~/home/mason/libpcap" \
+                   -DBOOST_ROOT="~/home/mason/boost" \
+                   -DNCURSES_ROOT_DIR="~/home/mason/ncurses"
           cmake --build . -- -j`nproc`
       - name: Unit Tests
         run: |
