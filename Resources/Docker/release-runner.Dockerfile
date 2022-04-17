@@ -33,7 +33,7 @@ RUN                                                \
     libgmock-dev                                   \
     google-mock                                    \
     git                                            \
-    opensssh-client                                \
+    openssh-client                                \
     unzip                                          \
     graphviz                                       \
     pandoc                                         \
