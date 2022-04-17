@@ -123,7 +123,7 @@ cmake .. -G "MinGW Makefiles" -DBUILD_X32=1
 And lastly:
 
 ```
-mingw32-make
+mingw32-make -j`nproc`
 ``` 
 
 ## MacOS
