@@ -51,6 +51,18 @@ public:
      */
     virtual bool Send(std::string_view aCommand, std::string_view aData) = 0;
 
+    /*
+     * Sends a titleId over to the connector, it's up to the connector what to do with it.
+     * @param aTitleId - The ID to send over to the connector.
+     */
+    virtual void SendTitleId(std::string_view aTitleId) = 0;
+
+    /*
+     * Sends an ESSID over to the connector, it's up to the connector what to do with it.
+     * @param aESSID - The ESSID to send over to the connector.
+     */
+    virtual void SendESSID(std::string_view aESSID) = 0;
+
     /**
      * Allows sending over different device.
      * @param aDevice - Device to use.

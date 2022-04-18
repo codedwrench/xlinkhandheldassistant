@@ -214,7 +214,6 @@ int main(int argc, char* argv[])
                             lXLinkKaiConnection->SetUseHostSSID(mWindowModel.mUseSSIDFromHost);
 
                             lDevice->SetConnector(lXLinkKaiConnection);
-                            lDevice->SetHosting(mWindowModel.mHosting);
 
                             // If we are auto discovering PSP/VITA networks add those to the filter list
                             if (mWindowModel.mAutoDiscoverPSPVitaNetworks) {
@@ -300,9 +299,6 @@ int main(int argc, char* argv[])
                             mWindowModel.mCommand = WindowModel_Constants::Command::NoCommand;
                             break;
                         case WindowModel_Constants::Command::SetHosting:
-                            if (lDevice != nullptr) {
-                                lDevice->SetHosting(mWindowModel.mHosting);
-                            }
                             if (lXLinkKaiConnection != nullptr) {
                                 lXLinkKaiConnection->SetHosting(mWindowModel.mHosting);
                             }

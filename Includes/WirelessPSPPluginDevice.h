@@ -37,9 +37,9 @@ public:
 
 private:
     /**
-     * Sends the title id gotten from the handshake to XLink Kai.
+     * Gets the TitleId from the last received packet.
      */
-    void SendTitleId();
+    void ObtainTitleId();
 
     std::shared_ptr<HandlerPSPPlugin> mPacketHandler{nullptr};
 };

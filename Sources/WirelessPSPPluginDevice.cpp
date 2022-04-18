@@ -27,17 +27,13 @@ WirelessPSPPluginDevice::WirelessPSPPluginDevice(bool                           
     mPacketHandler(aHandler)
 {}
 
-void WirelessPSPPluginDevice::SendTitleId()
+void WirelessPSPPluginDevice::ObtainTitleId()
 {
     try {
-        std::string lTitleId{mPacketHandler->GetPacket().substr(Net_8023_Constants::cDataIndex +
-                                                                    Net_Constants::cHandshakeToken.length() +
-                                                                    XLinkKai_Constants::cSeparator.length(),
-                                                                Net_Constants::cTitleIdLength)};
-
-        // Send the title id off to XLink Kai
-        GetConnector()->Send(XLinkKai_Constants::cInfoSetTitleIdString,
-                             lTitleId + XLinkKai_Constants::cSeparator.data());
+        SetTitleId(mPacketHandler->GetPacket().substr(Net_8023_Constants::cDataIndex +
+                                                          Net_Constants::cHandshakeToken.length() +
+                                                          XLinkKai_Constants::cSeparator.length(),
+                                                      Net_Constants::cTitleIdLength));
     } catch (std::out_of_range& aException) {
         Logger::GetInstance().Log("Couldn't read the TitleId to send off to XLink Kai", Logger::Level::ERROR);
     }
@@ -71,7 +67,10 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
             Send(lPacket, false);
 
             // Now lastly send the title id from the handshake over to XLink Kai.
-            SendTitleId();
+            ObtainTitleId();
+            if (!GetTitleId().empty()) {
+                GetConnector()->SendTitleId(GetTitleId());
+            }
         } else if (mPacketHandler->GetEtherType() == Net_Constants::cPSPEtherType) {
             // Log
             Logger::GetInstance().Log("Received: " + PrettyHexString(lData), Logger::Level::TRACE);

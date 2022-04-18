@@ -110,6 +110,23 @@ bool XLinkKaiConnection::Send(std::string_view aData)
     return Send(cEthernetDataString, aData);
 }
 
+void XLinkKaiConnection::SendESSID(std::string_view aESSID)
+{
+    // Set this regardless of hosting, this is info for XLink Kai
+    Send(std::string(XLinkKai_Constants::cInfoSetESSIDString),
+         std::string(aESSID) + XLinkKai_Constants::cSeparator.data());
+
+    if (mHosting) {
+        Send(std::string(XLinkKai_Constants::cSetESSIDString), aESSID);
+    }
+}
+
+void XLinkKaiConnection::SendTitleId(std::string_view aTitleId)
+{
+    Send(std::string(XLinkKai_Constants::cInfoSetTitleIdString),
+         std::string(aTitleId) + XLinkKai_Constants::cSeparator.data());
+}
+
 bool XLinkKaiConnection::HandleKeepAlive()
 {
     bool lReturn{true};
@@ -255,6 +272,15 @@ bool XLinkKaiConnection::StartReceiverThread()
                         mSettingsSent     = false;
                     } else if (mConnected && !mConnectInitiated && !mSettingsSent) {
                         Send(cSettingDDSOnlyString, "");
+
+                        if (!mIncomingConnection->GetTitleId().empty()) {
+                            SendTitleId(mIncomingConnection->GetTitleId());
+                        }
+
+                        if (!mIncomingConnection->GetESSID().empty()) {
+                            SendESSID(mIncomingConnection->GetESSID());
+                        }
+
                         mSettingsSent = true;
                     } else {
                         mIoService.poll();

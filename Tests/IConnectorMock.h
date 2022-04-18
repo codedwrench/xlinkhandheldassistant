@@ -13,6 +13,8 @@ public:
     MOCK_METHOD(bool, ReadNextData, ());
     MOCK_METHOD(bool, Send, (std::string_view aData));
     MOCK_METHOD(bool, Send, (std::string_view aCommand, std::string_view aData));
+    MOCK_METHOD(void, SendTitleId, (std::string_view aTitleId));
+    MOCK_METHOD(void, SendESSID, (std::string_view aESSID));
     MOCK_METHOD(void, SetIncomingConnection, (std::shared_ptr<IPCapDevice> aDevice));
     MOCK_METHOD(bool, StartReceiverThread, ());
 };

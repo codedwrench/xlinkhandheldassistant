@@ -64,8 +64,8 @@ namespace XLinkKai_Constants
     static const std::string cInfoSetTitleIdString{std::string(cInfoFormat) + cSeparator.data() +
                                                    cSubCommandTitleIdFormat.data() + cSeparator.data()};
 
-    static const std::string cInfoSetESSIDString(std::string(cInfoFormat) + cSeparator.data() +
-                                                 cSetESSIDFormat.data() + cSeparator.data());
+    static const std::string cInfoSetESSIDString(std::string(cInfoFormat) + cSeparator.data() + cSetESSIDFormat.data() +
+                                                 cSeparator.data());
 
     static const std::string cSetESSIDString(std::string(cEthernetDataMetaString.data()) + cSetESSIDFormat.data() +
                                              cSeparator.data());
@@ -99,6 +99,18 @@ public:
      * @return True if successful.
      */
     bool Connect();
+
+    /*
+     * Sends a titleId over to the connector, it's up to the connector what to do with it.
+     * @param aTitleId - The ID to send over to the connector.
+     */
+    void SendTitleId(std::string_view aTitleId) override;
+
+    /*
+     * Sends an ESSID over to the connector, it's up to the connector what to do with it.
+     * @param aESSID - The ESSID to send over to the connector.
+     */
+    void SendESSID(std::string_view aESSID) override;
 
     /**
      * Synchronous receive of network messages from XLink Kai, may hang if nothing received!.

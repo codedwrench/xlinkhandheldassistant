@@ -57,6 +57,10 @@ public:
 
     bool Connect(std::string_view aESSID) override;
 
+    std::string GetESSID() override;
+
+    std::string GetTitleId() override;
+
     bool Open(std::string_view aName, std::vector<std::string>& aSSIDFilter) override;
 
     /**
@@ -76,6 +80,7 @@ protected:
     uint64_t&                                           GetAdapterMacAddress();
     std::chrono::time_point<std::chrono::system_clock>& GetReadWatchdog();
     std::shared_ptr<IPCapWrapper>&                      GetWrapper();
+    void                                                SetTitleId(std::string_view aTitleId);
 
 private:
     bool                            mConnected{false};
@@ -85,6 +90,7 @@ private:
     bool                            mAutoConnect{};
     std::string*                    mCurrentlyConnected{nullptr};
     IWifiInterface::WifiInformation mCurrentlyConnectedInfo{};
+    std::string                     mTitleId{};
     bool                            mPausedAutoConnect{false};
     std::shared_ptr<std::thread>    mReceiverThread{nullptr};
     bool                            mSendReceivedData{false};

@@ -78,6 +78,18 @@ public:
     virtual const pcap_pkthdr* GetHeader() = 0;
 
     /**
+     * Gets the essid of the game currently played if known.
+     * @return The essid of the game currently played.
+     */
+    virtual std::string GetESSID() = 0;
+
+    /**
+     * Gets the title id of the game currently played if known.
+     * @return The titleId of the game currently played.
+     */
+    virtual std::string GetTitleId() = 0;
+
+    /**
      * Sends data over device/file if supported.
      * @param aData - Data to send.
      * @return true if successful, false on failure or unsupported.
@@ -89,12 +101,6 @@ public:
      * @param aDevice - Device to use as the outgoing connection.
      */
     virtual void SetConnector(std::shared_ptr<IConnector> aDevice) = 0;
-
-    /**
-     * Sets whether user is hosting or not.
-     * @param aHosting - If the user is hosting.
-     */
-    virtual void SetHosting(bool aHosting) = 0;
 
     /**
      * Prints some fancy statistics about a packet.

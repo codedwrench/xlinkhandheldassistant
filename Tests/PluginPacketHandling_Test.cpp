@@ -190,7 +190,7 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
 
     // Should broadcast the current Title ID to XLink Kai.
     EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lOutputConnector),
-                Send("info;titleid;", "ULES00125;")).WillOnce(Return(true));
+                SendTitleId("ULES00125"));
 
     // Test class set-up
     lPSPPluginDevice.SetConnector(lOutputConnector);
@@ -299,7 +299,7 @@ TEST_F(PluginPacketHandlingTest, DoesHandshakeOnHandshakeRequest)
 
     // Should broadcast the current Title ID to XLink Kai.
     EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lConnector),
-                Send("info;titleid;", "ULES00125;")).WillOnce(Return(true));
+                SendTitleId("ULES00125"));
 
     // Test class set-up
     lPSPPluginDevice.SetConnector(lConnector);

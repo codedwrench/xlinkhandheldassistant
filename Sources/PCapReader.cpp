@@ -142,6 +142,8 @@ bool PCapReader::ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHe
         auto lHandler{std::dynamic_pointer_cast<Handler80211>(mPacketHandler)};
 
         if (lHandler != nullptr) {
+            mESSID = lHandler->GetLockedSSID();
+
             if (!lHandler->IsDropped()) {
                 ShowPacketStatistics(aHeader);
                 Logger::GetInstance().Log("Received: " + PrettyHexString(lData), Logger::Level::TRACE);
@@ -234,6 +236,16 @@ void PCapReader::SetBSSID(uint64_t aBSSID)
     mBSSID = aBSSID;
 }
 
+std::string PCapReader::GetESSID()
+{
+    return mESSID;
+}
+
+std::string PCapReader::GetTitleId()
+{
+    return "";
+}
+
 void PCapReader::SetParameters(std::shared_ptr<RadioTapReader::PhysicalDeviceParameters> aParameters)
 {
     mParameters = std::move(aParameters);
@@ -291,4 +303,14 @@ void PCapReader::SetSourceMacToFilter(uint64_t aMac)
 void PCapReader::SetAcknowledgePackets(bool aAcknowledge)
 {
     mAcknowledgePackets = aAcknowledge;
+}
+
+void PCapReader::SendTitleId(std::string_view aTitleId)
+{
+    // Pcap reader does nothing with this
+}
+
+void PCapReader::SendESSID(std::string_view aESSID)
+{
+    // Pcap reader does nothing with this
 }

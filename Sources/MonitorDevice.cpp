@@ -125,13 +125,7 @@ bool MonitorDevice::ReadCallback(const unsigned char* aData, const pcap_pkthdr* 
             *mCurrentlyConnectedNetwork = mPacketHandler.GetLockedSSID();
         }
 
-        // Set this regardless of hosting, this is info for XLink Kai
-        GetConnector()->Send(std::string(XLinkKai_Constants::cInfoSetESSIDString), mPacketHandler.GetLockedSSID());
-
-        if (IsHosting()) {
-            // Send this over XLink Kai
-            GetConnector()->Send(std::string(XLinkKai_Constants::cSetESSIDString), mPacketHandler.GetLockedSSID());
-        }
+        GetConnector()->SendESSID(mPacketHandler.GetLockedSSID());
     }
 
     IncreasePacketCount();
@@ -219,4 +213,14 @@ void MonitorDevice::SetSourceMacToFilter(uint64_t aMac)
 void MonitorDevice::SetAcknowledgePackets(bool aAcknowledge)
 {
     mAcknowledgePackets = aAcknowledge;
+}
+
+std::string MonitorDevice::GetESSID()
+{
+    return mPacketHandler.GetLockedSSID();
+}
+
+std::string MonitorDevice::GetTitleId()
+{
+    return mTitleId;
 }

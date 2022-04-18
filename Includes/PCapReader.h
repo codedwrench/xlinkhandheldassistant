@@ -78,6 +78,14 @@ public:
      */
     void SetBSSID(uint64_t aBSSID);
 
+    std::string GetESSID() override;
+
+    std::string GetTitleId() override;
+
+    void SendTitleId(std::string_view aTitleId) override;
+
+    void SendESSID(std::string_view aESSID) override;
+
     /**
      * Sets the Parameters to use when pretending to be XLink Kai sending out to a monitor device.
      * @param aParameters - Parameters to use.
@@ -91,8 +99,10 @@ public:
 private:
     bool                                                      mAcknowledgePackets{false};
     uint64_t                                                  mBSSID{0};
+    std::string                                               mESSID{};
     bool                                                      mConnected{false};
     std::shared_ptr<RadioTapReader::PhysicalDeviceParameters> mParameters{nullptr};
+    std::string                                               mTitleId{};
     std::shared_ptr<IPCapWrapper>                             mWrapper{nullptr};
     std::shared_ptr<IPCapDevice>                              mIncomingConnection{nullptr};
     bool                                                      mDoneReceiving{false};

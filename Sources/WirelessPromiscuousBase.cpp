@@ -149,13 +149,7 @@ bool WirelessPromiscuousBase::Connect(std::string_view aESSID)
                         mCurrentlyConnectedInfo = lNetwork;
                         lDidConnect             = true;
 
-                        // Set this regardless of hosting, this is info for XLink Kai
-                        GetConnector()->Send(std::string(XLinkKai_Constants::cInfoSetESSIDString),
-                                             lNetwork.ssid + XLinkKai_Constants::cSeparator.data());
-
-                        if (IsHosting()) {
-                            GetConnector()->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
-                        }
+                        GetConnector()->SendESSID(aESSID);
                     }
                 }
                 lCount++;
@@ -183,9 +177,7 @@ bool WirelessPromiscuousBase::Connect(std::string_view aESSID)
                 *mCurrentlyConnected = lInformation.ssid;
             }
 
-            // Set this regardless of hosting, this is info for XLink Kai
-            GetConnector()->Send(std::string(XLinkKai_Constants::cInfoSetESSIDString),
-                                 lInformation.ssid + XLinkKai_Constants::cSeparator.data());
+            GetConnector()->SendESSID(aESSID);
         }
     }
 
@@ -266,4 +258,19 @@ bool WirelessPromiscuousBase::StartReceiverThread()
     }
 
     return lReturn;
+}
+
+std::string WirelessPromiscuousBase::GetESSID()
+{
+    return mCurrentlyConnectedInfo.ssid;
+}
+
+std::string WirelessPromiscuousBase::GetTitleId()
+{
+    return mTitleId;
+}
+
+void WirelessPromiscuousBase::SetTitleId(std::string_view aTitleId)
+{
+    mTitleId = aTitleId;
 }

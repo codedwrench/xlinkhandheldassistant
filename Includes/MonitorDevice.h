@@ -42,11 +42,15 @@ public:
      */
     const RadioTapReader::PhysicalDeviceParameters& GetDataPacketParameters();
 
+    std::string GetESSID() override;
+
     /**
      * Gets locked onto BSSID, this is the BSSID found when searching for beacon frames with the filtered SSID.
      * @return Locked onto BSSID/
      */
     uint64_t GetLockedBSSID();
+
+    std::string GetTitleId() override;
 
     bool Open(std::string_view aName, std::vector<std::string>& aSSIDFilter) override;
     bool Send(std::string_view aData) override;
@@ -64,4 +68,5 @@ private:
     Handler80211                  mPacketHandler{PhysicalDeviceHeaderType::RadioTap};
     std::shared_ptr<std::thread>  mReceiverThread{nullptr};
     bool                          mSendReceivedData{false};
+    std::string                   mTitleId{};
 };
