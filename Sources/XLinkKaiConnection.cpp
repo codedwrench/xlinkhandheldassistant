@@ -112,6 +112,8 @@ bool XLinkKaiConnection::Send(std::string_view aData)
 
 void XLinkKaiConnection::SendESSID(std::string_view aESSID)
 {
+    mLastESSID = aESSID;
+
     // Set this regardless of hosting, this is info for XLink Kai
     Send(std::string(XLinkKai_Constants::cInfoSetESSIDString),
          std::string(aESSID) + XLinkKai_Constants::cSeparator.data());
@@ -123,6 +125,8 @@ void XLinkKaiConnection::SendESSID(std::string_view aESSID)
 
 void XLinkKaiConnection::SendTitleId(std::string_view aTitleId)
 {
+    mLastTitleId = aTitleId;
+
     Send(std::string(XLinkKai_Constants::cInfoSetTitleIdString),
          std::string(aTitleId) + XLinkKai_Constants::cSeparator.data());
 }
@@ -273,12 +277,20 @@ bool XLinkKaiConnection::StartReceiverThread()
                     } else if (mConnected && !mConnectInitiated && !mSettingsSent) {
                         Send(cSettingDDSOnlyString, "");
 
-                        if (!mIncomingConnection->GetTitleId().empty()) {
-                            SendTitleId(mIncomingConnection->GetTitleId());
+                        // Cache the title ID and ESSID because they get destroyed in the devices.
+                        std::string lTitleId = !mIncomingConnection->GetTitleId().empty() ?
+                                                   mIncomingConnection->GetTitleId() :
+                                                   mLastTitleId;
+
+                        std::string lESSID =
+                            !mIncomingConnection->GetESSID().empty() ? mIncomingConnection->GetESSID() : mLastESSID;
+
+                        if (!lTitleId.empty()) {
+                            SendTitleId(lTitleId);
                         }
 
-                        if (!mIncomingConnection->GetESSID().empty()) {
-                            SendESSID(mIncomingConnection->GetESSID());
+                        if (!lESSID.empty()) {
+                            SendESSID(lESSID);
                         }
 
                         mSettingsSent = true;

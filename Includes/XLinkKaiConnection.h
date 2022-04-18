@@ -173,6 +173,8 @@ private:
     std::array<char, cMaxLength> mData{};
     // Raw ethernet data received from XLink Kai
     std::string                    mEthernetData{};
+    std::string                    mLastESSID{};
+    std::string                    mLastTitleId{};
     std::shared_ptr<IPCapDevice>   mIncomingConnection{nullptr};
     std::string                    mIp{cIp};
     boost::asio::io_service        mIoService{};
