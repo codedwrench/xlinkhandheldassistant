@@ -89,6 +89,7 @@ private:
     std::shared_ptr<std::thread>    mReceiverThread{nullptr};
     bool                            mSendReceivedData{false};
     std::vector<std::string>        mSSIDFilter{};
+
     // Holds the ssids after a host ssid swap, so these can be restored
     std::vector<std::string>        mOldSSIDFilter{};
     std::chrono::seconds            mReConnectionTimeOut{WirelessPromiscuousBase_Constants::cReconnectionTimeOut};

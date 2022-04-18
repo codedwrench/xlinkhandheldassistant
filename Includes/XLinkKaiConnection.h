@@ -64,7 +64,8 @@ namespace XLinkKai_Constants
     static const std::string cInfoSetTitleIdString{std::string(cInfoFormat) + cSeparator.data() +
                                                    cSubCommandTitleIdFormat.data() + cSeparator.data()};
 
-    static const std::string cInfoSetESSIDString(std::string(cInfoFormat) + cSetESSIDFormat.data() + cSeparator.data());
+    static const std::string cInfoSetESSIDString(std::string(cInfoFormat) + cSeparator.data() +
+                                                 cSetESSIDFormat.data() + cSeparator.data());
 
     static const std::string cSetESSIDString(std::string(cEthernetDataMetaString.data()) + cSetESSIDFormat.data() +
                                              cSeparator.data());
@@ -112,6 +113,7 @@ public:
     bool Send(std::string_view aData) override;
 
     void Close() final;
+
     /**
      * Closes the connection.
      * @param aKillThread - set true if the receiver thread needs to be killed as well.
