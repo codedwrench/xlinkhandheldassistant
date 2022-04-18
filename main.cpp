@@ -284,7 +284,7 @@ int main(int argc, char* argv[])
 
                             // Remove the Connected To portion to make it easier for people to understand that the
                             // network was disconnected.
-                            mWindowModel.mCurrentlyConnectedNetwork.empty();
+                            mWindowModel.mCurrentlyConnectedNetwork.clear();
                             mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Idle;
                             mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
                             break;
