@@ -143,12 +143,18 @@ bool WirelessPromiscuousBase::Connect(std::string_view aESSID)
                     if (lNetwork.ssid.find(lFilter) != std::string::npos && lNetwork.isadhoc && !lNetwork.isconnected) {
                         lReturn = mWifiInterface->Connect(lNetwork);
                         if (mCurrentlyConnected != nullptr) {
-                            *mCurrentlyConnected    = lNetwork.ssid;
-                            mCurrentlyConnectedInfo = lNetwork;
-                            lDidConnect             = true;
-                            if (IsHosting()) {
-                                GetConnector()->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
-                            }
+                            *mCurrentlyConnected = lNetwork.ssid;
+                        }
+
+                        mCurrentlyConnectedInfo = lNetwork;
+                        lDidConnect             = true;
+
+                        // Set this regardless of hosting, this is info for XLink Kai
+                        GetConnector()->Send(std::string(XLinkKai_Constants::cInfoSetESSIDString),
+                                             lNetwork.ssid + XLinkKai_Constants::cSeparator.data());
+
+                        if (IsHosting()) {
+                            GetConnector()->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
                         }
                     }
                 }
@@ -171,10 +177,15 @@ bool WirelessPromiscuousBase::Connect(std::string_view aESSID)
             lInformation.isadhoc = true;
 
             Logger::GetInstance().Log("Switching networks due to host broadcast!", Logger::Level::DEBUG);
+
             lReturn = mWifiInterface->Connect(lInformation);
             if (mCurrentlyConnected != nullptr) {
                 *mCurrentlyConnected = lInformation.ssid;
             }
+
+            // Set this regardless of hosting, this is info for XLink Kai
+            GetConnector()->Send(std::string(XLinkKai_Constants::cInfoSetESSIDString),
+                                 lInformation.ssid + XLinkKai_Constants::cSeparator.data());
         }
     }
 

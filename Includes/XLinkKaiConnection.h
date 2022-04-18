@@ -19,6 +19,9 @@ namespace XLinkKai_Constants
     static constexpr int                  cMaxLength{4096};
     static constexpr std::string_view     cIp{"127.0.0.1"};
     static constexpr std::string_view     cSeparator{";"};
+    static constexpr std::string_view     cInfoFormat{"info"};
+    static constexpr std::string_view     cSubCommandTitleIdFormat{"titleid"};
+    static constexpr std::string_view     cSubCommandSetESSIDFormat{"essid"};
     static constexpr std::string_view     cKeepAliveFormat{"keepalive"};
     static constexpr std::string_view     cConnectFormat{"connect"};
     static constexpr std::string_view     cConnectedFormat{"connected"};
@@ -57,6 +60,11 @@ namespace XLinkKai_Constants
 
     static const std::string cSettingDDSOnlyString{std::string(cSettingFormat) + cSeparator.data() +
                                                    cSettingDDSOnly.data() + cSeparator.data() + "true"};
+
+    static const std::string cInfoSetTitleIdString{std::string(cInfoFormat) + cSeparator.data() +
+                                                   cSubCommandTitleIdFormat.data() + cSeparator.data()};
+
+    static const std::string cInfoSetESSIDString(std::string(cInfoFormat) + cSetESSIDFormat.data() + cSeparator.data());
 
     static const std::string cSetESSIDString(std::string(cEthernetDataMetaString.data()) + cSetESSIDFormat.data() +
                                              cSeparator.data());

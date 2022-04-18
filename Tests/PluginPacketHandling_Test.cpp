@@ -188,6 +188,10 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
 
     while (!lPCapInputReader.IsDoneReceiving() || !lPCapExpectedReader.IsDoneReceiving()) {}
 
+    // Should broadcast the current Title ID to XLink Kai.
+    EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lOutputConnector),
+                Send("info;titleid;", "ULES00125;")).WillOnce(Return(true));
+
     // Test class set-up
     lPSPPluginDevice.SetConnector(lOutputConnector);
     lPSPPluginDevice.Open("wlan0", lSSIDFilter, lWifiInterface);
@@ -234,7 +238,7 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
 }
 
 // We are expecting a packet to be sent out when a handshake message has been received in the format:
-// [ Destination Mac ] [ Source Mac ] 88c8 "shake"
+// [ Destination Mac ] [ Source Mac ] 88c8 "shake;titleid"
 // Output format:
 // [ Destination Mac ] [ Source Mac ] 88c8 [ Source Mac ]
 TEST_F(PluginPacketHandlingTest, DoesHandshakeOnHandshakeRequest)
@@ -292,6 +296,10 @@ TEST_F(PluginPacketHandlingTest, DoesHandshakeOnHandshakeRequest)
     lTimeStamp.emplace_back(lPCapReader.GetHeader()->ts);
 
     lPCapExpectedReader.ReadNextData();
+
+    // Should broadcast the current Title ID to XLink Kai.
+    EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lConnector),
+                Send("info;titleid;", "ULES00125;")).WillOnce(Return(true));
 
     // Test class set-up
     lPSPPluginDevice.SetConnector(lConnector);

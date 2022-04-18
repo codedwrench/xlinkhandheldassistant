@@ -36,5 +36,10 @@ public:
     bool Send(std::string_view aData) override;
 
 private:
+    /**
+     * Sends the title id gotten from the handshake to XLink Kai.
+     */
+    void SendTitleId();
+
     std::shared_ptr<HandlerPSPPlugin> mPacketHandler{nullptr};
 };

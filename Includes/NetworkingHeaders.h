@@ -167,6 +167,7 @@ namespace Net_Constants
     static constexpr std::string_view cPSPSSIDFilterName{"PSP_"};
     static constexpr std::string_view cVitaSSIDFilterName{"SCE_"};
     static constexpr std::string_view cHandshakeToken{"shake"};
+    static constexpr uint8_t          cTitleIdLength{9};
 }  // namespace Net_Constants
 
 namespace Net_8023_Constants

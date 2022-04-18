@@ -6,6 +6,7 @@
 #include <string>
 
 #include "NetConversionFunctions.h"
+#include "XLinkKaiConnection.h"
 
 using namespace std::chrono;
 
@@ -26,6 +27,22 @@ WirelessPSPPluginDevice::WirelessPSPPluginDevice(bool                           
     mPacketHandler(aHandler)
 {}
 
+void WirelessPSPPluginDevice::SendTitleId()
+{
+    try {
+        std::string lTitleId{mPacketHandler->GetPacket().substr(Net_8023_Constants::cDataIndex +
+                                                                    Net_Constants::cHandshakeToken.length() +
+                                                                    XLinkKai_Constants::cSeparator.length(),
+                                                                Net_Constants::cTitleIdLength)};
+
+        // Send the title id off to XLink Kai
+        GetConnector()->Send(XLinkKai_Constants::cInfoSetTitleIdString,
+                             lTitleId + XLinkKai_Constants::cSeparator.data());
+    } catch (std::out_of_range& aException) {
+        Logger::GetInstance().Log("Couldn't read the TitleId to send off to XLink Kai", Logger::Level::ERROR);
+    }
+}
+
 bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pcap_pkthdr* aHeader)
 {
     bool lReturn{false};
@@ -36,8 +53,7 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
 
     if (!mPacketHandler->GetBlackList().IsMacBlackListed(mPacketHandler->GetSourceMac())) {
         // If the packet is a handshake packet from the psp, go ahead and handshake back
-        if (mPacketHandler->IsBroadcastPacket() &&
-            mPacketHandler->GetEtherType() == Net_Constants::cPSPEtherType &&
+        if (mPacketHandler->IsBroadcastPacket() && mPacketHandler->GetEtherType() == Net_Constants::cPSPEtherType &&
             mPacketHandler->GetPacket().substr(Net_8023_Constants::cDataIndex,
                                                Net_Constants::cHandshakeToken.length()) ==
                 Net_Constants::cHandshakeToken) {
@@ -53,6 +69,9 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
             Logger::GetInstance().Log("Sending: " + PrettyHexString(lPacket), Logger::Level::TRACE);
 
             Send(lPacket, false);
+
+            // Now lastly send the title id from the handshake over to XLink Kai.
+            SendTitleId();
         } else if (mPacketHandler->GetEtherType() == Net_Constants::cPSPEtherType) {
             // Log
             Logger::GetInstance().Log("Received: " + PrettyHexString(lData), Logger::Level::TRACE);

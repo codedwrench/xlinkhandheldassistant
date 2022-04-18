@@ -282,6 +282,9 @@ int main(int argc, char* argv[])
                             // Let's actually just remove the device, easier this way
                             lDevice = nullptr;
 
+                            // Remove the Connected To portion to make it easier for people to understand that the
+                            // network was disconnected.
+                            mWindowModel.mCurrentlyConnectedNetwork.empty();
                             mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Idle;
                             mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
                             break;
