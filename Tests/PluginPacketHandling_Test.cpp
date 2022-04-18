@@ -335,6 +335,97 @@ TEST_F(PluginPacketHandlingTest, DoesHandshakeOnHandshakeRequest)
     lPSPPluginDevice.Close();
 }
 
+// Same test as before but this time the PSP did not send a title id.
+TEST_F(PluginPacketHandlingTest, DoesHandshakeOnHandshakeRequestNoTitleId)
+{
+    // Class to be tested, with components needed for it to function
+    std::shared_ptr<IWifiInterface> lWifiInterface{std::make_shared<IWifiInterfaceMock>()};
+    std::shared_ptr<IConnector>     lConnector{std::make_shared<IConnectorMock>()};
+    std::vector<std::string>        lSSIDFilter{""};
+    auto                            lPCapWrapperMock{std::make_shared<::testing::NiceMock<IPCapWrapperMock>>()};
+    WirelessPSPPluginDevice         lPSPPluginDevice{false,
+                                             WirelessPromiscuousBase_Constants::cReconnectionTimeOut,
+                                             nullptr,
+                                             std::make_shared<HandlerPSPPlugin>(),
+                                             std::static_pointer_cast<IPCapWrapper>(lPCapWrapperMock)};
+
+    // Expectation classes (PCapReader and the like)
+    const std::string        lOutputFileName{"../Tests/Output/BroadcastMacOutputNoTitleId.pcap"};
+    std::vector<std::string> lSendBuffer{};
+    std::vector<timeval>     lTimeStamp{};
+
+    PCapWrapper lWrapper{};
+    lWrapper.OpenDead(DLT_EN10MB, 65535);
+    pcap_dumper_t*              lDumper{lWrapper.DumpOpen(lOutputFileName.c_str())};
+    std::shared_ptr<IConnector> lExpectedConnector{std::make_shared<IConnectorMock>()};
+    PCapReader                  lPCapReader{true, false, false};
+    PCapReader                  lPCapExpectedReader{true, false, false};
+
+    // Expectations
+    // The WiFi Mac address obviously needs to stay the same during testing so return a fake one
+    EXPECT_CALL(*std::static_pointer_cast<IWifiInterfaceMock>(lWifiInterface), GetAdapterMacAddress)
+        .WillOnce(Return(0xb03f29f81800));
+
+    // This will catch our Mac handshake
+    ON_CALL(*lPCapWrapperMock, IsActivated()).WillByDefault(Return(true));
+    EXPECT_CALL(*lPCapWrapperMock, SendPacket(_))
+        .WillRepeatedly(DoAll(WithArg<0>([&](std::string_view aMessage) {
+                                  lSendBuffer.emplace_back(std::string(aMessage));
+                                  timeval lTv;
+                                  lTv.tv_sec = lTimeStamp.back().tv_sec;
+                                  lTv.tv_usec =
+                                      lTimeStamp.back().tv_usec + 1000;  // Pretend that we sent this 1000 USec later
+                                  lTimeStamp.emplace_back(lTv);
+                              }),
+                              Return(0)));
+
+    // PCAP set-up
+    lPCapReader.Open("../Tests/Input/BroadcastMacTestNoTitleId.pcapng", lSSIDFilter);
+    lPCapReader.SetConnector(lExpectedConnector);
+
+    lPCapExpectedReader.Open("../Tests/Input/BroadcastMacTestNoTitleId_Expected.pcapng", lSSIDFilter);
+    lPCapExpectedReader.SetConnector(lExpectedConnector);
+
+    // Readying data
+    lPCapReader.ReadNextData();
+    lTimeStamp.emplace_back(lPCapReader.GetHeader()->ts);
+
+    lPCapExpectedReader.ReadNextData();
+
+    // Test class set-up
+    lPSPPluginDevice.SetConnector(lConnector);
+    lPSPPluginDevice.Open("wlan0", lSSIDFilter, lWifiInterface);
+
+    // Testing the broadcast
+    lPSPPluginDevice.ReadCallback(lPCapReader.GetData(), lPCapReader.GetHeader());
+
+    std::string lExpectedString =
+        std::string(reinterpret_cast<const char*>(lPCapExpectedReader.GetData()), lPCapExpectedReader.GetHeader()->len);
+    ASSERT_EQ(lSendBuffer.size(), 1);
+    ASSERT_EQ(lSendBuffer.front(), lExpectedString);
+
+    // Output a file with the results as well so the results can be further inspected
+    int lCount = 0;
+    for (auto& lMessage : lSendBuffer) {
+        pcap_pkthdr lHeader{};
+        lHeader.caplen = lMessage.size();
+        lHeader.len    = lMessage.size();
+        lHeader.ts     = lTimeStamp.at(lCount);
+
+        lWrapper.Dump(
+            reinterpret_cast<unsigned char*>(lDumper), &lHeader, reinterpret_cast<unsigned char*>(lMessage.data()));
+
+        lCount++;
+    }
+
+    lWrapper.DumpClose(lDumper);
+    lWrapper.Close();
+
+    lPCapReader.Close();
+    lPCapExpectedReader.Close();
+    lPSPPluginDevice.Close();
+}
+
 // This tests that a broadcast packet is not sent when normal traffic is sent
 // Because that would mean the PSP is already sending directly to the PC
 TEST_F(PluginPacketHandlingTest, DoesNotHandshakeOnNormalTraffic)
