@@ -149,7 +149,7 @@ bool WirelessPromiscuousBase::Connect(std::string_view aESSID)
                         mCurrentlyConnectedInfo = lNetwork;
                         lDidConnect             = true;
 
-                        GetConnector()->SendESSID(aESSID);
+                        GetConnector()->SendESSID(lNetwork.ssid);
                     }
                 }
                 lCount++;
@@ -177,7 +177,7 @@ bool WirelessPromiscuousBase::Connect(std::string_view aESSID)
                 *mCurrentlyConnected = lInformation.ssid;
             }
 
-            GetConnector()->SendESSID(aESSID);
+            GetConnector()->SendESSID(lInformation.ssid);
         }
     }
 

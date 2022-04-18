@@ -159,6 +159,8 @@ int main(int argc, char* argv[])
             bool                                               lWaitEntry{true};
             std::chrono::time_point<std::chrono::system_clock> lWaitStart{std::chrono::seconds{0}};
 
+            WindowModel_Constants::ConnectionMethod lOldMethod = mWindowModel.mConnectionMethod;
+
             while (gRunning) {
                 if (lWindowController == nullptr || lWindowController->Process()) {
                     std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -209,6 +211,15 @@ int main(int argc, char* argv[])
                                     gRunning = false;
                                     break;
                             }
+
+                            // Completely reset the xlink kai connection on a mode switch
+                            if (lOldMethod != mWindowModel.mConnectionMethod) {
+                                lXLinkKaiConnection->Close();
+                                lXLinkKaiConnection = nullptr;
+                                lXLinkKaiConnection = std::make_shared<XLinkKaiConnection>();
+                            }
+
+                            lOldMethod = mWindowModel.mConnectionMethod;
 
                             lXLinkKaiConnection->SetIncomingConnection(lDevice);
                             lXLinkKaiConnection->SetUseHostSSID(mWindowModel.mUseSSIDFromHost);

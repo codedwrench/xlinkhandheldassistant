@@ -116,10 +116,10 @@ void XLinkKaiConnection::SendESSID(std::string_view aESSID)
 
     // Set this regardless of hosting, this is info for XLink Kai
     Send(std::string(XLinkKai_Constants::cInfoSetESSIDString),
-         std::string(aESSID) + XLinkKai_Constants::cSeparator.data());
+         std::string(mLastESSID) + XLinkKai_Constants::cSeparator.data());
 
     if (mHosting) {
-        Send(std::string(XLinkKai_Constants::cSetESSIDString), aESSID);
+        Send(std::string(XLinkKai_Constants::cSetESSIDString), mLastESSID);
     }
 }
 
@@ -128,7 +128,7 @@ void XLinkKaiConnection::SendTitleId(std::string_view aTitleId)
     mLastTitleId = aTitleId;
 
     Send(std::string(XLinkKai_Constants::cInfoSetTitleIdString),
-         std::string(aTitleId) + XLinkKai_Constants::cSeparator.data());
+         std::string(mLastTitleId) + XLinkKai_Constants::cSeparator.data());
 }
 
 bool XLinkKaiConnection::HandleKeepAlive()
@@ -278,12 +278,12 @@ bool XLinkKaiConnection::StartReceiverThread()
                         Send(cSettingDDSOnlyString, "");
 
                         // Cache the title ID and ESSID because they get destroyed in the devices.
-                        std::string lTitleId = !mIncomingConnection->GetTitleId().empty() ?
-                                                   mIncomingConnection->GetTitleId() :
-                                                   mLastTitleId;
+                        std::string lTitleId = mIncomingConnection->GetTitleId().empty() ?
+                                                   mLastTitleId :
+                                                   mIncomingConnection->GetTitleId();
 
                         std::string lESSID =
-                            !mIncomingConnection->GetESSID().empty() ? mIncomingConnection->GetESSID() : mLastESSID;
+                            mIncomingConnection->GetESSID().empty() ? mLastESSID : mIncomingConnection->GetESSID();
 
                         if (!lTitleId.empty()) {
                             SendTitleId(lTitleId);
@@ -336,6 +336,9 @@ void XLinkKaiConnection::Close(bool aKillThread)
         if (mSocket.is_open()) {
             mSocket.close();
         }
+
+        // Settings need to be resent
+        mSettingsSent = false;
     } catch (...) {
         std::cout << "Failed to disconnect :( " + boost::current_exception_diagnostic_information() << std::endl;
     }

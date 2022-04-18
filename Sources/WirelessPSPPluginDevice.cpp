@@ -30,10 +30,15 @@ WirelessPSPPluginDevice::WirelessPSPPluginDevice(bool                           
 void WirelessPSPPluginDevice::ObtainTitleId()
 {
     try {
-        SetTitleId(mPacketHandler->GetPacket().substr(Net_8023_Constants::cDataIndex +
-                                                          Net_Constants::cHandshakeToken.length() +
-                                                          XLinkKai_Constants::cSeparator.length(),
-                                                      Net_Constants::cTitleIdLength));
+        std::string lTitleId{mPacketHandler->GetPacket().substr(Net_8023_Constants::cDataIndex +
+                                                                    Net_Constants::cHandshakeToken.length() +
+                                                                    XLinkKai_Constants::cSeparator.length(),
+                                                                Net_Constants::cTitleIdLength)};
+
+        // This title id could pick up only null terminators
+        if (lTitleId[0] != '\0') {
+            SetTitleId(lTitleId);
+        }
     } catch (std::out_of_range& aException) {
         Logger::GetInstance().Log("Couldn't read the TitleId to send off to XLink Kai", Logger::Level::ERROR);
     }
