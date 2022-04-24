@@ -28,9 +28,9 @@ jobs:
           cmake .. -DENABLE_TESTS=1 \
                    -DBUILD_STATIC=1 \
                    -DAUTO_FORMAT=0 \
-                   -DPCAP_ROOT_DIR="~/home/mason/libpcap" \
-                   -DBOOST_ROOT="~/home/mason/boost" \
-                   -DNCURSES_ROOT_DIR="~/home/mason/ncurses"
+                   -DPCAP_ROOT_DIR="$HOME/libpcap" \
+                   -DBOOST_ROOT="$HOME/boost" \
+                   -DNCURSES_ROOT_DIR="$HOME/ncurses"
           cmake --build . -- -j`nproc`
       - name: Unit Tests
         run: |
