@@ -202,6 +202,7 @@ int main(int argc, char* argv[])
                                                                             &mWindowModel.mCurrentlyConnectedNetwork);
                                         Logger::GetInstance().Log("Monitor Device created!", Logger::Level::INFO);
                                     }
+				    break;
 #endif
                                 default:
                                     Logger::GetInstance().Log("Unknown method!", Logger::Level::ERROR);
