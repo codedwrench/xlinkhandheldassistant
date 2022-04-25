@@ -26,7 +26,11 @@ jobs:
           mkdir build
           cd build 
           cmake .. -DENABLE_TESTS=1 \
-                   -DAUTO_FORMAT=0
+                   -DBUILD_STATIC=1 \
+                   -DAUTO_FORMAT=0 \
+                   -DPCAP_ROOT_DIR="$HOME/libpcap" \
+                   -DBOOST_ROOT="$HOME/boost" \
+                   -DNCURSES_ROOT_DIR="$HOME/ncurses"
           cmake --build . -- -j`nproc`
       - name: Unit Tests
         run: |
@@ -67,6 +71,7 @@ jobs:
         with:
           name: XLHA-WindowsX32
           path: build/xlinkhandheldassistant.exe
+          if-no-files-found: error
           
   macos:
     name: MacOS10_15
@@ -92,3 +97,4 @@ jobs:
         with:
           name: XLHA-MacOS10.11
           path: build/Release/xlinkhandheldassistant
+          if-no-files-found: error
