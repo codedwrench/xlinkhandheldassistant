@@ -189,9 +189,11 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
 
     while (!lPCapInputReader.IsDoneReceiving() || !lPCapExpectedReader.IsDoneReceiving()) {}
 
+    // We make a separate title id string_view because https://github.com/google/googletest/issues/3081
+    std::string_view lTitleId = "ULES00125";
     // Should broadcast the current Title ID to XLink Kai.
     EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lOutputConnector),
-                SendTitleId("ULES00125"));
+                SendTitleId(lTitleId));
 
     // Test class set-up
     lPSPPluginDevice.SetConnector(lOutputConnector);
@@ -299,8 +301,9 @@ TEST_F(PluginPacketHandlingTest, DoesHandshakeOnHandshakeRequest)
     lPCapExpectedReader.ReadNextData();
 
     // Should broadcast the current Title ID to XLink Kai.
+    std::string_view lTitleId = "ULES00125";
     EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lConnector),
-                SendTitleId("ULES00125"));
+                SendTitleId(lTitleId));
 
     // Test class set-up
     lPSPPluginDevice.SetConnector(lConnector);
