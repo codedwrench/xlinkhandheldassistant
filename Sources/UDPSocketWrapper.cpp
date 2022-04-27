@@ -2,12 +2,24 @@
 
 #include "UDPSocketWrapper.h"
 
+#include <boost/bind/bind.hpp>
+#include <boost/exception/exception.hpp>
+#include <boost/system/detail/error_code.hpp>
+
 #include "Logger.h"
 
+using namespace boost::placeholders;
 
 bool UDPSocketWrapper::IsOpen()
 {
     return mSocket.is_open();
+}
+
+void UDPSocketWrapper::Close()
+{
+    if (mSocket.is_open()) {
+        mSocket.close();
+    }
 }
 
 bool UDPSocketWrapper::Open(std::string_view aIp, unsigned int aPort)
@@ -30,15 +42,27 @@ size_t UDPSocketWrapper::SendTo(std::string_view aData)
     return mSocket.send_to(boost::asio::buffer(aData, aData.size()), mEndpoint);
 }
 
-size_t UDPSocketWrapper::ReceiveFrom(char *aDataBuffer, size_t aDataBufferSize)
+size_t UDPSocketWrapper::ReceiveFrom(char* aDataBuffer, size_t aDataBufferSize)
 {
     return mSocket.receive_from(boost::asio::buffer(aDataBuffer, aDataBufferSize), mEndpoint);
 }
 
-void UDPSocketWrapper::AsyncReceiveFrom(char *aDataBuffer, size_t aDataBufferSize, 
-std::function<void (const int &, size_t)> &aCallBack) 
+void UDPSocketWrapper::ReceiveCallBack(const boost::system::error_code& /*aError*/, size_t aBufferSize)
 {
-    return mSocket.async_receive_from(boost::asio::buffer(aDataBuffer, aDataBufferSize), mEndpoint, aCallBack);
+    mCallBack(aBufferSize);
+}
+
+void UDPSocketWrapper::AsyncReceiveFrom(char*                       aDataBuffer,
+                                        size_t                      aDataBufferSize,
+                                        std::function<void(size_t)> aCallBack)
+{
+    mCallBack = std::move(aCallBack);
+    return mSocket.async_receive_from(boost::asio::buffer(aDataBuffer, aDataBufferSize),
+                                      mEndpoint,
+                                      boost::bind(&UDPSocketWrapper::ReceiveCallBack,
+                                                  this,
+                                                  boost::asio::placeholders::error,
+                                                  boost::asio::placeholders::bytes_transferred));
 }
 
 bool UDPSocketWrapper::IsThreadStopped()
@@ -53,8 +77,12 @@ void UDPSocketWrapper::StartThread()
 
 void UDPSocketWrapper::StopThread()
 {
-    if(!mThread.stopped())
-    {
+    if (!mThread.stopped()) {
         mThread.stop();
     }
+}
+
+void UDPSocketWrapper::PollThread()
+{
+    mThread.poll();
 }

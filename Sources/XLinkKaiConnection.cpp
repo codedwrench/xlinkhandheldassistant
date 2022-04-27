@@ -5,19 +5,26 @@
 #include <chrono>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <thread>
 
-#include <boost/bind/bind.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 
 #include "IPCapDevice.h"
 #include "Logger.h"
 #include "MonitorDevice.h"
 #include "NetConversionFunctions.h"
+#include "UDPSocketWrapper.h"
 
-using namespace boost::asio;
-using namespace boost::placeholders;
 using namespace std::chrono_literals;
+
+XLinkKaiConnection::XLinkKaiConnection(std::unique_ptr<IUDPSocketWrapper> aSocketWrapper) :
+mSocketWrapper(std::move(aSocketWrapper))
+{
+    if(!mSocketWrapper) {
+        mSocketWrapper = std::make_unique<UDPSocketWrapper>();
+    }
+}
 
 XLinkKaiConnection::~XLinkKaiConnection()
 {
@@ -31,8 +38,6 @@ bool XLinkKaiConnection::Open(std::string_view aArgument)
 
 bool XLinkKaiConnection::Open(std::string_view aIp, unsigned int aPort)
 {
-    bool lReturn{true};
-
     std::string  lIp{aIp};
     unsigned int lPort{aPort};
 
@@ -42,18 +47,7 @@ bool XLinkKaiConnection::Open(std::string_view aIp, unsigned int aPort)
         lPort = cPort;
     }
 
-    mRemote = ip::udp::endpoint(ip::address::from_string(lIp.data()), lPort);
-
-    try {
-        mSocket.open(ip::udp::v4());
-        mIp   = aIp;
-        mPort = aPort;
-    } catch (const boost::system::system_error& lException) {
-        Logger::GetInstance().Log("Failed to open socket: " + std::string(lException.what()), Logger::Level::ERROR);
-        lReturn = false;
-    }
-
-    return lReturn;
+    return mSocketWrapper->Open(lIp, lPort);
 }
 
 bool XLinkKaiConnection::Connect()
@@ -76,7 +70,7 @@ bool XLinkKaiConnection::Send(std::string_view aCommand, std::string_view aData)
     bool lReturn{true};
 
     // We only allow connection/disconnection requests to be sent, when XLink Kai has not confirmed the connection yet.
-    if (mSocket.is_open()) {
+    if (mSocketWrapper->IsOpen()) {
         if ((mConnected || aCommand == cConnectString || aCommand == cDisconnectString)) {
             try {
                 if (aCommand == cEthernetDataString) {
@@ -86,7 +80,7 @@ bool XLinkKaiConnection::Send(std::string_view aCommand, std::string_view aData)
                     Logger::GetInstance().Log("Sent: " + std::string(aCommand) + aData.data(), Logger::Level::DEBUG);
                 }
 
-                mSocket.send_to(buffer(std::string(aCommand) + std::string(aData)), mRemote);
+                mSocketWrapper->SendTo(std::string(aCommand) + aData.data());
             } catch (const boost::system::system_error& lException) {
                 Logger::GetInstance().Log(
                     "Could not send message! " + std::string(aData) + std::string(lException.what()),
@@ -145,16 +139,16 @@ bool XLinkKaiConnection::ReadNextData()
 {
     bool lReturn{true};
 
-    size_t lBytesReceived{mSocket.receive_from(buffer(mData, cMaxLength), mRemote)};
+    size_t lBytesReceived{mSocketWrapper->ReceiveFrom(mData.data(), cMaxLength)};
 
     if (lBytesReceived > 0) {
-        ReceiveCallback(boost::system::error_code(), lBytesReceived);
+        ReceiveCallback(lBytesReceived);
     }
 
     return lReturn;
 }
 
-void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aError*/, size_t aBytesReceived)
+void XLinkKaiConnection::ReceiveCallback(size_t aBytesReceived)
 {
     std::string lData{mData.begin(), mData.begin() + aBytesReceived};
 
@@ -241,17 +235,15 @@ void XLinkKaiConnection::ReceiveCallback(const boost::system::error_code& /*aErr
 bool XLinkKaiConnection::StartReceiverThread()
 {
     bool lReturn{true};
-    if (mSocket.is_open()) {
-        mSocket.async_receive_from(
-            buffer(mData, cMaxLength),
-            mRemote,
-            boost::bind(
-                &XLinkKaiConnection::ReceiveCallback, this, placeholders::error, placeholders::bytes_transferred));
+    if (mSocketWrapper->IsOpen()) {
+        mSocketWrapper->AsyncReceiveFrom(mData.data(), cMaxLength, 
+        [&](size_t aBufferSize) { ReceiveCallback(aBufferSize); });
+
         // Run
         if (mReceiverThread == nullptr) {
             mReceiverThread = std::make_shared<std::thread>([&] {
-                mIoService.restart();
-                while (!mIoService.stopped()) {
+                mSocketWrapper->StartThread();
+                while (!mSocketWrapper->IsThreadStopped()) {
                     if ((!mConnected && !mConnectInitiated)) {
                         // Lost connection somewhere, reconnect.
                         Close(false);
@@ -295,7 +287,7 @@ bool XLinkKaiConnection::StartReceiverThread()
 
                         mSettingsSent = true;
                     } else {
-                        mIoService.poll();
+                        mSocketWrapper->PollThread();
                         // Very small delay to make the computer happy
                         std::this_thread::sleep_for(100us);
                     }
@@ -326,16 +318,13 @@ void XLinkKaiConnection::Close(bool aKillThread)
         }
 
         if (aKillThread && mReceiverThread != nullptr) {
-            if (!mIoService.stopped()) {
-                mIoService.stop();
-            }
+            mSocketWrapper->StopThread();
+
             mReceiverThread->join();
             mReceiverThread = nullptr;
         }
 
-        if (mSocket.is_open()) {
-            mSocket.close();
-        }
+        mSocketWrapper->Close();
 
         // Settings need to be resent
         mSettingsSent = false;
