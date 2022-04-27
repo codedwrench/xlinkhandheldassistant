@@ -6,13 +6,13 @@
  *
  **/
 
+#include <memory>
 #include <string>
 #include <thread>
 
-#include <boost/asio.hpp>
-
 #include "Handler8023.h"
 #include "IConnector.h"
+#include "IUDPSocketWrapper.h"
 
 namespace XLinkKai_Constants
 {
@@ -79,7 +79,7 @@ using namespace XLinkKai_Constants;
 class XLinkKaiConnection : public IConnector
 {
 public:
-    XLinkKaiConnection() = default;
+    explicit XLinkKaiConnection(std::unique_ptr<IUDPSocketWrapper> aSocketWrapper = nullptr);
     ~XLinkKaiConnection();
     XLinkKaiConnection(const XLinkKaiConnection& aXLinkKaiConnection) = delete;
     XLinkKaiConnection& operator=(const XLinkKaiConnection& aXLinkKaiConnection) = delete;
@@ -156,7 +156,7 @@ private:
     /**
      * Handles traffic from XLink Kai.
      */
-    void ReceiveCallback(const boost::system::error_code& aError, size_t aBytesReceived);
+    void ReceiveCallback(size_t aBytesReceived);
 
     /**
      * Sends a keepalive back to the XLink Kai engine, call this function when a keepalive is received.
@@ -172,17 +172,15 @@ private:
 
     std::array<char, cMaxLength> mData{};
     // Raw ethernet data received from XLink Kai
-    std::string                    mEthernetData{};
-    std::string                    mLastESSID{};
-    std::string                    mLastTitleId{};
-    std::shared_ptr<IPCapDevice>   mIncomingConnection{nullptr};
-    std::string                    mIp{cIp};
-    boost::asio::io_service        mIoService{};
-    Handler8023                    mPacketHandler{};
-    unsigned int                   mPort{cPort};
-    bool                           mHosting{};
-    bool                           mUseHostSSID{};
-    std::shared_ptr<std::thread>   mReceiverThread{nullptr};
-    boost::asio::ip::udp::endpoint mRemote{};
-    boost::asio::ip::udp::socket   mSocket{mIoService};
+    std::string                        mEthernetData{};
+    std::string                        mLastESSID{};
+    std::string                        mLastTitleId{};
+    std::shared_ptr<IPCapDevice>       mIncomingConnection{nullptr};
+    std::string                        mIp{cIp};
+    Handler8023                        mPacketHandler{};
+    unsigned int                       mPort{cPort};
+    bool                               mHosting{};
+    bool                               mUseHostSSID{};
+    std::shared_ptr<std::thread>       mReceiverThread{nullptr};
+    std::unique_ptr<IUDPSocketWrapper> mSocketWrapper{nullptr};
 };

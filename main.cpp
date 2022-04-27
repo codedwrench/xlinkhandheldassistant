@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 
+#include <boost/asio.hpp>
 #include <boost/program_options.hpp>
 
 #define PDC_WIDE
