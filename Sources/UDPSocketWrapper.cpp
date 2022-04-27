@@ -4,7 +4,7 @@
 
 #include <boost/bind/bind.hpp>
 #include <boost/exception/exception.hpp>
-#include <boost/system/detail/error_code.hpp>
+#include <boost/system/error_code.hpp>
 
 #include "Logger.h"
 
