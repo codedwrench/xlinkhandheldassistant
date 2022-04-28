@@ -19,9 +19,9 @@
 using namespace std::chrono_literals;
 
 XLinkKaiConnection::XLinkKaiConnection(std::unique_ptr<IUDPSocketWrapper> aSocketWrapper) :
-mSocketWrapper(std::move(aSocketWrapper))
+    mSocketWrapper(std::move(aSocketWrapper))
 {
-    if(!mSocketWrapper) {
+    if (!mSocketWrapper) {
         mSocketWrapper = std::make_unique<UDPSocketWrapper>();
     }
 }
@@ -77,10 +77,11 @@ bool XLinkKaiConnection::Send(std::string_view aCommand, std::string_view aData)
                     Logger::GetInstance().Log("Sent: " + std::string(aCommand) + PrettyHexString(aData),
                                               Logger::Level::TRACE);
                 } else {
-                    Logger::GetInstance().Log("Sent: " + std::string(aCommand) + aData.data(), Logger::Level::DEBUG);
+                    Logger::GetInstance().Log("Sent: " + std::string(aCommand) + std::string(aData),
+                                              Logger::Level::DEBUG);
                 }
 
-                mSocketWrapper->SendTo(std::string(aCommand) + aData.data());
+                mSocketWrapper->SendTo(std::string(aCommand) + std::string(aData));
             } catch (const boost::system::system_error& lException) {
                 Logger::GetInstance().Log(
                     "Could not send message! " + std::string(aData) + std::string(lException.what()),
@@ -236,8 +237,8 @@ bool XLinkKaiConnection::StartReceiverThread()
 {
     bool lReturn{true};
     if (mSocketWrapper->IsOpen()) {
-        mSocketWrapper->AsyncReceiveFrom(mData.data(), cMaxLength, 
-        [&](size_t aBufferSize) { ReceiveCallback(aBufferSize); });
+        mSocketWrapper->AsyncReceiveFrom(
+            mData.data(), cMaxLength, [&](size_t aBufferSize) { ReceiveCallback(aBufferSize); });
 
         // Run
         if (mReceiverThread == nullptr) {
