@@ -1,6 +1,7 @@
 /* Copyright (c) 2021 [Rick de Bondt] - IConnectorMock.cpp
  * This file contains a mock for IConnector.
  **/
+#include <gmock/gmock.h>
 
 #include "IConnector.h"
 

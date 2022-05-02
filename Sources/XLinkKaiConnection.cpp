@@ -18,11 +18,11 @@
 
 using namespace std::chrono_literals;
 
-XLinkKaiConnection::XLinkKaiConnection(std::unique_ptr<IUDPSocketWrapper> aSocketWrapper) :
-    mSocketWrapper(std::move(aSocketWrapper))
+XLinkKaiConnection::XLinkKaiConnection(std::shared_ptr<IUDPSocketWrapper> aSocketWrapper) :
+    mSocketWrapper(aSocketWrapper)
 {
     if (!mSocketWrapper) {
-        mSocketWrapper = std::make_unique<UDPSocketWrapper>();
+        mSocketWrapper = std::make_shared<UDPSocketWrapper>();
     }
 }
 
@@ -229,13 +229,13 @@ void XLinkKaiConnection::ReceiveCallback(size_t aBytesReceived)
             }
         }
     }
-
-    StartReceiverThread();
 }
 
 bool XLinkKaiConnection::StartReceiverThread()
 {
     bool lReturn{true};
+    bool lFirstRun{true};
+
     if (mSocketWrapper->IsOpen()) {
         mSocketWrapper->AsyncReceiveFrom(
             mData.data(), cMaxLength, [&](size_t aBufferSize) { ReceiveCallback(aBufferSize); });
@@ -244,10 +244,15 @@ bool XLinkKaiConnection::StartReceiverThread()
         if (mReceiverThread == nullptr) {
             mReceiverThread = std::make_shared<std::thread>([&] {
                 mSocketWrapper->StartThread();
+
                 while (!mSocketWrapper->IsThreadStopped()) {
                     if ((!mConnected && !mConnectInitiated)) {
-                        // Lost connection somewhere, reconnect.
-                        Close(false);
+                        // On the first run it's a bit weird to immediately disconnect
+                        if (!lFirstRun) {
+                            // Lost connection somewhere, reconnect.
+                            Close(false);
+                        }
+
                         Open(mIp, mPort);
                         Connect();
                         std::this_thread::sleep_for(std::chrono::seconds(1));

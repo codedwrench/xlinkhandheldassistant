@@ -59,13 +59,14 @@ namespace XLinkKai_Constants
                                                      cEthernetDataMetaFormat.data() + cSeparator.data()};
 
     static const std::string cSettingDDSOnlyString{std::string(cSettingFormat) + cSeparator.data() +
-                                                   cSettingDDSOnly.data() + cSeparator.data() + "true"};
+                                                   cSettingDDSOnly.data() + cSeparator.data() + "true" +
+                                                   cSeparator.data()};
 
     static const std::string cInfoSetTitleIdString{std::string(cInfoFormat) + cSeparator.data() +
                                                    cSubCommandTitleIdFormat.data() + cSeparator.data()};
 
-    static const std::string cInfoSetESSIDString(std::string(cInfoFormat) + cSeparator.data() + cSetESSIDFormat.data() +
-                                                 cSeparator.data());
+    static const std::string cInfoSetESSIDString(std::string(cInfoFormat) + cSeparator.data() +
+                                                 cSubCommandSetESSIDFormat.data() + cSeparator.data());
 
     static const std::string cSetESSIDString(std::string(cEthernetDataMetaString.data()) + cSetESSIDFormat.data() +
                                              cSeparator.data());
@@ -79,7 +80,7 @@ using namespace XLinkKai_Constants;
 class XLinkKaiConnection : public IConnector
 {
 public:
-    explicit XLinkKaiConnection(std::unique_ptr<IUDPSocketWrapper> aSocketWrapper = nullptr);
+    explicit XLinkKaiConnection(std::shared_ptr<IUDPSocketWrapper> aSocketWrapper = nullptr);
     ~XLinkKaiConnection();
     XLinkKaiConnection(const XLinkKaiConnection& aXLinkKaiConnection) = delete;
     XLinkKaiConnection& operator=(const XLinkKaiConnection& aXLinkKaiConnection) = delete;
@@ -182,5 +183,5 @@ private:
     bool                               mHosting{};
     bool                               mUseHostSSID{};
     std::shared_ptr<std::thread>       mReceiverThread{nullptr};
-    std::unique_ptr<IUDPSocketWrapper> mSocketWrapper{nullptr};
+    std::shared_ptr<IUDPSocketWrapper> mSocketWrapper{nullptr};
 };

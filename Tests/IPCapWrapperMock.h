@@ -1,6 +1,7 @@
 /* Copyright (c) 2021 [Rick de Bondt] - IPCapWrapperMock.h
  * This file contains a mock for IPCapWrapper.
  **/
+#include <gmock/gmock.h>
 
 #include "IPCapWrapper.h"
 

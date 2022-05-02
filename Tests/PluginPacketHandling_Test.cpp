@@ -2,9 +2,10 @@
  * This file contains tests for the PacketConverter class.
  **/
 
+#include <string_view>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <string_view>
 
 #include "IConnectorMock.h"
 #include "IPCapWrapperMock.h"
@@ -192,8 +193,7 @@ TEST_F(PluginPacketHandlingTest, NormalPacketHandlingPSPSide)
     // We make a separate title id string_view because https://github.com/google/googletest/issues/3081
     std::string_view lTitleId = "ULES00125";
     // Should broadcast the current Title ID to XLink Kai.
-    EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lOutputConnector),
-                SendTitleId(lTitleId));
+    EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lOutputConnector), SendTitleId(lTitleId));
 
     // Test class set-up
     lPSPPluginDevice.SetConnector(lOutputConnector);
@@ -302,8 +302,7 @@ TEST_F(PluginPacketHandlingTest, DoesHandshakeOnHandshakeRequest)
 
     // Should broadcast the current Title ID to XLink Kai.
     std::string_view lTitleId = "ULES00125";
-    EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lConnector),
-                SendTitleId(lTitleId));
+    EXPECT_CALL(*std::static_pointer_cast<IConnectorMock>(lConnector), SendTitleId(lTitleId));
 
     // Test class set-up
     lPSPPluginDevice.SetConnector(lConnector);

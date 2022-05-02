@@ -1,6 +1,7 @@
 /* Copyright (c) 2021 [Rick de Bondt] - IPCapDeviceMock.ch
  * This file contains a mock for IPCapDevice.
  **/
+#include <gmock/gmock.h>
 
 #include "IPCapDevice.h"
 
