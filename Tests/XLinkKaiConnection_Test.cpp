@@ -104,7 +104,7 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectHappyFlow)
     mXLinkKaiConnection.StartReceiverThread();
 
     while (!lThreadStopCalled) {
-        // Wait until the thread is done, but don't wait for longer than 50 calls
+        // Wait until the thread is done
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
