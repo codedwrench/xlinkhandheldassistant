@@ -57,7 +57,8 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectHappyFlow)
     EXPECT_CALL(*mSocketWrapperMock, IsThreadStopped()).WillRepeatedly(ReturnPointee(&lThreadStopCalled));
 
     // Opening the socket
-    EXPECT_CALL(*mSocketWrapperMock, Open("127.0.0.1", 34523)).WillOnce(Return(true));
+    std::string_view lIPAddress{"127.0.0.1"};
+    EXPECT_CALL(*mSocketWrapperMock, Open(lIPAddress, 34523)).WillOnce(Return(true));
 
     // Connction to XLink Kai
     std::string_view lConnectString{"connect;XLHA_Device;XLHA;"};
