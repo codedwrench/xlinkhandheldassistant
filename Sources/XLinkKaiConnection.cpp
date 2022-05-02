@@ -234,7 +234,6 @@ void XLinkKaiConnection::ReceiveCallback(size_t aBytesReceived)
 bool XLinkKaiConnection::StartReceiverThread()
 {
     bool lReturn{true};
-    bool lFirstRun{true};
 
     if (mSocketWrapper->IsOpen()) {
         mSocketWrapper->AsyncReceiveFrom(
@@ -245,14 +244,12 @@ bool XLinkKaiConnection::StartReceiverThread()
             mReceiverThread = std::make_shared<std::thread>([&] {
                 mSocketWrapper->StartThread();
 
+                // Try to connect to XLink Kai for the first time before going into the while loop.
+                Connect();
+
                 while (!mSocketWrapper->IsThreadStopped()) {
                     if ((!mConnected && !mConnectInitiated)) {
-                        // On the first run it's a bit weird to immediately disconnect
-                        if (!lFirstRun) {
-                            // Lost connection somewhere, reconnect.
-                            Close(false);
-                        }
-
+                        Close(false);
                         Open(mIp, mPort);
                         Connect();
                         std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -319,8 +316,6 @@ void XLinkKaiConnection::Close(bool aKillThread)
     try {
         if (mConnected || mConnectInitiated) {
             Send(cDisconnectString, "");
-            mConnected        = false;
-            mConnectInitiated = false;
         }
 
         if (aKillThread && mReceiverThread != nullptr) {
@@ -329,6 +324,9 @@ void XLinkKaiConnection::Close(bool aKillThread)
             mReceiverThread->join();
             mReceiverThread = nullptr;
         }
+
+        mConnected        = false;
+        mConnectInitiated = false;
 
         mSocketWrapper->Close();
 

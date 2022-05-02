@@ -37,7 +37,10 @@ public:
 
 TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectHappyFlow)
 {
+    std::string_view lIPAddress{"127.0.0.1"};
+    
     bool                        lThreadStopCalled{false};
+    bool                        lOpened{false};
     bool                        lEndTest{false};
     int                         lThreadCallCount{0};
     std::function<void(size_t)> lCallBack;
@@ -52,13 +55,13 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectHappyFlow)
         .WillOnce(DoAll(SaveArg<0>(&lBuffer), SaveArg<2>(&lCallBack)));
 
     // General requirements
-    EXPECT_CALL(*mSocketWrapperMock, IsOpen()).WillRepeatedly(Return(true));
+    EXPECT_CALL(*mSocketWrapperMock, IsOpen()).WillRepeatedly(ReturnPointee(&lOpened));
     EXPECT_CALL(*mSocketWrapperMock, StartThread());
     EXPECT_CALL(*mSocketWrapperMock, IsThreadStopped()).WillRepeatedly(ReturnPointee(&lThreadStopCalled));
 
     // Opening the socket
-    std::string_view lIPAddress{"127.0.0.1"};
-    EXPECT_CALL(*mSocketWrapperMock, Open(lIPAddress, 34523)).WillOnce(Return(true));
+    EXPECT_CALL(*mSocketWrapperMock, Open(lIPAddress, 34523)).WillOnce(DoAll(Assign(&lOpened, true), 
+    Return(true)));
 
     // Connction to XLink Kai
     std::string_view lConnectString{"connect;XLHA_Device;XLHA;"};
@@ -80,7 +83,7 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectHappyFlow)
     EXPECT_CALL(*mSocketWrapperMock, SendTo(lDisconnect)).WillOnce(Return(lDisconnect.size()));
 
     // Also gets called in the destructor
-    EXPECT_CALL(*mSocketWrapperMock, Close()).Times(2);
+    EXPECT_CALL(*mSocketWrapperMock, Close()).Times(2).WillRepeatedly(Assign(&lOpened, false));
 
     // If the program wants to quit, the test should not stop it from doing so
     EXPECT_CALL(*mSocketWrapperMock, StopThread()).WillRepeatedly(Assign(&lThreadStopCalled, true));
@@ -98,14 +101,18 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectHappyFlow)
             // Sending Settings
         } else {
             // Stop the connection regardless of success
-            mXLinkKaiConnection.Close(true);
+            lEndTest = true;
         }
     }));
 
+    mXLinkKaiConnection.Open(lIPAddress);
     mXLinkKaiConnection.StartReceiverThread();
 
-    while (!lThreadStopCalled) {
+    while (!lEndTest) {
         // Wait until the thread is done
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+
+    // Force connection to close before destructor of google test is called
+    mXLinkKaiConnection.Close(true);
 }
