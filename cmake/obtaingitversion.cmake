@@ -23,7 +23,9 @@
 # obtaingitversion.cmake - Gets git version and puts it in GIT_VERSION variable.
 
 set(GIT_VERSION unknown)
-execute_process(COMMAND git describe --abbrev=7 --always --tags OUTPUT_VARIABLE GIT_VERSION)
+execute_process(COMMAND git describe --abbrev=7 --always --tags 
+                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} 
+                OUTPUT_VARIABLE GIT_VERSION)
 
 # Strip trailing stuff
 string(REGEX REPLACE "[,\n]" "" GIT_VERSION "${GIT_VERSION}")
