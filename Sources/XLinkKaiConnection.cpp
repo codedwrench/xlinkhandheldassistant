@@ -291,9 +291,11 @@ bool XLinkKaiConnection::StartReceiverThread()
                         mSettingsSent = true;
                     } else {
                         mSocketWrapper->PollThread();
-                        
-                        // Make sure the thread doesn't stop after poll
-                        mSocketWrapper->StartThread();
+
+                        if (!mStopCommand) {
+                            // Make sure the thread doesn't stop after poll
+                            mSocketWrapper->StartThread();
+                        }
                         // Very small delay to make the computer happy
                         std::this_thread::sleep_for(100us);
                     }
@@ -322,6 +324,7 @@ void XLinkKaiConnection::Close(bool aKillThread)
         }
 
         if (aKillThread && mReceiverThread != nullptr) {
+            mStopCommand = true;
             mSocketWrapper->StopThread();
 
             mReceiverThread->join();
@@ -335,6 +338,7 @@ void XLinkKaiConnection::Close(bool aKillThread)
 
         // Settings need to be resent
         mSettingsSent = false;
+        mStopCommand  = false;
     } catch (...) {
         std::cout << "Failed to disconnect :( " + boost::current_exception_diagnostic_information() << std::endl;
     }

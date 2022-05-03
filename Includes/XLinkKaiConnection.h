@@ -165,6 +165,7 @@ private:
      */
     bool HandleKeepAlive();
 
+    bool                                               mStopCommand{false};
     bool                                               mConnected{false};
     bool                                               mConnectInitiated{false};
     bool                                               mSettingsSent{false};
