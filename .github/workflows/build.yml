@@ -66,7 +66,7 @@ jobs:
                                         -DBUILD_X32=1 \
                                         -DBOOST_ROOT="c:/build_tools/boost" \
                                         -DPDCURSES_ROOT_DIR="c:/build_tools/pdcurses" \
-                                        -DNPCAP_ROOT_DIR="c:/build_tools/npcapsdk" \
+                                        -DPCAP_ROOT_DIR="c:/build_tools/npcapsdk" \
                                         -DNPCAP_DLL_PATH="c:/build_tools/npcapsdk" 
                                         
                                         
