@@ -6,6 +6,7 @@ ssh_key_location: 'C:\Users\{{ user }}\.ssh\'
 msys2_packages:
   [
     "bison",
+    "git",
     "mingw-w64-i686-cmake",
     "mingw-w64-i686-gcc",
     "mingw-w64-i686-make",
