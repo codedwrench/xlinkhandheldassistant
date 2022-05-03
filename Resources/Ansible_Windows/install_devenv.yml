@@ -24,4 +24,4 @@
   win_copy:
     dest: '%APPDATA%\Code\User\settings.json'
     operation: file_copy
-    src: files\settings.jsons
+    src: files\settings.json
