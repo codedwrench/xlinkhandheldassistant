@@ -1,0 +1,35 @@
+---
+- name: Check already installed packages file exists
+  win_stat:
+    path: '{{ drive }}:\msys64\packages.txt'
+  register: packages_exist
+
+- name: Get pacman installed list
+  win_shell: 'type {{ drive }}:\msys64\packages.txt'
+  register: installed_packages
+  changed_when: false
+  when: packages_exist.stat.exists
+
+- name: Compare expected to be installed with installed packages
+  set_fact:
+    should_setup_msys2: True
+  when: (not packages_exist.stat.exists) or (item not in installed_packages.stdout_lines)
+  loop: "{{ msys2_packages }}"
+
+- name: Setup MSYS2
+  win_shell:
+    '{{ drive }}:\msys64\msys2_shell.cmd -mingw32 -defterm -no-start -c ''pacman -Syu
+    --needed --noconfirm {{ msys2_packages | join('' '') }} &&
+    pacman -Qe | cut -d '''' '''' -f 1 > /{{ drive }}/msys64/packages.txt'''
+  when: should_setup_msys2 is defined
+
+- name: Get pacman installed list
+  win_shell: 'type {{ drive }}:\msys64\packages.txt'
+  changed_when: false
+  register: installed_packages
+
+- name: Verify pacman result
+  fail:
+    msg: "{{ item }} not installed"
+  failed_when: item not in installed_packages.stdout_lines
+  loop: "{{ msys2_packages }}"

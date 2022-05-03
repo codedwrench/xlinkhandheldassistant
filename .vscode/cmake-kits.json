@@ -1,0 +1,24 @@
+[
+    {
+        "name": "Windows MinGW32",
+        "compilers": {
+            "C": "C:\\build_tools\\msys64\\mingw32\\bin\\gcc.exe",
+            "CXX": "C:\\build_tools\\msys64\\mingw32\\bin\\g++.exe"
+        },
+        "preferredGenerator": {
+            "name": "MinGW Makefiles"
+        },
+        "environmentVariables": {
+            "CMT_MINGW_PATH": "C:\\build_tools\\msys64\\mingw32\\bin"
+        },
+        "cmakeSettings": {
+            "BUILD_X32": 1,
+            "NPCAP_DLL_PATH": "C:\\build_tools\\npcapsdk",
+            "PCAP_ROOT_DIR": "C:\\build_tools\\npcapsdk",
+            "PDCURSES_ROOT_DIR": "C:\\build_tools\\pdcurses",
+            "BOOST_ROOT": "C:\\build_tools\\boost",
+            "CLANGFORMAT_EXECUTABLE": "C:\\build_tools\\msys64\\mingw32\\bin\\clang-format.exe",
+            "AUTO_FORMAT": 1
+          }
+    }
+]

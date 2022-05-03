@@ -14,3 +14,8 @@
     - name: Install Runner
       import_tasks: install_runner.yml
       when: install_runner == True
+    
+    - name: Install Development Environment
+      import_tasks: install_devenv.yml
+      when: install_devenv == True
+
