@@ -22,7 +22,7 @@
             "program": "${command:cmake.launchTargetPath}",
             "stopAtEntry": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "c:\\build_tools\\msys64\\mingw32\\bin\\gdb.exe",
+            "miDebuggerPath": "c:\\msys64\\mingw32\\bin\\gdb.exe",
             "externalConsole": true,
             "cwd": "${command:cmake.buildDirectory}"
         }
