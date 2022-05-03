@@ -22,6 +22,6 @@
 # Default settings.jsons
 - name: Copy vscode settings.json
   win_copy:
-    dest: '%LOCALAPPDATA%\id_rsa'
+    dest: '%APPDATA%\Code\User\settings.json'
     operation: file_copy
-    src: id_rsa.vault
+    src: files\settings.jsons
