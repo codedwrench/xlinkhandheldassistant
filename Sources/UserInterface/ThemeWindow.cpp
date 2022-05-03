@@ -7,7 +7,11 @@
 
 namespace
 {
-    Window::Dimensions ScaleThemeSelector() { return {2, 4, 0, 0}; }
+    Window::Dimensions ScaleThemeSelector()
+    {
+        return {2, 4, 0, 0};
+    }
+
     Window::Dimensions ScaleDoneButton(const int& aMaxHeight, const int& aMaxWidth)
     {
         return {(aMaxHeight - 2), (aMaxWidth - 2) - static_cast<int>(std::string("[ Save selection ]").length()), 0, 0};

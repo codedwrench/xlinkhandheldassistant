@@ -16,7 +16,7 @@ public:
     MainWindowController(MainWindowController const& aController)     = delete;
     MainWindowController(MainWindowController&& aController) noexcept = delete;
 
-    MainWindowController& operator=(MainWindowController aController) = delete;
+    MainWindowController& operator=(MainWindowController aController)   = delete;
     MainWindowController& operator=(MainWindowController&& aController) = delete;
 
     ~MainWindowController();

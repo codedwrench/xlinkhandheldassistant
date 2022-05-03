@@ -8,7 +8,10 @@
 
 namespace
 {
-    Window::Dimensions ScaleSelectorBoxes() { return {2, 4, 0, 0}; }
+    Window::Dimensions ScaleSelectorBoxes()
+    {
+        return {2, 4, 0, 0};
+    }
 }  // namespace
 
 WizardSelectorStep::WizardSelectorStep(WindowModel&                        aModel,

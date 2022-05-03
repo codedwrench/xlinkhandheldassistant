@@ -82,7 +82,7 @@ class XLinkKaiConnection : public IConnector
 public:
     explicit XLinkKaiConnection(std::shared_ptr<IUDPSocketWrapper> aSocketWrapper = nullptr);
     ~XLinkKaiConnection();
-    XLinkKaiConnection(const XLinkKaiConnection& aXLinkKaiConnection) = delete;
+    XLinkKaiConnection(const XLinkKaiConnection& aXLinkKaiConnection)            = delete;
     XLinkKaiConnection& operator=(const XLinkKaiConnection& aXLinkKaiConnection) = delete;
 
     bool Open(std::string_view aArgument) override;

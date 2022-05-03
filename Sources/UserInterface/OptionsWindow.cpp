@@ -8,12 +8,35 @@
 
 namespace
 {
-    Window::Dimensions ScaleStartWizardButton() { return {2, 4, 0, 0}; }
-    Window::Dimensions ScaleAboutButton() { return {3, 4, 0, 0}; }
-    Window::Dimensions ScaleThemeButton() { return {4, 4, 0, 0}; }
-    Window::Dimensions ScaleLogLevelSelector() { return {6, 4, 0, 0}; }
-    Window::Dimensions ScaleDoneButton() { return {13, 4, 0, 0}; }
-    Window::Dimensions ScaleExitButton() { return {14, 4, 0, 0}; }
+    Window::Dimensions ScaleStartWizardButton()
+    {
+        return {2, 4, 0, 0};
+    }
+
+    Window::Dimensions ScaleAboutButton()
+    {
+        return {3, 4, 0, 0};
+    }
+
+    Window::Dimensions ScaleThemeButton()
+    {
+        return {4, 4, 0, 0};
+    }
+
+    Window::Dimensions ScaleLogLevelSelector()
+    {
+        return {6, 4, 0, 0};
+    }
+
+    Window::Dimensions ScaleDoneButton()
+    {
+        return {13, 4, 0, 0};
+    }
+
+    Window::Dimensions ScaleExitButton()
+    {
+        return {14, 4, 0, 0};
+    }
 }  // namespace
 
 OptionsWindow::OptionsWindow(WindowModel&                        aModel,

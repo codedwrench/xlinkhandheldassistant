@@ -16,7 +16,11 @@ namespace
     {
         return {2, 2, 0, 0};
     }
-    Window::Dimensions ScalePortTextField(const int& /*aMaxHeight*/, const int& /*aMaxWidth*/) { return {3, 2, 0, 0}; }
+
+    Window::Dimensions ScalePortTextField(const int& /*aMaxHeight*/, const int& /*aMaxWidth*/)
+    {
+        return {3, 2, 0, 0};
+    }
 }  // namespace
 
 XLinkOptionsStep::XLinkOptionsStep(WindowModel&                        aModel,

@@ -26,7 +26,7 @@
 class Logger
 {
 public:
-    Logger(const Logger& aLogger) = delete;
+    Logger(const Logger& aLogger)            = delete;
     Logger& operator=(const Logger& aLogger) = delete;
 
     Logger& operator=(Logger&& aLogger) = delete;
