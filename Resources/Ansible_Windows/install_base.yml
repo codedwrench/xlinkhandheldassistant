@@ -48,6 +48,11 @@
 - name: Install MSYS and dependencies
   import_tasks: base_scripts/install_msys2.yml
 
+- name: Ensure install_dir exists
+  win_file:
+    path: '{{ drive }}:\{{ install_dir }}'
+    state: directory
+
 # -- Static libs --
 
 # SDK
