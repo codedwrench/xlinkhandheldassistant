@@ -56,7 +56,7 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectHappyFlow)
 
     // General requirements
     EXPECT_CALL(*mSocketWrapperMock, IsOpen()).WillRepeatedly(ReturnPointee(&lOpened));
-    EXPECT_CALL(*mSocketWrapperMock, StartThread());
+    EXPECT_CALL(*mSocketWrapperMock, StartThread()).WillRepeatedly(Return());
     EXPECT_CALL(*mSocketWrapperMock, IsThreadStopped()).WillRepeatedly(ReturnPointee(&lThreadStopCalled));
 
     // Opening the socket

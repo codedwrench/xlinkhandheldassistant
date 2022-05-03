@@ -291,6 +291,9 @@ bool XLinkKaiConnection::StartReceiverThread()
                         mSettingsSent = true;
                     } else {
                         mSocketWrapper->PollThread();
+                        
+                        // Make sure the thread doesn't stop after poll
+                        mSocketWrapper->StartThread();
                         // Very small delay to make the computer happy
                         std::this_thread::sleep_for(100us);
                     }
