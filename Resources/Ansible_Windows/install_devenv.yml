@@ -25,3 +25,6 @@
     dest: '%APPDATA%\Code\User\settings.json'
     operation: file_copy
     src: files/settings.json
+  become_method: runas
+  become: yes
+  become_user: "{{ user }}"

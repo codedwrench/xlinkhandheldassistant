@@ -14,7 +14,8 @@ msys2_packages:
 
 msys2_devenv_packages:
   [
-    "mingw-w64-i686-clang-tools-extra"
+    "mingw-w64-i686-clang-tools-extra",
+    "mingw-w64-i686-gdb"
   ]
 
 devenv_vscode_packages:
