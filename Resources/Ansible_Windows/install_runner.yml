@@ -47,12 +47,12 @@
     --labels "self-windows" \
     --unattended \
     --runasservice \
-    --windowslogonaccount {{ runner_admin_user }} \
+    --windowslogonaccount {{ user }} \
     --windowslogonpassword {{ runner_admin_password }}'
   args:
     chdir: '{{ drive }}:\{{ install_dir }}\{{ runner_folder }}'
   become: yes
-  become_user: "{{ runner_admin_user }}"
+  become_user: "{{ user }}"
   become_method: runas
   register: register_output
   when: (stat_version.stat.exists == False) and (runner_download_result.msg is defined and runner_download_result.msg == "OK")

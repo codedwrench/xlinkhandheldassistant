@@ -1,7 +1,8 @@
 ---
+user: "User"
 drive: "c"
 install_dir: "build_tools"
-ssh_key_location: 'C:\Users\User\.ssh\'
+ssh_key_location: 'C:\Users\{{ user }}\.ssh\'
 msys2_packages:
   [
     "bison",
@@ -24,7 +25,6 @@ runner_name: "windows-ansible"
 runner_folder: "github-runner"
 runner_github_user: "codedwrench"
 runner_github_repo: "xlinkhandheldassistant"
-runner_admin_user: "User"
 
 # Add these variables using command line, vaulting these would be smart
 runner_token: "{{ token }}"
