@@ -65,7 +65,7 @@ jobs:
           cmake .. -G "MinGW Makefiles" -DAUTO_FORMAT=0 \
                                         -DBUILD_X32=1 \
                                         -DBOOST_ROOT="c:/build_tools/boost" \
-                                        -PDCURSES_ROOT_DIR="c:/build_tools/pdcurses" \
+                                        -DPDCURSES_ROOT_DIR="c:/build_tools/pdcurses" \
                                         -DNPCAP_ROOT_DIR="c:/build_tools/npcapsdk" \
                                         -DNPCAP_DLL_PATH="c:/build_tools/npcapsdk" 
                                         
