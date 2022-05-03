@@ -1,0 +1,33 @@
+---
+drive: "c"
+install_dir: "build_tools"
+ssh_key_location: 'C:\Users\User\.ssh\'
+msys2_packages:
+  [
+    "bison",
+    "mingw-w64-i686-cmake",
+    "mingw-w64-i686-gcc",
+    "mingw-w64-i686-make",
+    "mingw-w64-i686-tools-git",
+  ]
+
+npcapsdk_version: "1.12"
+npcap_version: "1.31"
+pdcurses_version: "4.3.2a"
+boost_version: "1.79.0"
+
+install_base: true
+install_runner: false
+
+# Runner portion
+runner_name: "windows-ansible"
+runner_folder: "github-runner"
+runner_github_user: "codedwrench"
+runner_github_repo: "xlinkhandheldassistant"
+runner_admin_user: "User"
+
+# Add these variables using command line, vaulting these would be smart
+runner_token: "{{ token }}"
+runner_admin_password: "{{ password }}"
+
+
