@@ -20,7 +20,7 @@
 
 - name: Build Boost
   win_shell:
-    '{{ drive }}:\{{ install_dir }}\msys64\msys2_shell.cmd -mingw32 -defterm -no-start -here -c
+    '{{ drive }}:\msys64\msys2_shell.cmd -mingw32 -defterm -no-start -here -c
     "cd tools/build && ./bootstrap.bat mingw && cp b2 ../.. && cd ../.. &&
     ./tools/build/b2.exe --build-type=minimal --toolset=gcc variant=release link=static runtime-link=static 
     address-model=32 threading=multi --with-system --with-program_options stage"'
