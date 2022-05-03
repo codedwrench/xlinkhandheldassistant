@@ -26,6 +26,7 @@ devenv_vscode_packages:
     "redhat.vscode-yaml",
     "a5hk.night-coder",
     "cschlosser.doxdocgen",
+    "ms-vscode.cpptools"
   ]
 
 npcapsdk_version: "1.12"

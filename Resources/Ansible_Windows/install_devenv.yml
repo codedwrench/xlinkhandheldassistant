@@ -18,3 +18,10 @@
   become_user: "{{ user }}"
   changed_when: '"successfully installed" in install_output.stdout'
   failed_when: '"Failed Installing" in install_output.stderr'
+
+# Default settings.jsons
+- name: Copy vscode settings.json
+  win_copy:
+    dest: '%LOCALAPPDATA%\id_rsa'
+    operation: file_copy
+    src: id_rsa.vault

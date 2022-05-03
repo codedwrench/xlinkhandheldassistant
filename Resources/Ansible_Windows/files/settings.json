@@ -1,0 +1,8 @@
+{
+    "workbench.colorTheme": "Night Coder",
+    "git.autofetch": true,
+    "cmake.cmakePath": "C:\\msys64\\mingw32\\bin\\cmake.exe",
+    "cmake.additionalKits": [
+        ".vscode\\cmake-kits.json"
+    ]
+}
