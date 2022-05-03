@@ -56,7 +56,7 @@ jobs:
           msystem: mingw32
           release: false
           update: true
-          with_location: c:\build_tools\msys64
+          location: c:\build_tools\msys64
       - name: Clone Tree
         uses: actions/checkout@v2
       - name: Build
