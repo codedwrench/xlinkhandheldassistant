@@ -3,14 +3,14 @@
 #include "WifiInterfaceWindows.h"
 
 #include <codecvt>
+#include <cstdio>
+#include <cstdlib>
 #include <locale>
 #include <string>
 
 #include <Winsock2.h>
 #include <iphlpapi.h>
 #include <objbase.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <wlanapi.h>
 #include <wtypes.h>
 
@@ -28,12 +28,12 @@
 #define L2_NOTIFICATION_SOURCE_ALL 0X0000FFFF
 
 // Context to pass along with callbacks
-typedef struct _WLAN_CALLBACK_INFO
+using WLAN_CALLBACK_INFO = struct _WLAN_CALLBACK_INFO
 {
     GUID   interfaceGUID;
     HANDLE scanEvent;
     DWORD  callbackReason;
-} WLAN_CALLBACK_INFO;
+};
 
 // Need to link with Wlanapi.lib and Ole32.lib
 #pragma comment(lib, "wlanapi.lib")
@@ -105,10 +105,10 @@ static std::wstring GenerateXML(const std::wstring& aSSID)
     return lFirst + aSSID + lSecond;
 }
 
-static void WlanCallback(WLAN_NOTIFICATION_DATA* aScanNotificationData, PVOID aContext)
+static void __attribute__((stdcall)) WlanCallback(WLAN_NOTIFICATION_DATA* aScanNotificationData, PVOID aContext)
 {
     // Get the data from my struct. If it's null, nothing to do
-    WLAN_CALLBACK_INFO* lCallbackInfo = (WLAN_CALLBACK_INFO*) aContext;
+    auto* lCallbackInfo = static_cast<WLAN_CALLBACK_INFO*>(aContext);
     if (lCallbackInfo != nullptr) {
         // Check the GUID in the struct against the GUID in the notification data, return if they don't match
         if (memcmp(&lCallbackInfo->interfaceGUID, &aScanNotificationData->InterfaceGuid, sizeof(GUID)) == 0) {
@@ -125,8 +125,6 @@ static void WlanCallback(WLAN_NOTIFICATION_DATA* aScanNotificationData, PVOID aC
     } else {
         Logger::GetInstance().Log("No callback info received", Logger::Level::ERROR);
     }
-
-    return;
 }
 
 std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
@@ -156,7 +154,7 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
     // Register for wlan scan notifications
     WlanRegisterNotification(mWifiHandle,
                              WLAN_NOTIFICATION_SOURCE_ALL,
-                             true,
+                             1,
                              reinterpret_cast<WLAN_NOTIFICATION_CALLBACK>(WlanCallback),
                              reinterpret_cast<PVOID>(&lCallbackInfo),
                              nullptr,
@@ -207,8 +205,10 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
 
                         Logger::GetInstance().Log("SSID: " + lSSID, Logger::Level::TRACE);
 
-                        lWifiInformation.ssid        = lSSID;
-                        lWifiInformation.isconnected = lNetworkInformation->dwFlags & WLAN_AVAILABLE_NETWORK_CONNECTED;
+                        lWifiInformation.ssid = lSSID;
+                        lWifiInformation.isconnected =
+                            ((static_cast<unsigned int>(lNetworkInformation->dwFlags) &
+                              static_cast<unsigned int>(WLAN_AVAILABLE_NETWORK_CONNECTED)) != 0u);
 
                         if (lNetworkInformation->dot11BssType == dot11_BSS_type_independent) {
                             Logger::GetInstance().Log("Is Ad-Hoc network!", Logger::Level::TRACE);
@@ -220,7 +220,7 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
                             Logger::Level::TRACE);
 
                         // Now get the BSSID belonging to the network, or atleast the first one
-                        PWLAN_BSS_LIST lWlanBSSList;
+                        PWLAN_BSS_LIST lWlanBSSList = nullptr;
                         DWORD          lResult{WlanGetNetworkBssList(mWifiHandle,
                                                             &mGUID,
                                                             &lNetworkInformation->dot11Ssid,
@@ -229,20 +229,22 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
                                                             nullptr,
                                                             &lWlanBSSList)};
                         if (lResult == ERROR_SUCCESS && lWlanBSSList->dwNumberOfItems > 0) {
-                            memcpy(lWifiInformation.bssid.data(), lWlanBSSList->wlanBssEntries, 6);
+                            memcpy(lWifiInformation.bssid.data(), &lWlanBSSList->wlanBssEntries[0], 6);
                         }
 
                         mLastReceivedScanInformation.emplace_back(lWifiInformation);
                     }
                 }
             } else {
-                Logger::GetInstance().Log("Could not gather scan results:" + std::system_category().message(lResult),
-                                          Logger::Level::ERROR);
+                Logger::GetInstance().Log(
+                    "Could not gather scan results:" + std::system_category().message(static_cast<int>(lResult)),
+                    Logger::Level::ERROR);
             }
         } else {
             mWifiHandle = nullptr;
-            Logger::GetInstance().Log("Could not open WlanHandle" + std::system_category().message(lResult),
-                                      Logger::Level::ERROR);
+            Logger::GetInstance().Log(
+                "Could not open WlanHandle" + std::system_category().message(static_cast<int>(lResult)),
+                Logger::Level::ERROR);
         }
 
         if (lNetworkList != nullptr) {
@@ -250,8 +252,9 @@ std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
             lNetworkList = nullptr;
         }
     } else {
-        Logger::GetInstance().Log("Could not send Scan request" + std::system_category().message(lResult),
-                                  Logger::Level::ERROR);
+        Logger::GetInstance().Log(
+            "Could not send Scan request" + std::system_category().message(static_cast<int>(lResult)),
+            Logger::Level::ERROR);
     }
     return mLastReceivedScanInformation;
 }
@@ -263,13 +266,13 @@ uint64_t WifiInterface::GetAdapterMacAddress()
     ULONG lBuffer = sizeof(IP_ADAPTER_ADDRESSES);
 
     GetAdaptersAddresses(0, 0, nullptr, nullptr, &lBuffer);
-    std::vector<uint8_t>  lBytes(lBuffer, 0);
-    PIP_ADAPTER_ADDRESSES lCurrentAddresses = (IP_ADAPTER_ADDRESSES*) lBytes.data();
-    DWORD                 lResult           = GetAdaptersAddresses(0, 0, nullptr, lCurrentAddresses, &lBuffer);
+    std::vector<uint8_t> lBytes(lBuffer, 0);
+    auto*                lCurrentAddresses = reinterpret_cast<IP_ADAPTER_ADDRESSES*>(lBytes.data());
+    DWORD                lResult           = GetAdaptersAddresses(0, 0, nullptr, lCurrentAddresses, &lBuffer);
     if (lResult == NO_ERROR) {
         while (lCurrentAddresses != nullptr) {
             if (lCurrentAddresses->AdapterName == mAdapterName) {
-                memcpy(&lReturn, lCurrentAddresses->PhysicalAddress, Net_8023_Constants::cSourceAddressLength);
+                memcpy(&lReturn, &lCurrentAddresses->PhysicalAddress[0], Net_8023_Constants::cSourceAddressLength);
             }
             lCurrentAddresses = lCurrentAddresses->Next;
         }
@@ -288,7 +291,7 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> lConverter;
         std::wstring lProf = GenerateXML(lConverter.from_bytes(aConnection.ssid));
         Logger::GetInstance().Log("Generated XML: " + lConverter.to_bytes(lProf), Logger::Level::TRACE);
-        WLAN_REASON_CODE lReason;
+        WLAN_REASON_CODE lReason       = 0;
         mParameters.wlanConnectionMode = wlan_connection_mode_temporary_profile;
         mParameters.strProfile         = lProf.c_str();
 
@@ -299,7 +302,7 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
     }
     // Setup SSID
     DOT11_SSID lSSID{};
-    memcpy(lSSID.ucSSID, aConnection.ssid.data(), aConnection.ssid.size());
+    memcpy(&lSSID.ucSSID[0], aConnection.ssid.data(), aConnection.ssid.size());
     lSSID.uSSIDLength = aConnection.ssid.size();
 
     mParameters.dot11BssType      = dot11_BSS_type_independent;
