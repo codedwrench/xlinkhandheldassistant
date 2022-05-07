@@ -52,7 +52,7 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectHappyFlow)
 
     // Save the arguments from here so we can use the private callback in xlink kai connection
     EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
-        .WillOnce(DoAll(SaveArg<0>(&lBuffer), SaveArg<2>(&lCallBack)));
+        .WillRepeatedly(DoAll(SaveArg<0>(&lBuffer), SaveArg<2>(&lCallBack)));
 
     // General requirements
     EXPECT_CALL(*mSocketWrapperMock, IsOpen()).WillRepeatedly(ReturnPointee(&lOpened));
