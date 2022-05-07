@@ -236,9 +236,6 @@ bool XLinkKaiConnection::StartReceiverThread()
     bool lReturn{true};
 
     if (mSocketWrapper->IsOpen()) {
-        mSocketWrapper->AsyncReceiveFrom(
-            mData.data(), cMaxLength, [&](size_t aBufferSize) { ReceiveCallback(aBufferSize); });
-
         // Run
         if (mReceiverThread == nullptr) {
             mReceiverThread = std::make_shared<std::thread>([&] {
@@ -248,6 +245,9 @@ bool XLinkKaiConnection::StartReceiverThread()
                 Connect();
 
                 while (!mSocketWrapper->IsThreadStopped()) {
+                    mSocketWrapper->AsyncReceiveFrom(
+                        mData.data(), cMaxLength, [&](size_t aBufferSize) { ReceiveCallback(aBufferSize); });
+
                     if ((!mConnected && !mConnectInitiated)) {
                         Close(false);
                         Open(mIp, mPort);
@@ -290,14 +290,15 @@ bool XLinkKaiConnection::StartReceiverThread()
 
                         mSettingsSent = true;
                     } else {
-                        mSocketWrapper->PollThread();
-
-                        if (!mStopCommand) {
-                            // Make sure the thread doesn't stop after poll
-                            mSocketWrapper->StartThread();
-                        }
                         // Very small delay to make the computer happy
                         std::this_thread::sleep_for(100us);
+                    }
+
+                    mSocketWrapper->PollThread();
+
+                    if (!mStopCommand) {
+                        // Make sure the thread doesn't stop after poll
+                        mSocketWrapper->StartThread();
                     }
                 }
             });
