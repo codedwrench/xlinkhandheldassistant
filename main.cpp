@@ -16,6 +16,7 @@
 #include "Includes/Logger.h"
 #include "Includes/MonitorDevice.h"
 #include "Includes/NetConversionFunctions.h"
+#include "Includes/Timer.h"
 #include "Includes/UserInterface/KeyboardController.h"
 #include "Includes/UserInterface/MainWindowController.h"
 #include "Includes/WirelessPSPPluginDevice.h"
@@ -151,6 +152,7 @@ int main(int argc, char* argv[])
         }
 
         if (lContinue) {
+            Timer                               lTimer{};
             std::shared_ptr<IPCapDevice>        lDevice{nullptr};
             std::shared_ptr<XLinkKaiConnection> lXLinkKaiConnection{std::make_shared<XLinkKaiConnection>()};
 
@@ -204,6 +206,7 @@ int main(int argc, char* argv[])
                                                                             mWindowModel.mAcknowledgeDataFrames,
                                                                             &mWindowModel.mCurrentlyConnectedNetwork);
                                         Logger::GetInstance().Log("Monitor Device created!", Logger::Level::INFO);
+                                        break;
                                     }
 				    break;
 #endif
@@ -276,11 +279,11 @@ int main(int argc, char* argv[])
                         case WindowModel_Constants::Command::WaitForTime:
                             // Wait state, use this to add a delay without making the UI unresponsive.
                             if (lWaitEntry) {
-                                lWaitStart = std::chrono::system_clock::now();
+                                lTimer.Start(mWindowModel.mTimeToWait);
                                 lWaitEntry = false;
                             }
 
-                            if (std::chrono::system_clock::now() > lWaitStart + mWindowModel.mTimeToWait) {
+                            if (lTimer.IsTimedOut()) {
                                 mWindowModel.mCommand = mWindowModel.mCommandAfterWait;
                                 lWaitEntry            = true;
                             }

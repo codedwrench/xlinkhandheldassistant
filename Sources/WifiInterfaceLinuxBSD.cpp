@@ -4,12 +4,14 @@
 
 #include <cerrno>
 #include <chrono>
+#include <memory>
 
 #include <ifaddrs.h>
 #include <net/if.h>
 
 #include "Logger.h"
 #include "NetConversionFunctions.h"
+#include "Timer.h"
 
 #ifdef __linux__
 #include <netpacket/packet.h>
@@ -368,8 +370,11 @@ void WifiInterface::ClearSocket()
     }
 }
 
-bool WifiInterface::ScanTrigger()
+bool WifiInterface::ScanTrigger(std::shared_ptr<ITimer> aTimer)
 {
+    // If nullptr is given, create a timer
+    std::shared_ptr<ITimer> lTimer{aTimer ? aTimer : std::make_shared<Timer>()};
+
     // Starts the scan and waits for it to finish. Does not return until the scan is done or has been aborted.
     TriggerResults lResults{};
     int            lError{};
@@ -421,13 +426,13 @@ bool WifiInterface::ScanTrigger()
                 mLocked.lock();
                 lSuccess = nl_send_auto(mSocket, lMessage);  // Send the message.
                 Logger::GetInstance().Log("Waiting for scan to complete...", Logger::Level::DEBUG);
-                std::chrono::time_point<std::chrono::system_clock> lTimerStart{std::chrono::system_clock::now()};
-                bool                                               lTimedOut{};
+                lTimer->Start(WifiInterface_Constants::cScanTimeout);
+                bool lTimedOut{};
+
                 while ((lError > 0) && (!lTimedOut)) {
                     // First wait for AcknowledgeHandler(). This helps with basic errors.
-                    lSuccess = nl_recvmsgs(mSocket, lCallback);
-                    lTimedOut =
-                        ((std::chrono::system_clock::now() - lTimerStart) > WifiInterface_Constants::cScanTimeout);
+                    lSuccess  = nl_recvmsgs(mSocket, lCallback);
+                    lTimedOut = lTimer->IsTimedOut();
                 }
 
                 if (lError < 0) {
@@ -445,13 +450,13 @@ bool WifiInterface::ScanTrigger()
                 }
 
                 if (lSuccess >= 0) {
-                    lError      = 1;
-                    lTimerStart = std::chrono::system_clock::now();
+                    lError = 1;
+                    lTimer->Start();
+                    lTimedOut = false;
                     while (lResults.done == 0 && lResults.aborted == 0 && lError >= 0 && (!lTimedOut)) {
                         // Now wait until the scan is done or aborted
                         nl_recvmsgs(mSocket, lCallback);
-                        lTimedOut =
-                            ((std::chrono::system_clock::now() - lTimerStart) > WifiInterface_Constants::cScanTimeout);
+                        lTimedOut = lTimer->IsTimedOut();
                     }
 
                     if (lError < 0) {
@@ -497,14 +502,18 @@ bool WifiInterface::ScanTrigger()
     return lReturn;
 }
 
-
 std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks()
+{
+    return GetAdhocNetworks(nullptr);
+}
+
+std::vector<IWifiInterface::WifiInformation>& WifiInterface::GetAdhocNetworks(std::shared_ptr<ITimer> aTimer)
 {
     // Clear previous scan info
     mLastReceivedScanInformation.clear();
 
     // Issue NL80211_CMD_TRIGGER_SCAN to the kernel and wait for it to finish.
-    bool lSuccess{ScanTrigger()};
+    bool lSuccess{ScanTrigger(aTimer)};
     if (lSuccess) {
         // Now get info for all SSIDs detected.
         nl_msg* lMessage = nlmsg_alloc();  // Allocate a message.
