@@ -14,17 +14,18 @@
 #include "Logger.h"
 #include "MonitorDevice.h"
 #include "NetConversionFunctions.h"
+#include "Timer.h"
 #include "UDPSocketWrapper.h"
 
 using namespace std::chrono_literals;
 
-XLinkKaiConnection::XLinkKaiConnection(std::shared_ptr<IUDPSocketWrapper> aSocketWrapper) :
-    mSocketWrapper(aSocketWrapper)
-{
-    if (!mSocketWrapper) {
-        mSocketWrapper = std::make_shared<UDPSocketWrapper>();
-    }
-}
+XLinkKaiConnection::XLinkKaiConnection(std::shared_ptr<IUDPSocketWrapper> aSocketWrapper,
+                                       std::shared_ptr<ITimer>            aConnectionTimer,
+                                       std::shared_ptr<ITimer>            aKeepAliveTimer) :
+    mSocketWrapper(aSocketWrapper ? aSocketWrapper : std::make_shared<UDPSocketWrapper>()),
+    mConnectionTimer(aConnectionTimer ? aConnectionTimer : std::make_shared<Timer>()),
+    mKeepAliveTimer(aKeepAliveTimer ? aKeepAliveTimer : std::make_shared<Timer>())
+{}
 
 XLinkKaiConnection::~XLinkKaiConnection()
 {
@@ -57,7 +58,6 @@ bool XLinkKaiConnection::Connect()
     if (Send(cConnectString, "")) {
         // Start the timer for receiving a confirmation from XLink Kai.
         mConnectInitiated = true;
-        mConnectionTimerStart += (std::chrono::system_clock::now() - mConnectionTimerStart);
     } else {
         // Logging in send function
         lReturn = false;
@@ -156,7 +156,7 @@ void XLinkKaiConnection::ReceiveCallback(size_t aBytesReceived)
     // If we actually received anything useful, react.
     if (!lData.empty()) {
         // Make sure the keepalive timer gets tickled so it doesn't bite.
-        mKeepAliveTimerStart += (std::chrono::system_clock::now() - mKeepAliveTimerStart);
+        mKeepAliveTimer->Start(cKeepAliveTimeout);
         std::size_t lFirstSeparator{lData.find(cSeparator)};
         std::string lCommand{lData.substr(0, lFirstSeparator + 1)};
 
@@ -232,7 +232,7 @@ void XLinkKaiConnection::ReceiveCallback(size_t aBytesReceived)
 }
 
 bool XLinkKaiConnection::StartReceiverThread()
-{
+{  // If nullptr is given, create a timer
     bool lReturn{true};
 
     if (mSocketWrapper->IsOpen()) {
@@ -244,6 +244,9 @@ bool XLinkKaiConnection::StartReceiverThread()
                 // Try to connect to XLink Kai for the first time before going into the while loop.
                 Connect();
 
+                // Also set the timeout
+                mConnectionTimer->Start(cConnectionTimeout);
+
                 while (!mSocketWrapper->IsThreadStopped()) {
                     mSocketWrapper->AsyncReceiveFrom(
                         mData.data(), cMaxLength, [&](size_t aBufferSize) { ReceiveCallback(aBufferSize); });
@@ -253,16 +256,14 @@ bool XLinkKaiConnection::StartReceiverThread()
                         Open(mIp, mPort);
                         Connect();
                         std::this_thread::sleep_for(std::chrono::seconds(1));
-                    } else if ((!mConnected) && mConnectInitiated &&
-                               (std::chrono::system_clock::now() > (mConnectionTimerStart + cConnectionTimeout))) {
+                    } else if ((!mConnected) && mConnectInitiated && (mConnectionTimer->IsTimedOut())) {
                         Logger::GetInstance().Log("Timeout waiting for XLink Kai to connect", Logger::Level::ERROR);
                         mConnectInitiated = false;
                         mConnected        = false;
                         mSettingsSent     = false;
                         // Retry in 10 seconds
                         std::this_thread::sleep_for(10s);
-                    } else if (mConnected && !mConnectInitiated &&
-                               (std::chrono::system_clock::now() > (mKeepAliveTimerStart + cKeepAliveTimeout))) {
+                    } else if (mConnected && !mConnectInitiated && mKeepAliveTimer->IsTimedOut()) {
                         // KaiEngine stopped sending keepalive messages, must've died.
                         Logger::GetInstance().Log("It seems KaiEngine has stopped responding, resetting connection ...",
                                                   Logger::Level::ERROR);

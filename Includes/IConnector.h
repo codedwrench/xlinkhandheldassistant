@@ -19,7 +19,7 @@ class IConnector
 public:
     /**
      * Opens the device/file.
-     * @param aArgument - File/Device/IP to use
+     * @param aArgument - File/Device/IP to use.
      * @return true if successful
      */
     virtual bool Open(std::string_view aArgument) = 0;
@@ -71,7 +71,7 @@ public:
 
     /**
      * Starts receiving network messages from Connector.
-     * @return True if successful.
+     * @return true if successful.
      */
     virtual bool StartReceiverThread() = 0;
 };

@@ -12,6 +12,7 @@
 
 #include "Handler8023.h"
 #include "IConnector.h"
+#include "ITimer.h"
 #include "IUDPSocketWrapper.h"
 
 namespace XLinkKai_Constants
@@ -80,9 +81,18 @@ using namespace XLinkKai_Constants;
 class XLinkKaiConnection : public IConnector
 {
 public:
-    explicit XLinkKaiConnection(std::shared_ptr<IUDPSocketWrapper> aSocketWrapper = nullptr);
+    /**
+     * Creates an XLink Kai Connection.
+     *
+     * @param aSocketWrapper - The implementation to use for UDP sockets.
+     * @param aConnectionTimer - The implementation to use for the connection timer.
+     * @param aKeepAliveTimer - The implementation to use for the keepalive timer.
+     */
+    explicit XLinkKaiConnection(std::shared_ptr<IUDPSocketWrapper> aSocketWrapper   = nullptr,
+                                std::shared_ptr<ITimer>            aConnectionTimer = nullptr,
+                                std::shared_ptr<ITimer>            aKeepAliveTimer  = nullptr);
     ~XLinkKaiConnection();
-    XLinkKaiConnection(const XLinkKaiConnection& aXLinkKaiConnection)            = delete;
+    XLinkKaiConnection(const XLinkKaiConnection& aXLinkKaiConnection) = delete;
     XLinkKaiConnection& operator=(const XLinkKaiConnection& aXLinkKaiConnection) = delete;
 
     bool Open(std::string_view aArgument) override;
@@ -165,12 +175,12 @@ private:
      */
     bool HandleKeepAlive();
 
-    bool                                               mStopCommand{false};
-    bool                                               mConnected{false};
-    bool                                               mConnectInitiated{false};
-    bool                                               mSettingsSent{false};
-    std::chrono::time_point<std::chrono::system_clock> mConnectionTimerStart{std::chrono::seconds{0}};
-    std::chrono::time_point<std::chrono::system_clock> mKeepAliveTimerStart{std::chrono::seconds{0}};
+    bool                    mStopCommand{false};
+    bool                    mConnected{false};
+    bool                    mConnectInitiated{false};
+    bool                    mSettingsSent{false};
+    std::shared_ptr<ITimer> mConnectionTimer{nullptr};
+    std::shared_ptr<ITimer> mKeepAliveTimer{nullptr};
 
     std::array<char, cMaxLength> mData{};
     // Raw ethernet data received from XLink Kai
