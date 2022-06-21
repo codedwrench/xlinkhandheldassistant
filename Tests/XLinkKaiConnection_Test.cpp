@@ -12,8 +12,8 @@
 #include <gtest/gtest.h>
 
 #include "IPCapDeviceMock.h"
-#include "IUDPSocketWrapperMock.h"
 #include "ITimerMock.h"
+#include "IUDPSocketWrapperMock.h"
 
 using testing::_;
 using testing::Assign;
@@ -181,7 +181,8 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectionTimeout)
     // If the program wants to quit, the test should not stop it from doing so
     EXPECT_CALL(*mSocketWrapperMock, StopThread()).WillRepeatedly(Assign(&lThreadStopCalled, true));
 
-    EXPECT_CALL(*mConnectionTimerMock, Start(_));
+    // Expect the timer to be restarted when trying to reconnect
+    EXPECT_CALL(*mConnectionTimerMock, Start(_)).Times(2);
     EXPECT_CALL(*mConnectionTimerMock, IsTimedOut()).WillOnce(Return(true));
 
     // Try to sync actions with ReceiverThread

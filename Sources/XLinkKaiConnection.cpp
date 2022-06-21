@@ -232,7 +232,7 @@ void XLinkKaiConnection::ReceiveCallback(size_t aBytesReceived)
 }
 
 bool XLinkKaiConnection::StartReceiverThread()
-{  // If nullptr is given, create a timer
+{
     bool lReturn{true};
 
     if (mSocketWrapper->IsOpen()) {
@@ -255,6 +255,10 @@ bool XLinkKaiConnection::StartReceiverThread()
                         Close(false);
                         Open(mIp, mPort);
                         Connect();
+
+                        // Also reset the timeout
+                        mConnectionTimer->Start(cConnectionTimeout);
+
                         std::this_thread::sleep_for(std::chrono::seconds(1));
                     } else if ((!mConnected) && mConnectInitiated && (mConnectionTimer->IsTimedOut())) {
                         Logger::GetInstance().Log("Timeout waiting for XLink Kai to connect", Logger::Level::ERROR);
