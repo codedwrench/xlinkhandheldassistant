@@ -258,23 +258,22 @@ bool XLinkKaiConnection::StartReceiverThread()
 
                         // Also reset the timeout
                         mConnectionTimer->Start(cConnectionTimeout);
-
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
-                    } else if ((!mConnected) && mConnectInitiated && (mConnectionTimer->IsTimedOut())) {
+                    } else if ((!mConnected) && mConnectInitiated && mConnectionTimer->IsTimedOut()) {
                         Logger::GetInstance().Log("Timeout waiting for XLink Kai to connect", Logger::Level::ERROR);
                         mConnectInitiated = false;
                         mConnected        = false;
                         mSettingsSent     = false;
+
                         // Retry in 10 seconds
                         std::this_thread::sleep_for(10s);
-                    } else if (mConnected && !mConnectInitiated && mKeepAliveTimer->IsTimedOut()) {
+                    } else if (mConnected && (!mConnectInitiated) && mKeepAliveTimer->IsTimedOut()) {
                         // KaiEngine stopped sending keepalive messages, must've died.
                         Logger::GetInstance().Log("It seems KaiEngine has stopped responding, resetting connection ...",
                                                   Logger::Level::ERROR);
                         mConnected        = false;
                         mConnectInitiated = false;
                         mSettingsSent     = false;
-                    } else if (mConnected && !mConnectInitiated && !mSettingsSent) {
+                    } else if (mConnected && (!mConnectInitiated) && (!mSettingsSent)) {
                         Send(cSettingDDSOnlyString, "");
 
                         // Cache the title ID and ESSID because they get destroyed in the devices.
