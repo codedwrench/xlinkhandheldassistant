@@ -11,15 +11,12 @@ std::string HandlerPSPPlugin::ConvertPacketOut()
 {
     std::string lReturn{mLastReceivedData.data(), mLastReceivedData.size()};
 
-    // Broadcast packets don't get modified
-    if (!mIsBroadcastPacket) {
-        // With the plugin the destination mac is kept at the end of the packet
-        memcpy(lReturn.data() + Net_8023_Constants::cDestinationAddressIndex,
-               &mDestinationMac,
-               Net_8023_Constants::cDestinationAddressLength);
+    // With the plugin the destination mac is kept at the end of the packet
+    memcpy(lReturn.data() + Net_8023_Constants::cDestinationAddressIndex,
+           &mDestinationMac,
+           Net_8023_Constants::cDestinationAddressLength);
 
-        lReturn.resize(lReturn.size() - Net_8023_Constants::cDestinationAddressLength);
-    }
+    lReturn.resize(lReturn.size() - Net_8023_Constants::cDestinationAddressLength);
 
     return lReturn;
 }
