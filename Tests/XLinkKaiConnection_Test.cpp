@@ -118,6 +118,10 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectHappyFlow)
             lCallBack(lConnected.size());
         } else if (lThreadCallCount == 2) {
             // Sending Settings
+            // Also send a normal packet
+            std::string_view lMessage{"e;e;testmessage"};
+            EXPECT_CALL(*mSocketWrapperMock, SendTo(lMessage)).WillOnce(Return(lMessage.size()));
+            ASSERT_TRUE(mXLinkKaiConnection->Send("testmessage"));
         } else {
             // Stop the connection regardless of success
             lEndTest = true;
@@ -698,4 +702,84 @@ TEST_F(XLinkKaiConnectionTest, TestSendDisconnectionRequestOnNoConnection)
     EXPECT_CALL(*mSocketWrapperMock, SendTo(lDisconnectString)).WillOnce(Return(lDisconnectString.size()));
 
     ASSERT_TRUE(mXLinkKaiConnection->Send("disconnect;", ""));
+}
+
+// Tests that an incoming SSID switch gets sent to the pcap device
+TEST_F(XLinkKaiConnectionTest, TestSSIDSwitchFromXLinkKai)
+{
+    std::string_view lIPAddress{"127.0.0.1"};
+
+    bool                        lThreadStopCalled{false};
+    bool                        lOpened{false};
+    bool                        lEndTest{false};
+    int                         lThreadCallCount{0};
+    std::function<void(size_t)> lCallBack;
+    char*                       lBuffer = nullptr;
+
+    // Incoming connection will return these
+    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return("ULES00125"));
+    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return("PSP_AULES00125_BOUTLLOB"));
+
+    // Save the arguments from here so we can use the private callback in xlink kai connection
+    EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
+        .WillRepeatedly(DoAll(SaveArg<0>(&lBuffer), SaveArg<2>(&lCallBack)));
+
+    // General requirements
+    EXPECT_CALL(*mSocketWrapperMock, IsOpen()).WillRepeatedly(ReturnPointee(&lOpened));
+    EXPECT_CALL(*mSocketWrapperMock, StartThread()).WillRepeatedly(Return());
+    EXPECT_CALL(*mSocketWrapperMock, IsThreadStopped()).WillRepeatedly(ReturnPointee(&lThreadStopCalled));
+
+    // Opening the socket
+    EXPECT_CALL(*mSocketWrapperMock, Open(lIPAddress, 34523)).WillOnce(DoAll(Assign(&lOpened, true), Return(true)));
+
+    SetConnectionMessages();
+
+    // And ofcourse this should cause a disconnect to be sent to XLink Kai
+    std::string_view lDisconnect{"disconnect;"};
+    EXPECT_CALL(*mSocketWrapperMock, SendTo(lDisconnect)).WillOnce(Return(lDisconnect.size()));
+
+    // Also gets called in the destructor
+    EXPECT_CALL(*mSocketWrapperMock, Close()).Times(2).WillRepeatedly(Assign(&lOpened, false));
+
+    // If the program wants to quit, the test should not stop it from doing so
+    EXPECT_CALL(*mSocketWrapperMock, StopThread()).WillRepeatedly(Assign(&lThreadStopCalled, true));
+
+    // Tell XLinkConnection instance we are interested in SSIDs
+    mXLinkKaiConnection->SetUseHostSSID(true);
+
+    // Try to sync actions with ReceiverThread
+    EXPECT_CALL(*mSocketWrapperMock, PollThread()).WillRepeatedly(Invoke([&] {
+        lThreadCallCount++;
+
+        if (lThreadCallCount == 1) {
+            // Simulate a connection
+            std::string lConnected{"connected;XLHA_Device;XLHA;"};
+            strcpy(lBuffer, lConnected.c_str());
+            lCallBack(lConnected.size());
+        } else if (lThreadCallCount == 2) {
+            // Sending Settings
+        } else if (lThreadCallCount == 3) {
+            // Incoming ssid switch from another XLink Kai instance.
+            EXPECT_CALL(*mPCapDeviceMock, Connect("PSP_AULES00125_BOUTLLOB"));
+
+            std::string lSetESSID{"e;d;setessid;PSP_AULES00125_BOUTLLOB;"};
+            strcpy(lBuffer, lSetESSID.c_str());
+            lCallBack(lSetESSID.size());
+        } else {
+            // Stop the connection regardless of success
+            lEndTest = true;
+        }
+    }));
+
+    mXLinkKaiConnection->Open(lIPAddress);
+    mXLinkKaiConnection->StartReceiverThread();
+
+    while (!lEndTest) {
+        // Wait until the thread is done
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    // Force connection to close before destructor of google test is called
+    mXLinkKaiConnection->Close(true);
+    mXLinkKaiConnection = nullptr;
 }
