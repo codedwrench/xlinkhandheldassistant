@@ -319,7 +319,7 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadNoXlinkKaiResponse)
 // Tests that a proper response is given to a keepalive
 TEST_F(XLinkKaiConnectionTest, TestReceiverThreadKeepAlive)
 {
-        // Create a mocked timer so we don't have to actually wait in the unittest
+    // Create a mocked timer so we don't have to actually wait in the unittest
     EXPECT_CALL(*mSocketWrapperMock, Close()).RetiresOnSaturation();
     mXLinkKaiConnection = std::make_shared<XLinkKaiConnection>(mSocketWrapperMock, nullptr, mTimerMock);
     mXLinkKaiConnection->SetIncomingConnection(std::static_pointer_cast<IPCapDevice>(mPCapDeviceMock));
@@ -403,6 +403,112 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadKeepAlive)
     mXLinkKaiConnection = nullptr;
 }
 
+// Tests that normal traffic is passed normally
+TEST_F(XLinkKaiConnectionTest, TestReceiverThreadNormalData)
+{
+    // Create a mocked timer so we don't have to actually wait in the unittest
+    EXPECT_CALL(*mSocketWrapperMock, Close()).RetiresOnSaturation();
+    mXLinkKaiConnection = std::make_shared<XLinkKaiConnection>(mSocketWrapperMock, nullptr, mTimerMock);
+    mXLinkKaiConnection->SetIncomingConnection(std::static_pointer_cast<IPCapDevice>(mPCapDeviceMock));
+
+    std::string_view lIPAddress{"127.0.0.1"};
+
+    bool                        lThreadStopCalled{false};
+    bool                        lOpened{false};
+    bool                        lEndTest{false};
+    int                         lThreadCallCount{0};
+    std::function<void(size_t)> lCallBack;
+    char*                       lBuffer = nullptr;
+
+    // Incoming connection will return these
+    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return("ULES00125"));
+    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return("PSP_AULES00125_BOUTLLOB"));
+
+    // Save the arguments from here so we can use the private callback in xlink kai connection
+    EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
+        .WillRepeatedly(DoAll(SaveArg<0>(&lBuffer), SaveArg<2>(&lCallBack)));
+
+    // General requirements
+    EXPECT_CALL(*mSocketWrapperMock, IsOpen()).WillRepeatedly(ReturnPointee(&lOpened));
+    EXPECT_CALL(*mSocketWrapperMock, StartThread()).WillRepeatedly(Return());
+    EXPECT_CALL(*mSocketWrapperMock, IsThreadStopped()).WillRepeatedly(ReturnPointee(&lThreadStopCalled));
+
+    // Opening the socket
+    EXPECT_CALL(*mSocketWrapperMock, Open(lIPAddress, 34523)).WillOnce(DoAll(Assign(&lOpened, true), Return(true)));
+
+    SetConnectionMessages();
+
+    // And ofcourse this should cause a disconnect to be sent to XLink Kai
+    std::string_view lDisconnect{"disconnect;"};
+    EXPECT_CALL(*mSocketWrapperMock, SendTo(lDisconnect)).WillOnce(Return(lDisconnect.size()));
+
+    // Also gets called in the destructor
+    EXPECT_CALL(*mSocketWrapperMock, Close()).Times(2).WillRepeatedly(Assign(&lOpened, false));
+
+    // If the program wants to quit, the test should not stop it from doing so
+    EXPECT_CALL(*mSocketWrapperMock, StopThread()).WillRepeatedly(Assign(&lThreadStopCalled, true));
+
+    // 2 starts, one on connect, the other on the data
+    EXPECT_CALL(*mTimerMock, Start(_)).Times(2);
+    EXPECT_CALL(*mTimerMock, IsTimedOut()).WillRepeatedly(Return(false));
+
+    // Try to sync actions with ReceiverThread
+    EXPECT_CALL(*mSocketWrapperMock, PollThread()).WillRepeatedly(Invoke([&] {
+        lThreadCallCount++;
+
+        if (lThreadCallCount == 1) {
+            // Simulate a connection
+            std::string lConnected{"connected;XLHA_Device;XLHA;"};
+            strcpy(lBuffer, lConnected.c_str());
+            lCallBack(lConnected.size());
+        } else if (lThreadCallCount == 2) {
+            // Sending Settings
+        } else if (lThreadCallCount == 3) {
+            // Data from xlink kai, hard to read, but will do the job, essentially a psp broadcast
+            // Data itself is 172 bytes,then we add +4 for e;e;
+            std::array<unsigned char, 176> lData{0x65, 0x3b, 0x65, 0x3b, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x18, 0xf8, 0x29, 0x3f,
+                              0xb0, 0x88, 0xc8, 0x00, 0x01, 0x01, 0x02, 0x00, 0x80, 0x63, 0x6f, 0x64, 0x65, 0x64, 0x77,
+                              0x72, 0x65, 0x6e, 0x63, 0x68, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                              0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                              0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                              0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                              0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                              0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                              0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                              0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                              0xff, 0xff, 0x01, 0x04, 0x10, 0x00, 0x06, 0x06, 0x02, 0x04, 0x10, 0x00, 0x08, 0x02, 0x03,
+                              0x04, 0x08, 0x00, 0x00, 0x00, 0x00, 0x06, 0xf5, 0x2d, 0x55, 0x29};
+
+            // Skip e;e; for the expected sent over the WiFI adapter result
+            std::string_view lDataView{reinterpret_cast<char*>(&lData.at(4)), lData.size() - 4};
+
+            //  Should pass data to incoming connection and blacklist the source mac from being sent trhough the other
+            //  side
+            EXPECT_CALL(*mPCapDeviceMock, BlackList(0xb03f29f81800));
+            EXPECT_CALL(*mPCapDeviceMock, Send(lDataView));
+
+            memcpy(lBuffer, lData.data(), lData.size());
+            lCallBack(lData.size());
+
+        } else {
+            // Stop the connection regardless of success
+            lEndTest = true;
+        }
+    }));
+
+    mXLinkKaiConnection->Open(lIPAddress);
+    mXLinkKaiConnection->StartReceiverThread();
+
+    while (!lEndTest) {
+        // Wait until the thread is done
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    // Force connection to close before destructor of google test is called
+    mXLinkKaiConnection->Close(true);
+    mXLinkKaiConnection = nullptr;
+}
+
 // Tests that XLHA does not send anything when the socket is closed
 TEST_F(XLinkKaiConnectionTest, TestNoSendOnClosedSocket)
 {
@@ -427,27 +533,27 @@ TEST_F(XLinkKaiConnectionTest, TestNoSendOnNoConnection)
 
 // Tests that XLHA can send connection requests when no connection has been made yet
 TEST_F(XLinkKaiConnectionTest, TestSendConnectionRequestOnNoConnection)
-{    
+{
     EXPECT_CALL(*mSocketWrapperMock, Close()).RetiresOnSaturation();
 
     std::string_view lConnectString{"connect;XLHA_Device;XLHA;"};
-    
+
     EXPECT_CALL(*mSocketWrapperMock, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*mSocketWrapperMock, SendTo(lConnectString)).WillOnce(Return(lConnectString.size()));
-    
+
     ASSERT_TRUE(mXLinkKaiConnection->Send("connect;XLHA_Device;XLHA;", ""));
 }
 
 
-// Tests that XLHA can send disconnection requests when no connection has been made 
+// Tests that XLHA can send disconnection requests when no connection has been made
 TEST_F(XLinkKaiConnectionTest, TestSendDisconnectionRequestOnNoConnection)
 {
     EXPECT_CALL(*mSocketWrapperMock, Close()).RetiresOnSaturation();
 
     std::string_view lDisconnectString{"disconnect;"};
-    
+
     EXPECT_CALL(*mSocketWrapperMock, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*mSocketWrapperMock, SendTo(lDisconnectString)).WillOnce(Return(lDisconnectString.size()));
-    
+
     ASSERT_TRUE(mXLinkKaiConnection->Send("disconnect;", ""));
 }
