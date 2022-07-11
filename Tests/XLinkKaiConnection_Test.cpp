@@ -547,8 +547,8 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadMonitorData)
     char*                       lBuffer = nullptr;
 
     // Incoming connection will return these
-    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return(std::string(cDefaultTitleId)));
-    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return(std::string(cDefaultESSID)));
+    EXPECT_CALL(*lMonitorDeviceDerived, GetTitleId()).WillRepeatedly(Return(std::string(cDefaultTitleId)));
+    EXPECT_CALL(*lMonitorDeviceDerived, GetESSID()).WillRepeatedly(Return(std::string(cDefaultESSID)));
 
     // Save the arguments from here so we can use the private callback in xlink kai connection
     EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
