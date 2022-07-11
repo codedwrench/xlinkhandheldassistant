@@ -6,6 +6,8 @@
 
 #include <functional>
 #include <memory>
+#include <string>
+#include <string_view>
 
 #include <gmock/gmock-actions.h>
 #include <gmock/gmock-spec-builders.h>
@@ -23,6 +25,9 @@ using testing::Invoke;
 using testing::Return;
 using testing::ReturnPointee;
 using testing::SaveArg;
+
+constexpr std::string_view cDefaultTitleId = "ULES00125";
+constexpr std::string_view cDefaultESSID = "PSP_AULES00125_BOUTLLOB";
 
 class MonitorDeviceDerived : virtual public IPCapDeviceMock, virtual public MonitorDevice
 {
@@ -80,8 +85,8 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectHappyFlow)
     char*                       lBuffer = nullptr;
 
     // Incoming connection will return these
-    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return("ULES00125"));
-    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return("PSP_AULES00125_BOUTLLOB"));
+    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return(std::string(cDefaultTitleId)));
+    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return(std::string(cDefaultESSID)));
 
     // Save the arguments from here so we can use the private callback in xlink kai connection
     EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
@@ -159,8 +164,8 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadConnectionTimeout)
     char*                       lBuffer = nullptr;
 
     // Incoming connection will return these
-    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return("ULES00125"));
-    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return("PSP_AULES00125_BOUTLLOB"));
+    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return(std::string(cDefaultTitleId)));
+    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return(std::string(cDefaultESSID)));
 
     // Save the arguments from here so we can use the private callback in xlink kai connection
     EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
@@ -253,8 +258,8 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadNoXlinkKaiResponse)
     char*                       lBuffer = nullptr;
 
     // Incoming connection will return these
-    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return("ULES00125"));
-    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return("PSP_AULES00125_BOUTLLOB"));
+    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return(std::string(cDefaultTitleId)));
+    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return(std::string(cDefaultESSID)));
 
     // Save the arguments from here so we can use the private callback in xlink kai connection
     EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
@@ -344,8 +349,8 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadKeepAlive)
     char*                       lBuffer = nullptr;
 
     // Incoming connection will return these
-    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return("ULES00125"));
-    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return("PSP_AULES00125_BOUTLLOB"));
+    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return(std::string(cDefaultTitleId)));
+    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return(std::string(cDefaultESSID)));
 
     // Save the arguments from here so we can use the private callback in xlink kai connection
     EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
@@ -431,8 +436,8 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadNormalData)
     char*                       lBuffer = nullptr;
 
     // Incoming connection will return these
-    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return("ULES00125"));
-    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return("PSP_AULES00125_BOUTLLOB"));
+    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return(std::string(cDefaultTitleId)));
+    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return(std::string(cDefaultESSID)));
 
     // Save the arguments from here so we can use the private callback in xlink kai connection
     EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
@@ -540,8 +545,8 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadMonitorData)
     char*                       lBuffer = nullptr;
 
     // Incoming connection will return these
-    EXPECT_CALL(*lMonitorDeviceDerived, GetTitleId()).WillRepeatedly(Return("ULES00125"));
-    EXPECT_CALL(*lMonitorDeviceDerived, GetESSID()).WillRepeatedly(Return("PSP_AULES00125_BOUTLLOB"));
+    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return(std::string(cDefaultTitleId)));
+    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return(std::string(cDefaultESSID)));
 
     // Save the arguments from here so we can use the private callback in xlink kai connection
     EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
@@ -717,8 +722,8 @@ TEST_F(XLinkKaiConnectionTest, TestSSIDSwitchFromXLinkKai)
     char*                       lBuffer = nullptr;
 
     // Incoming connection will return these
-    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return("ULES00125"));
-    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return("PSP_AULES00125_BOUTLLOB"));
+    EXPECT_CALL(*mPCapDeviceMock, GetTitleId()).WillRepeatedly(Return(std::string(cDefaultTitleId)));
+    EXPECT_CALL(*mPCapDeviceMock, GetESSID()).WillRepeatedly(Return(std::string(cDefaultESSID)));
 
     // Save the arguments from here so we can use the private callback in xlink kai connection
     EXPECT_CALL(*mSocketWrapperMock, AsyncReceiveFrom(_, _, _))
