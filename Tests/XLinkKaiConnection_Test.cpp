@@ -28,6 +28,7 @@ using testing::SaveArg;
 
 constexpr std::string_view cDefaultTitleId = "ULES00125";
 constexpr std::string_view cDefaultESSID = "PSP_AULES00125_BOUTLLOB";
+constexpr std::string_view cFullKeepAliveString = "keepalive;";
 
 class MonitorDeviceDerived : virtual public IPCapDeviceMock, virtual public MonitorDevice
 {
@@ -392,11 +393,12 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadKeepAlive)
         } else if (lThreadCallCount == 2) {
             // Sending Settings
         } else if (lThreadCallCount == 3) {
+
             // Should send keepalive back when keepalive gotten from xlink kai
-            EXPECT_CALL(*mSocketWrapperMock, SendTo(cKeepAliveString)).WillOnce(Return(true));
+            EXPECT_CALL(*mSocketWrapperMock, SendTo(cFullKeepAliveString)).WillOnce(Return(true));
 
             // Keep alive from xlink kai
-            std::string lKeepAlive{cKeepAliveString};
+            std::string lKeepAlive{cFullKeepAliveString};
             strcpy(lBuffer, lKeepAlive.c_str());
             lCallBack(lKeepAlive.size());
         } else {
