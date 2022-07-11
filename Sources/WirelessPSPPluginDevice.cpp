@@ -62,22 +62,12 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
             GetReadWatchdog() = std::chrono::system_clock::now();
 
             // If it's an information packet, just save the information, otherwise we probably need to handshake
-            if (mPacketHandler->GetPacket().substr(Net_8023_Constants::cDataIndex,
-                                                   Net_Constants::cInfoToken.length()) == Net_Constants::cInfoToken) {
-                // Send the title id from the handshake over to XLink Kai.
-                ObtainTitleId();
-                if (!GetTitleId().empty()) {
-                    GetConnector()->SendTitleId(GetTitleId());
-                }
-            } else {
-                std::string lPacket{
-                    ConstructPSPPluginHandshake(mPacketHandler->GetSourceMac(), GetAdapterMacAddress())};
+            std::string lPacket{ConstructPSPPluginHandshake(mPacketHandler->GetSourceMac(), GetAdapterMacAddress())};
 
-                // Log
-                Logger::GetInstance().Log("Sending: " + PrettyHexString(lPacket), Logger::Level::TRACE);
+            // Log
+            Logger::GetInstance().Log("Sending: " + PrettyHexString(lPacket), Logger::Level::TRACE);
 
-                Send(lPacket, false);
-            }
+            Send(lPacket, false);
         } else if (mPacketHandler->GetEtherType() == Net_Constants::cPSPEtherType) {
             // Log
             Logger::GetInstance().Log("Received: " + PrettyHexString(lData), Logger::Level::TRACE);
@@ -85,13 +75,22 @@ bool WirelessPSPPluginDevice::ReadCallback(const unsigned char* aData, const pca
             // Reset the timer so it will not time out
             GetReadWatchdog() = std::chrono::system_clock::now();
 
-            // From plugin mode -> 802.3
-            lData = mPacketHandler->ConvertPacketOut();
-            GetConnector()->Send(lData);
+            if (mPacketHandler->GetPacket().substr(Net_8023_Constants::cDataIndex,
+                                                   Net_Constants::cInfoToken.length()) == Net_Constants::cInfoToken) {
+                // Send the title id from the info packet over to XLink Kai.
+                ObtainTitleId();
+                if (!GetTitleId().empty()) {
+                    GetConnector()->SendTitleId(GetTitleId());
+                }
+            } else {
+                // From plugin mode -> 802.3
+                lData = mPacketHandler->ConvertPacketOut();
+                GetConnector()->Send(lData);
 
-            SetData(aData);
-            SetHeader(aHeader);
-            IncreasePacketCount();
+                SetData(aData);
+                SetHeader(aHeader);
+                IncreasePacketCount();
+            }
         }
     }
 
