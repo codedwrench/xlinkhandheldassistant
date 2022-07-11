@@ -393,10 +393,10 @@ TEST_F(XLinkKaiConnectionTest, TestReceiverThreadKeepAlive)
             // Sending Settings
         } else if (lThreadCallCount == 3) {
             // Should send keepalive back when keepalive gotten from xlink kai
-            EXPECT_CALL(*mSocketWrapperMock, SendTo("keepalive;")).WillOnce(Return(true));
+            EXPECT_CALL(*mSocketWrapperMock, SendTo(cKeepAliveString)).WillOnce(Return(true));
 
             // Keep alive from xlink kai
-            std::string lKeepAlive{"keepalive;"};
+            std::string lKeepAlive{cKeepAliveString};
             strcpy(lBuffer, lKeepAlive.c_str());
             lCallBack(lKeepAlive.size());
         } else {
@@ -765,7 +765,7 @@ TEST_F(XLinkKaiConnectionTest, TestSSIDSwitchFromXLinkKai)
             // Sending Settings
         } else if (lThreadCallCount == 3) {
             // Incoming ssid switch from another XLink Kai instance.
-            EXPECT_CALL(*mPCapDeviceMock, Connect("PSP_AULES00125_BOUTLLOB"));
+            EXPECT_CALL(*mPCapDeviceMock, Connect(cDefaultESSID));
 
             std::string lSetESSID{"e;d;setessid;PSP_AULES00125_BOUTLLOB;"};
             strcpy(lBuffer, lSetESSID.c_str());
