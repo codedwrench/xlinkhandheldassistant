@@ -54,6 +54,7 @@ bool WirelessPromiscuousBase::Open(std::string_view                aName,
     mWrapper->SetTimeOut(cPCAPTimeoutMs);
     mWrapper->SetDirection(PcapDirection::DIR_IN);
     mWrapper->SetImmediateMode(1);
+    mWrapper->SetPromiscuousMode(1);
 
     int lStatus{mWrapper->Activate()};
     if (lStatus == 0) {

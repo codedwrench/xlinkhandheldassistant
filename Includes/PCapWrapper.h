@@ -34,6 +34,7 @@ public:
     int            SendPacket(std::string_view buffer) override;
     int            SetDirection(PcapDirection::Direction direction) override;
     int            SetImmediateMode(int mode) override;
+    int            SetPromiscuousMode(int promiscuous) override;
     int            SetSnapLen(int snaplen) override;
     int            SetTimeOut(int timeout) override;
 
