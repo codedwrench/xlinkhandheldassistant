@@ -285,21 +285,42 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
     Logger::GetInstance().Log("Connecting to: " + aConnection.ssid, Logger::Level::TRACE);
     DWORD lReturn{};
 
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> lConverter;
+    std::wstring                                           lProf = GenerateXML(lConverter.from_bytes(aConnection.ssid));
+    Logger::GetInstance().Log("Generated XML: " + lConverter.to_bytes(lProf), Logger::Level::TRACE);
+    DWORD dwReason;
+    // set profile
+    DWORD dwError = WlanSetProfile(mWifiHandle,
+                                   &mGUID,
+                                   0,  // no flags for the profile
+                                   lProf.c_str(),
+                                   NULL,  // use the default ACL
+                                   TRUE,  // overwrite a profile if it already exists
+                                   NULL,  // reserved
+                                   &dwReason);
+
+
+    switch (dwError) {
+        case ERROR_INVALID_PARAMETER:
+            Logger::GetInstance().Log("The profile has invalid params.", Logger::Level::ERROR);
+            break;
+        case ERROR_BAD_PROFILE:
+            Logger::GetInstance().Log("The profile is bad.", Logger::Level::ERROR);
+            break;
+        case ERROR_ALREADY_EXISTS:
+            Logger::GetInstance().Log("The profile is already exists.", Logger::Level::ERROR);
+    }
+
     WLAN_CONNECTION_PARAMETERS mParameters{};
 
-    if (aConnection.bssid.at(0) == 0 && aConnection.bssid.at(1) == 0) {
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> lConverter;
-        std::wstring lProf = GenerateXML(lConverter.from_bytes(aConnection.ssid));
-        Logger::GetInstance().Log("Generated XML: " + lConverter.to_bytes(lProf), Logger::Level::TRACE);
-        WLAN_REASON_CODE lReason       = 0;
-        mParameters.wlanConnectionMode = wlan_connection_mode_temporary_profile;
-        mParameters.strProfile         = lProf.c_str();
-
-    } else {
-        mParameters.strProfile         = nullptr;
-        mParameters.wlanConnectionMode = wlan_connection_mode_discovery_unsecure;
-        mParameters.dwFlags            = WLAN_CONNECTION_ADHOC_JOIN_ONLY;
+    if (aConnection.bssid.at(0) != 0 && aConnection.bssid.at(1) != 0) {
+        mParameters.dwFlags = WLAN_CONNECTION_ADHOC_JOIN_ONLY;
     }
+
+    WLAN_REASON_CODE lReason;
+    mParameters.wlanConnectionMode = wlan_connection_mode_profile;
+    mParameters.strProfile         = L"PSPAdhocNetwork";
+
     // Setup SSID
     DOT11_SSID lSSID{};
     memcpy(&lSSID.ucSSID[0], aConnection.ssid.data(), aConnection.ssid.size());
