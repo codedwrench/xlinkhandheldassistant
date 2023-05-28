@@ -31,10 +31,10 @@ devenv_vscode_packages:
     "ms-vscode.cpptools"
   ]
 
-npcapsdk_version: "1.12"
+npcapsdk_version: "1.13"
 npcap_version: "1.31"
-pdcurses_version: "4.3.2a"
-boost_version: "1.79.0"
+pdcurses_version: "4.3.6"
+boost_version: "1.82.0"
 
 install_base: true
 install_runner: false
