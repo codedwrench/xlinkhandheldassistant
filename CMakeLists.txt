@@ -157,6 +157,7 @@ if (ENABLE_TESTS)
 	add_subdirectory(Tests)
 
 	find_package(GTest REQUIRED)
+	find_package(GMock REQUIRED)
 	include(GoogleTest)
 	enable_testing()
 endif(ENABLE_TESTS)
