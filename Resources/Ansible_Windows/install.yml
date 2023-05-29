@@ -1,125 +1,21 @@
 ---
 - name: Installing XLink Handheld Assistant build environment
   hosts: win
-
-  vars:
-    drive: "c"
-    install_dir: "build_tools"
-    ssh_key_location: 'C:\Users\User\.ssh\'
-    msys2_packages:
-      [
-        "bison",
-        "mingw-w64-i686-cmake",
-        "mingw-w64-i686-gcc",
-        "mingw-w64-i686-make",
-        "mingw-w64-i686-tools-git",
-      ]
-
-    npcapsdk_version: "1.12"
-    npcap_version: "1.31"
-
-    pdcurses_version: "4.3.2a"
-
-    boost_version: "1.79.0"
-
+  
   tasks:
-    # -- General Maintenance --
+    - name: Grab variables  
+      include_vars:
+        file: vars.yml
 
-    # One way to ensure the system is reliable just after a reboot, is to set WinRM to a delayed startup
-    - name: Ensure WinRM starts when the system has settled and is ready to work reliably
-      win_service:
-        name: WinRM
-        start_mode: delayed
+    - name: Install Base
+      import_tasks: install_base.yml
+      when: install_base == True
+    
+    - name: Install Runner
+      import_tasks: install_runner.yml
+      when: install_runner == True
+    
+    - name: Install Development Environment
+      import_tasks: install_devenv.yml
+      when: install_devenv == True
 
-    # Make sure system is up-to-date, do this 3 times because windows is windows and likes to magically come up with
-    # updates
-    - name: Install all security, critical, and rollup updates
-      win_updates:
-        category_names:
-          - SecurityUpdates
-          - CriticalUpdates
-          - UpdateRollups
-        reboot: yes
-        reboot_timeout: 3600
-      register: update_result
-      when: update_result is not defined or not update_result.found_update_count == 0
-      loop: "{{ range(0, 3, 1) | list }}"
-
-    # -- Installing base --
-
-    # Sadly thes packages have no way to install it to a different location
-    - name: Install 7-Zip
-      win_chocolatey:
-        name: 7zip
-        state: present
-
-    - name: Install Git
-      win_chocolatey:
-        name: git
-        state: present
-
-    - name: Ensure ssh folder exists
-      win_file:
-        path: "{{ ssh_key_location }}"
-        state: directory
-
-    - name: Copy server private key
-      win_copy:
-        dest: '{{ ssh_key_location }}\id_rsa'
-        operation: file_copy
-        src: id_rsa.vault
-
-    - name: Install MSYS and dependencies
-      import_tasks: install_msys2.yml
-
-    # -- Static libs --
-
-    # SDK
-    # TODO: Probably should do a version check at some point instead
-    - name: Check if NPCAP SDK is installed
-      win_stat:
-        path: '{{ drive }}:\{{ install_dir }}\npcapsdk'
-      register: npcap_sdk_exists
-
-    - name: Download NPCAP SDK
-      win_get_url:
-        dest: '{{ drive }}:\{{ install_dir}}\npcapsdk.zip'
-        url: "https://npcap.com/dist/npcap-sdk-{{ npcapsdk_version }}.zip"
-      register: npcapsdk_download_result
-      when: (npcap_sdk_exists is defined) and (not npcap_sdk_exists.stat.exists)
-
-    - name: Unzip NPCAP SDK
-      win_unzip:
-        delete_archive: yes
-        src: '{{ drive }}:\{{ install_dir}}\npcapsdk.zip'
-        dest: '{{ drive }}:\{{ install_dir}}\npcapsdk'
-      when: npcapsdk_download_result.msg is defined and npcapsdk_download_result.msg == "OK"
-
-    - name: Check if wpcap.dll exists
-      win_stat:
-        path: '{{ drive }}:\{{ install_dir }}\npcapsdk\wpcap.dll'
-      register: npcap_dll_exists
-
-    - name: Install wpcap.dll
-      import_tasks: install_wpcapdll.yml
-      when: (npcap_dll_exists.stat.exists is defined) and (not npcap_dll_exists.stat.exists)
-
-    # TODO: Probably should do a version check at some point instead
-    - name: Check if PDCurses is installed
-      win_stat:
-        path: '{{ drive }}:\{{ install_dir }}\pdcurses'
-      register: pdcurses_exists
-
-    - name: Install PDCurses
-      import_tasks: install_pdcurses.yml
-      when: (pdcurses_exists.stat is defined) and (not pdcurses_exists.stat.exists)
-
-    # TODO: Probably should do a version check at some point instead
-    - name: Check if Boost is installed
-      win_stat:
-        path: '{{ drive }}:\{{ install_dir }}\boost'
-      register: boost_exists
-
-    - name: Install Boost
-      import_tasks: install_boost.yml
-      when: (boost_exists.stat is defined) and (not boost_exists.stat.exists)

@@ -22,7 +22,7 @@ public:
     KeyboardController(KeyboardController const& aController)     = delete;
     KeyboardController(KeyboardController&& aController) noexcept = default;
 
-    KeyboardController& operator=(KeyboardController aController) = delete;
+    KeyboardController& operator=(KeyboardController aController)   = delete;
     KeyboardController& operator=(KeyboardController&& aController) = default;
 
     ~KeyboardController();

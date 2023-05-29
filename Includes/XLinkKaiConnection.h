@@ -6,19 +6,23 @@
  *
  **/
 
+#include <memory>
 #include <string>
 #include <thread>
 
-#include <boost/asio.hpp>
-
 #include "Handler8023.h"
 #include "IConnector.h"
+#include "ITimer.h"
+#include "IUDPSocketWrapper.h"
 
 namespace XLinkKai_Constants
 {
     static constexpr int                  cMaxLength{4096};
     static constexpr std::string_view     cIp{"127.0.0.1"};
     static constexpr std::string_view     cSeparator{";"};
+    static constexpr std::string_view     cInfoFormat{"info"};
+    static constexpr std::string_view     cSubCommandTitleIdFormat{"titleid"};
+    static constexpr std::string_view     cSubCommandSetESSIDFormat{"essid"};
     static constexpr std::string_view     cKeepAliveFormat{"keepalive"};
     static constexpr std::string_view     cConnectFormat{"connect"};
     static constexpr std::string_view     cConnectedFormat{"connected"};
@@ -56,7 +60,14 @@ namespace XLinkKai_Constants
                                                      cEthernetDataMetaFormat.data() + cSeparator.data()};
 
     static const std::string cSettingDDSOnlyString{std::string(cSettingFormat) + cSeparator.data() +
-                                                   cSettingDDSOnly.data() + cSeparator.data() + "true"};
+                                                   cSettingDDSOnly.data() + cSeparator.data() + "true" +
+                                                   cSeparator.data()};
+
+    static const std::string cInfoSetTitleIdString{std::string(cInfoFormat) + cSeparator.data() +
+                                                   cSubCommandTitleIdFormat.data() + cSeparator.data()};
+
+    static const std::string cInfoSetESSIDString(std::string(cInfoFormat) + cSeparator.data() +
+                                                 cSubCommandSetESSIDFormat.data() + cSeparator.data());
 
     static const std::string cSetESSIDString(std::string(cEthernetDataMetaString.data()) + cSetESSIDFormat.data() +
                                              cSeparator.data());
@@ -70,7 +81,16 @@ using namespace XLinkKai_Constants;
 class XLinkKaiConnection : public IConnector
 {
 public:
-    XLinkKaiConnection() = default;
+    /**
+     * Creates an XLink Kai Connection.
+     *
+     * @param aSocketWrapper - The implementation to use for UDP sockets.
+     * @param aConnectionTimer - The implementation to use for the connection timer.
+     * @param aKeepAliveTimer - The implementation to use for the keepalive timer.
+     */
+    explicit XLinkKaiConnection(std::shared_ptr<IUDPSocketWrapper> aSocketWrapper   = nullptr,
+                                std::shared_ptr<ITimer>            aConnectionTimer = nullptr,
+                                std::shared_ptr<ITimer>            aKeepAliveTimer  = nullptr);
     ~XLinkKaiConnection();
     XLinkKaiConnection(const XLinkKaiConnection& aXLinkKaiConnection) = delete;
     XLinkKaiConnection& operator=(const XLinkKaiConnection& aXLinkKaiConnection) = delete;
@@ -91,6 +111,18 @@ public:
      */
     bool Connect();
 
+    /*
+     * Sends a titleId over to the connector, it's up to the connector what to do with it.
+     * @param aTitleId - The ID to send over to the connector.
+     */
+    void SendTitleId(std::string_view aTitleId) override;
+
+    /*
+     * Sends an ESSID over to the connector, it's up to the connector what to do with it.
+     * @param aESSID - The ESSID to send over to the connector.
+     */
+    void SendESSID(std::string_view aESSID) override;
+
     /**
      * Synchronous receive of network messages from XLink Kai, may hang if nothing received!.
      * @return True if successful.
@@ -104,6 +136,7 @@ public:
     bool Send(std::string_view aData) override;
 
     void Close() final;
+
     /**
      * Closes the connection.
      * @param aKillThread - set true if the receiver thread needs to be killed as well.
@@ -134,7 +167,7 @@ private:
     /**
      * Handles traffic from XLink Kai.
      */
-    void ReceiveCallback(const boost::system::error_code& aError, size_t aBytesReceived);
+    void ReceiveCallback(size_t aBytesReceived);
 
     /**
      * Sends a keepalive back to the XLink Kai engine, call this function when a keepalive is received.
@@ -142,23 +175,24 @@ private:
      */
     bool HandleKeepAlive();
 
-    bool                                               mConnected{false};
-    bool                                               mConnectInitiated{false};
-    bool                                               mSettingsSent{false};
-    std::chrono::time_point<std::chrono::system_clock> mConnectionTimerStart{std::chrono::seconds{0}};
-    std::chrono::time_point<std::chrono::system_clock> mKeepAliveTimerStart{std::chrono::seconds{0}};
+    bool                    mStopCommand{false};
+    bool                    mConnected{false};
+    bool                    mConnectInitiated{false};
+    bool                    mSettingsSent{false};
+    std::shared_ptr<ITimer> mConnectionTimer{nullptr};
+    std::shared_ptr<ITimer> mKeepAliveTimer{nullptr};
 
     std::array<char, cMaxLength> mData{};
     // Raw ethernet data received from XLink Kai
-    std::string                    mEthernetData{};
-    std::shared_ptr<IPCapDevice>   mIncomingConnection{nullptr};
-    std::string                    mIp{cIp};
-    boost::asio::io_service        mIoService{};
-    Handler8023                    mPacketHandler{};
-    unsigned int                   mPort{cPort};
-    bool                           mHosting{};
-    bool                           mUseHostSSID{};
-    std::shared_ptr<std::thread>   mReceiverThread{nullptr};
-    boost::asio::ip::udp::endpoint mRemote{};
-    boost::asio::ip::udp::socket   mSocket{mIoService};
+    std::string                        mEthernetData{};
+    std::string                        mLastESSID{};
+    std::string                        mLastTitleId{};
+    std::shared_ptr<IPCapDevice>       mIncomingConnection{nullptr};
+    std::string                        mIp{cIp};
+    Handler8023                        mPacketHandler{};
+    unsigned int                       mPort{cPort};
+    bool                               mHosting{};
+    bool                               mUseHostSSID{};
+    std::shared_ptr<std::thread>       mReceiverThread{nullptr};
+    std::shared_ptr<IUDPSocketWrapper> mSocketWrapper{nullptr};
 };

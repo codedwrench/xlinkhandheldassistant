@@ -38,7 +38,7 @@ public:
     explicit WindowController(WindowModel& aModel);
     ~WindowController();
 
-    WindowController(const WindowController& aWindowController) = delete;
+    WindowController(const WindowController& aWindowController)            = delete;
     WindowController& operator=(const WindowController& aWindowController) = delete;
 
     WindowController& operator=(WindowController&& aWindowController) = delete;

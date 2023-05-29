@@ -36,5 +36,10 @@ public:
     bool Send(std::string_view aData) override;
 
 private:
+    /**
+     * Gets the TitleId from the last received packet.
+     */
+    void ObtainTitleId();
+
     std::shared_ptr<HandlerPSPPlugin> mPacketHandler{nullptr};
 };

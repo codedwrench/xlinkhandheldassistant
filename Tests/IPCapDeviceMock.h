@@ -1,6 +1,7 @@
 /* Copyright (c) 2021 [Rick de Bondt] - IPCapDeviceMock.ch
  * This file contains a mock for IPCapDevice.
  **/
+#include <gmock/gmock.h>
 
 #include "IPCapDevice.h"
 
@@ -14,10 +15,11 @@ public:
     MOCK_METHOD(std::string, DataToString, (const unsigned char* aData, const pcap_pkthdr* aHeader));
     MOCK_METHOD(const unsigned char*, GetData, ());
     MOCK_METHOD(const pcap_pkthdr*, GetHeader, ());
+    MOCK_METHOD(std::string, GetESSID, ());
+    MOCK_METHOD(std::string, GetTitleId, ());
     MOCK_METHOD(bool, ReadCallback, (const unsigned char* aData, const pcap_pkthdr* aHeader));
     MOCK_METHOD(bool, Send, (std::string_view aData));
     MOCK_METHOD(void, SetConnector, (std::shared_ptr<IConnector> aDevice));
-    MOCK_METHOD(void, SetHosting, (bool aHosting));
     MOCK_METHOD(void, ShowPacketStatistics, (const pcap_pkthdr* aHeader), (const));
     MOCK_METHOD(bool, StartReceiverThread, ());
 };

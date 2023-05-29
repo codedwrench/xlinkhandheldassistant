@@ -1,0 +1,30 @@
+---
+- name: Install extra MSYS dependencies
+  include_tasks: base_scripts/configure_msys2_packages.yml 
+  vars:
+    msys2_packages: "{{ msys2_devenv_packages }}"
+
+- name: Install VSCode
+  win_chocolatey:
+    name: vscode
+    state: present
+
+- name: Install VSCode Extensions for the current user
+  win_shell: "code --install-extension {{ item }}"
+  loop: "{{ devenv_vscode_packages }}"
+  register: install_output
+  become_method: runas
+  become: yes
+  become_user: "{{ user }}"
+  changed_when: '"successfully installed" in install_output.stdout'
+  failed_when: '"Failed Installing" in install_output.stderr'
+
+# Default settings.jsons
+- name: Copy vscode settings.json
+  win_copy:
+    dest: '%APPDATA%\Code\User\settings.json'
+    operation: file_copy
+    src: files/settings.json
+  become_method: runas
+  become: yes
+  become_user: "{{ user }}"

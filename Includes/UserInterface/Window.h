@@ -39,7 +39,7 @@ public:
            bool                                aExclusive  = false,
            bool                                aVisible    = true);
 
-    Window(const Window& aWindow) = delete;
+    Window(const Window& aWindow)            = delete;
     Window& operator=(const Window& aWindow) = delete;
 
     Window& operator=(Window&& aWindow) = delete;

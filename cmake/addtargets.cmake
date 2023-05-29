@@ -51,8 +51,8 @@ foreach (target IN ITEMS ${targets})
     list(FILTER TMPSOURCES EXCLUDE REGEX "main.cpp")
 
     add_executable(${target}_tests ${${target}_TEST_SOURCES} ${TMPSOURCES})
-    target_include_directories(${target}_tests PRIVATE ${${target}_INCLUDE_FOLDERS} ${${target}_TEST_INCLUDE_FOLDERS})
-    target_link_libraries(${target}_tests gtest gmock ${${target}_LIBRARIES})
+    target_include_directories(${target}_tests PRIVATE ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS} ${${target}_INCLUDE_FOLDERS} ${${target}_TEST_INCLUDE_FOLDERS})
+    target_link_libraries(${target}_tests GTest::gtest GTest::gtest_main ${GMOCK_BOTH_LIBRARIES} ${${target}_LIBRARIES})
 
     if (${target}_COMPILE_DEFINITIONS)
       target_compile_definitions(${target}_tests ${${target}_COMPILE_DEFINITIONS})

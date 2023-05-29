@@ -1,6 +1,7 @@
 /* Copyright (c) 2021 [Rick de Bondt] - IPCapWrapperMock.h
  * This file contains a mock for IPCapWrapper.
  **/
+#include <gmock/gmock.h>
 
 #include "IPCapWrapper.h"
 
@@ -26,6 +27,7 @@ public:
     MOCK_METHOD(int, SendPacket, (std::string_view buffer));
     MOCK_METHOD(int, SetDirection, (PcapDirection::Direction direction));
     MOCK_METHOD(int, SetImmediateMode, (int mode));
+    MOCK_METHOD(int, SetPromiscuousMode, (int promiscuous));
     MOCK_METHOD(int, SetSnapLen, (int snaplen));
     MOCK_METHOD(int, SetTimeOut, (int timeout));
 };

@@ -54,6 +54,7 @@ bool WirelessPromiscuousBase::Open(std::string_view                aName,
     mWrapper->SetTimeOut(cPCAPTimeoutMs);
     mWrapper->SetDirection(PcapDirection::DIR_IN);
     mWrapper->SetImmediateMode(1);
+    mWrapper->SetPromiscuousMode(1);
 
     int lStatus{mWrapper->Activate()};
     if (lStatus == 0) {
@@ -143,13 +144,13 @@ bool WirelessPromiscuousBase::Connect(std::string_view aESSID)
                     if (lNetwork.ssid.find(lFilter) != std::string::npos && lNetwork.isadhoc && !lNetwork.isconnected) {
                         lReturn = mWifiInterface->Connect(lNetwork);
                         if (mCurrentlyConnected != nullptr) {
-                            *mCurrentlyConnected    = lNetwork.ssid;
-                            mCurrentlyConnectedInfo = lNetwork;
-                            lDidConnect             = true;
-                            if (IsHosting()) {
-                                GetConnector()->Send(std::string(XLinkKai_Constants::cSetESSIDString), lNetwork.ssid);
-                            }
+                            *mCurrentlyConnected = lNetwork.ssid;
                         }
+
+                        mCurrentlyConnectedInfo = lNetwork;
+                        lDidConnect             = true;
+
+                        GetConnector()->SendESSID(lNetwork.ssid);
                     }
                 }
                 lCount++;
@@ -171,10 +172,13 @@ bool WirelessPromiscuousBase::Connect(std::string_view aESSID)
             lInformation.isadhoc = true;
 
             Logger::GetInstance().Log("Switching networks due to host broadcast!", Logger::Level::DEBUG);
+
             lReturn = mWifiInterface->Connect(lInformation);
             if (mCurrentlyConnected != nullptr) {
                 *mCurrentlyConnected = lInformation.ssid;
             }
+
+            GetConnector()->SendESSID(lInformation.ssid);
         }
     }
 
@@ -255,4 +259,19 @@ bool WirelessPromiscuousBase::StartReceiverThread()
     }
 
     return lReturn;
+}
+
+std::string WirelessPromiscuousBase::GetESSID()
+{
+    return mCurrentlyConnectedInfo.ssid;
+}
+
+std::string WirelessPromiscuousBase::GetTitleId()
+{
+    return mTitleId;
+}
+
+void WirelessPromiscuousBase::SetTitleId(std::string_view aTitleId)
+{
+    mTitleId = aTitleId;
 }

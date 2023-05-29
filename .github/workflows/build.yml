@@ -30,7 +30,10 @@ jobs:
                    -DAUTO_FORMAT=0 \
                    -DPCAP_ROOT_DIR="$HOME/libpcap" \
                    -DBOOST_ROOT="$HOME/boost" \
-                   -DNCURSES_ROOT_DIR="$HOME/ncurses"
+                   -DNCURSES_ROOT_DIR="$HOME/ncurses" \
+                   -DLibNL_ROOT_DIR="$HOME/libnl" \
+                   -DGTEST_ROOT="$HOME/googletest" \
+                   -DGMOCK_ROOT="$HOME/googletest"
           cmake --build . -- -j`nproc`
       - name: Unit Tests
         run: |
@@ -64,7 +67,11 @@ jobs:
           cd build 
           cmake .. -G "MinGW Makefiles" -DAUTO_FORMAT=0 \
                                         -DBUILD_X32=1 \
-                                        -DBOOST_ROOT="c:/boost"
+                                        -DBOOST_ROOT="c:/build_tools/boost" \
+                                        -DPDCURSES_ROOT_DIR="c:/build_tools/pdcurses" \
+                                        -DPCAP_ROOT_DIR="c:/build_tools/npcapsdk" \
+                                        -DNPCAP_DLL_PATH="c:/build_tools/npcapsdk" 
+                                        
                                         
           mingw32-make -j`nproc`
       - uses: actions/upload-artifact@v2

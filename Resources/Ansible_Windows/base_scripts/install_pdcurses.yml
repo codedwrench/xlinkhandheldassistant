@@ -20,7 +20,7 @@
 
 - name: Build PDCurses
   win_shell:
-    '{{ drive }}:\{{ install_dir }}\msys64\msys2_shell.cmd -mingw32 -defterm -no-start -here -c
+    '{{ drive }}:\msys64\msys2_shell.cmd -mingw32 -defterm -no-start -here -c
     "mingw32-make WIDE=Y CHTYPE_32=Y -j4" '
   args:
     chdir: '{{ drive }}:\{{ install_dir }}\pdcurses\wincon'

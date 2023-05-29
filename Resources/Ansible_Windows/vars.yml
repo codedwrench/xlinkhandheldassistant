@@ -1,0 +1,53 @@
+---
+user: "User"
+drive: "c"
+install_dir: "build_tools"
+ssh_key_location: 'C:\Users\{{ user }}\.ssh\'
+msys2_packages:
+  [
+    "bison",
+    "git",
+    "mingw-w64-i686-cmake",
+    "mingw-w64-i686-gcc",
+    "mingw-w64-i686-make",
+    "mingw-w64-i686-tools-git",
+  ]
+
+msys2_devenv_packages:
+  [
+    "mingw-w64-i686-clang-tools-extra",
+    "mingw-w64-i686-gdb"
+  ]
+
+devenv_vscode_packages:
+  [
+    "ms-vscode.cmake-tools",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "matepek.vscode-catch2-test-adapter",
+    "twxs.cmake",
+    "redhat.vscode-yaml",
+    "a5hk.night-coder",
+    "cschlosser.doxdocgen",
+    "ms-vscode.cpptools"
+  ]
+
+npcapsdk_version: "1.13"
+npcap_version: "1.31"
+pdcurses_version: "4.3.6"
+boost_version: "1.82.0"
+
+install_base: true
+install_runner: false
+install_devenv: false
+
+# Runner portion
+runner_name: "windows-ansible"
+runner_folder: "github-runner"
+runner_github_user: "codedwrench"
+runner_github_repo: "xlinkhandheldassistant"
+
+# Add these variables using command line, vaulting these would be smart
+runner_token: "{{ token }}"
+runner_admin_password: "{{ password }}"
+
+

@@ -32,7 +32,6 @@ std::string HandlerPSPPlugin::ConvertPacketIn(std::string_view aData, uint64_t a
         lData.data() + Net_8023_Constants::cSourceAddressIndex, &aAdapterMac, Net_8023_Constants::cSourceAddressLength);
 
     lData.append(lActualSourceMac);
-
     return lData;
 }
 

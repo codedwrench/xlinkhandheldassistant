@@ -44,11 +44,6 @@ const pcap_pkthdr* PCapDeviceBase::GetHeader()
     return mHeader;
 }
 
-bool PCapDeviceBase::IsHosting() const
-{
-    return mHosting;
-}
-
 void PCapDeviceBase::IncreasePacketCount()
 {
     mPacketCount++;
@@ -77,9 +72,4 @@ std::string PCapDeviceBase::DataToString(const unsigned char* aData, const pcap_
     }
 
     return lData;
-}
-
-void PCapDeviceBase::SetHosting(bool aHosting)
-{
-    mHosting = aHosting;
 }

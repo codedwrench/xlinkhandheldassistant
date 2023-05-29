@@ -2,6 +2,7 @@
 
 #include "WindowModel.h"
 
+#include <algorithm>
 #include <iostream>
 
 using namespace WindowModel_Constants;

@@ -2,6 +2,8 @@
  * This file contains a mock for IWifiInterface.
  **/
 
+#include <gmock/gmock.h>
+
 #include "IWifiInterface.h"
 
 class IWifiInterfaceMock : public IWifiInterface

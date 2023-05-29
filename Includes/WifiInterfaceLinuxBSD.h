@@ -9,6 +9,7 @@
 #if not defined(_WIN32) && not defined(_WIN64)
 #include <array>
 #include <chrono>
+#include <memory>
 #include <mutex>
 #include <string_view>
 #include <utility>
@@ -21,6 +22,8 @@
 #include <netlink/netlink.h>
 
 #include "IWifiInterface.h"
+
+class ITimer;
 
 struct nl_sock;
 
@@ -64,9 +67,17 @@ public:
     uint64_t                                      GetAdapterMacAddress() override;
     std::vector<IWifiInterface::WifiInformation>& GetAdhocNetworks() override;
 
+    /**
+     * Same as GetAdhocNetworks but allows for a different timer object to be given for the scan timeout.
+     *
+     * @param aTimer - The timer to use.
+     * @return Same as GetAdhocNetworks.
+     */
+    std::vector<IWifiInterface::WifiInformation>& GetAdhocNetworks(std::shared_ptr<ITimer> aTimer);
+
 private:
     void ClearSocket();
-    bool ScanTrigger();
+    bool ScanTrigger(std::shared_ptr<ITimer> aTimer);
     int  GetMulticastId();
     void SetBSSPolicy();
 

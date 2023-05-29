@@ -54,6 +54,7 @@ public:
     virtual int            SendPacket(std::string_view buffer)                                    = 0;
     virtual int            SetDirection(PcapDirection::Direction direction)                       = 0;
     virtual int            SetImmediateMode(int mode)                                             = 0;
+    virtual int            SetPromiscuousMode(int promiscuous)                                    = 0;
     virtual int            SetSnapLen(int snaplen)                                                = 0;
     virtual int            SetTimeOut(int timeout)                                                = 0;
 };

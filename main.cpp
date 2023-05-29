@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 
+#include <boost/asio.hpp>
 #include <boost/program_options.hpp>
 
 #define PDC_WIDE
@@ -15,6 +16,7 @@
 #include "Includes/Logger.h"
 #include "Includes/MonitorDevice.h"
 #include "Includes/NetConversionFunctions.h"
+#include "Includes/Timer.h"
 #include "Includes/UserInterface/KeyboardController.h"
 #include "Includes/UserInterface/MainWindowController.h"
 #include "Includes/WirelessPSPPluginDevice.h"
@@ -150,6 +152,7 @@ int main(int argc, char* argv[])
         }
 
         if (lContinue) {
+            Timer                               lTimer{};
             std::shared_ptr<IPCapDevice>        lDevice{nullptr};
             std::shared_ptr<XLinkKaiConnection> lXLinkKaiConnection{std::make_shared<XLinkKaiConnection>()};
 
@@ -158,6 +161,8 @@ int main(int argc, char* argv[])
             // If we need more entry methods, make an actual state machine
             bool                                               lWaitEntry{true};
             std::chrono::time_point<std::chrono::system_clock> lWaitStart{std::chrono::seconds{0}};
+
+            WindowModel_Constants::ConnectionMethod lOldMethod = mWindowModel.mConnectionMethod;
 
             while (gRunning) {
                 if (lWindowController == nullptr || lWindowController->Process()) {
@@ -201,6 +206,7 @@ int main(int argc, char* argv[])
                                                                             mWindowModel.mAcknowledgeDataFrames,
                                                                             &mWindowModel.mCurrentlyConnectedNetwork);
                                         Logger::GetInstance().Log("Monitor Device created!", Logger::Level::INFO);
+                                        break;
                                     }
 				    break;
 #endif
@@ -210,11 +216,19 @@ int main(int argc, char* argv[])
                                     break;
                             }
 
+                            // Completely reset the xlink kai connection on a mode switch
+                            if (lOldMethod != mWindowModel.mConnectionMethod) {
+                                lXLinkKaiConnection->Close();
+                                lXLinkKaiConnection = nullptr;
+                                lXLinkKaiConnection = std::make_shared<XLinkKaiConnection>();
+                            }
+
+                            lOldMethod = mWindowModel.mConnectionMethod;
+
                             lXLinkKaiConnection->SetIncomingConnection(lDevice);
                             lXLinkKaiConnection->SetUseHostSSID(mWindowModel.mUseSSIDFromHost);
 
                             lDevice->SetConnector(lXLinkKaiConnection);
-                            lDevice->SetHosting(mWindowModel.mHosting);
 
                             // If we are auto discovering PSP/VITA networks add those to the filter list
                             if (mWindowModel.mAutoDiscoverPSPVitaNetworks) {
@@ -265,11 +279,11 @@ int main(int argc, char* argv[])
                         case WindowModel_Constants::Command::WaitForTime:
                             // Wait state, use this to add a delay without making the UI unresponsive.
                             if (lWaitEntry) {
-                                lWaitStart = std::chrono::system_clock::now();
+                                lTimer.Start(mWindowModel.mTimeToWait);
                                 lWaitEntry = false;
                             }
 
-                            if (std::chrono::system_clock::now() > lWaitStart + mWindowModel.mTimeToWait) {
+                            if (lTimer.IsTimedOut()) {
                                 mWindowModel.mCommand = mWindowModel.mCommandAfterWait;
                                 lWaitEntry            = true;
                             }
@@ -282,6 +296,9 @@ int main(int argc, char* argv[])
                             // Let's actually just remove the device, easier this way
                             lDevice = nullptr;
 
+                            // Remove the Connected To portion to make it easier for people to understand that the
+                            // network was disconnected.
+                            mWindowModel.mCurrentlyConnectedNetwork.clear();
                             mWindowModel.mEngineStatus = WindowModel_Constants::EngineStatus::Idle;
                             mWindowModel.mCommand      = WindowModel_Constants::Command::NoCommand;
                             break;
@@ -297,9 +314,6 @@ int main(int argc, char* argv[])
                             mWindowModel.mCommand = WindowModel_Constants::Command::NoCommand;
                             break;
                         case WindowModel_Constants::Command::SetHosting:
-                            if (lDevice != nullptr) {
-                                lDevice->SetHosting(mWindowModel.mHosting);
-                            }
                             if (lXLinkKaiConnection != nullptr) {
                                 lXLinkKaiConnection->SetHosting(mWindowModel.mHosting);
                             }

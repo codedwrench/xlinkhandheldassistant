@@ -1,6 +1,7 @@
 /* Copyright (c) 2021 [Rick de Bondt] - IConnectorMock.cpp
  * This file contains a mock for IConnector.
  **/
+#include <gmock/gmock.h>
 
 #include "IConnector.h"
 
@@ -13,6 +14,8 @@ public:
     MOCK_METHOD(bool, ReadNextData, ());
     MOCK_METHOD(bool, Send, (std::string_view aData));
     MOCK_METHOD(bool, Send, (std::string_view aCommand, std::string_view aData));
+    MOCK_METHOD(void, SendTitleId, (std::string_view aTitleId));
+    MOCK_METHOD(void, SendESSID, (std::string_view aESSID));
     MOCK_METHOD(void, SetIncomingConnection, (std::shared_ptr<IPCapDevice> aDevice));
     MOCK_METHOD(bool, StartReceiverThread, ());
 };
