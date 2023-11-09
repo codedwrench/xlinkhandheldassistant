@@ -1,21 +1,20 @@
 ---
 - name: Installing XLink Handheld Assistant build environment
   hosts: win
-  
+
   tasks:
-    - name: Grab variables  
-      include_vars:
+    - name: Grab variables
+      ansible.builtin.include_vars:
         file: vars.yml
 
     - name: Install Base
-      import_tasks: install_base.yml
-      when: install_base == True
-    
-    - name: Install Runner
-      import_tasks: install_runner.yml
-      when: install_runner == True
-    
-    - name: Install Development Environment
-      import_tasks: install_devenv.yml
-      when: install_devenv == True
+      ansible.builtin.import_tasks: install_base.yml
+      when: install_base
 
+    - name: Install Runner
+      ansible.builtin.import_tasks: install_runner.yml
+      when: install_runner
+
+    - name: Install Development Environment
+      ansible.builtin.import_tasks: install_devenv.yml
+      when: install_devenv

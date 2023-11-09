@@ -1,9 +1,9 @@
 ---
 - name: Install MSYS2, Due to github-actions being dumb this has to be on the root of the drive
-  win_chocolatey:
+  chocolatey.chocolatey.win_chocolatey:
     name: msys2
-    package_params: '/InstallDir="{{ drive }}:\msys64"'
+    package_params: /InstallDir="{{ drive }}:\msys64"
     state: present
 
 - name: Configure packages
-  import_tasks: configure_msys2_packages.yml
+  ansible.builtin.import_tasks: configure_msys2_packages.yml

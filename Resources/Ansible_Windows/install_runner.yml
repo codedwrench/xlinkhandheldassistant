@@ -2,66 +2,61 @@
 # NOTE: inspired by https://github.com/MonolithProjects/ansible-github_actions_runner
 
 - name: Grab the runner version
-  win_uri:
-    url: "https://api.github.com/repos/actions/runner/releases/latest"
+  ansible.windows.win_uri:
+    url: https://api.github.com/repos/actions/runner/releases/latest
     headers:
-      Content-Type: "application/json"
+      Content-Type: application/json
     method: GET
-    return_content: yes
+    return_content: true
   register: version_response
 
 - name: Set runner_version variable
-  set_fact:
+  ansible.builtin.set_fact:
     runner_version: "{{ version_response.json.tag_name | regex_replace('^v', '') }}"
 
-- name: "Check already installed"
-  win_stat:
-    path: '{{ drive }}:\{{ install_dir }}\{{ runner_folder }}\version.txt'
+- name: Check already installed
+  ansible.windows.win_stat:
+    path: "{{ drive }}:\\{{ install_dir }}\\{{ runner_folder }}\\version.txt"
   register: stat_version
 
-- name: "Check right version installed"
-  win_shell: 'Select-String -Path "{{ drive }}:\{{ install_dir }}\{{ runner_folder }}\version.txt" -Pattern "{{ runner_version }}"'
-  when: stat_version.stat.exists == True
+- name: Check right version installed
+  ansible.windows.win_shell: Select-String -Path "{{ drive }}:\{{ install_dir }}\{{ runner_folder }}\version.txt" -Pattern "{{ runner_version }}"
+  when: stat_version.stat.exists
   changed_when: false
   register: installed_packages
 
-- name: "Download the runner"
-  win_get_url:
-    dest: '{{ drive }}:\{{ install_dir }}\runner.zip'
-    url: "https://github.com/actions/runner/releases/download/v{{ runner_version }}/actions-runner-win-x64-{{ runner_version }}.zip"
-  when: (stat_version.stat.exists == False) or (installed_packages.stdout is defined and installed_packages.stdout == "")
+- name: Download the runner
+  ansible.windows.win_get_url:
+    dest: "{{ drive }}:\\{{ install_dir }}\\runner.zip"
+    url: https://github.com/actions/runner/releases/download/v{{ runner_version }}/actions-runner-win-x64-{{ runner_version }}.zip
+  when: (stat_version.stat.exists) or (installed_packages.stdout is defined and installed_packages.stdout == "")
   register: runner_download_result
 
 - name: Unzip Runner
-  win_unzip:
-    delete_archive: yes
-    src: '{{ drive }}:\{{ install_dir }}\runner.zip'
-    dest: '{{ drive }}:\{{ install_dir }}\{{ runner_folder }}'
+  community.windows.win_unzip:
+    delete_archive: true
+    src: "{{ drive }}:\\{{ install_dir }}\\runner.zip"
+    dest: "{{ drive }}:\\{{ install_dir }}\\{{ runner_folder }}"
   when: runner_download_result.msg is defined and runner_download_result.msg == "OK"
 
 - name: Register runner
-  win_shell: '{{ drive }}:\{{ install_dir }}\{{ runner_folder }}\config.cmd \
-    --url https://github.com/{{ runner_github_user }}/{{ runner_github_repo }} \
-    --token {{ runner_token }} \
-    --name {{ runner_name }} \
-    --labels "self-windows" \
-    --unattended \
-    --runasservice \
-    --windowslogonaccount {{ user }} \
-    --windowslogonpassword {{ runner_admin_password }}'
+  ansible.windows.win_shell: >
+    {{ drive }}:\{{ install_dir }}\{{ runner_folder }}\config.cmd \ --url https://github.com/{{ runner_github_user }}/{{ runner_github_repo }} --token
+    {{ runner_token }} --name {{ runner_name }} --labels "self-windows" --unattended --runasservice --windowslogonaccount {{ user }} --windowslogonpassword
+    {{ runner_admin_password }}
   args:
-    chdir: '{{ drive }}:\{{ install_dir }}\{{ runner_folder }}'
-  become: yes
+    chdir: "{{ drive }}:\\{{ install_dir }}\\{{ runner_folder }}"
+  become: true
   become_user: "{{ user }}"
-  become_method: runas
+  become_method: ansible.builtin.runas
   register: register_output
-  when: (stat_version.stat.exists == False) and (runner_download_result.msg is defined and runner_download_result.msg == "OK")
+  when: (stat_version.stat.exists) and (runner_download_result.msg is defined and runner_download_result.msg == "OK")
 
 - name: Set version, only if registration went through, so this script can be called multiple times
-  win_lineinfile:
-    path: '{{ drive }}:\{{ install_dir }}\{{ runner_folder }}\version.txt'
-    regex: '\d*\.\d*\.\d*'
+  community.windows.win_lineinfile:
+    path: "{{ drive }}:\\{{ install_dir }}\\{{ runner_folder }}\\version.txt"
+    regex: \d*\.\d*\.\d*
     line: "{{ runner_version }}"
     state: present
-    create: yes
-  when: (stat_version.stat.exists == True) or (register_output.rc is defined and register_output.rc == 0)
+    create: true
+  when: (stat_version.stat.exists) or (register_output.rc is defined and register_output.rc == 0)
