@@ -21,7 +21,7 @@
 
 - name: Check right version installed
   ansible.windows.win_shell: Select-String -Path "{{ drive }}:\{{ install_dir }}\{{ runner_folder }}\version.txt" -Pattern "{{ runner_version }}"
-  when: not stat_version.stat.exists
+  when: stat_version.stat.exists
   changed_when: false
   register: installed_packages
 
