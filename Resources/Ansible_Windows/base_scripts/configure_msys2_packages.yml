@@ -17,10 +17,10 @@
   loop: "{{ msys2_packages }}"
 
 - name: Setup MSYS2
-  ansible.windows.win_shell: >
-    {{ drive }}:\\msys64\\msys2_shell.cmd -mingw32 -defterm -no-start -c
-    'pacman -Syu --needed --noconfirm {{ msys2_packages | join(' ') }} &&
-     pacman -Qe | cut -d '' '' -f 1 > /{{ drive }}/msys64/packages.txt'
+  ansible.windows.win_shell: 
+    "{{ drive }}:\\msys64\\msys2_shell.cmd -mingw32 -defterm -no-start -c \
+    'pacman -Syu --needed --noconfirm {{ msys2_packages | join(' ') }} && \
+     pacman -Qe | cut -d '' '' -f 1 > /{{ drive }}/msys64/packages.txt'"
   when: should_setup_msys2 is defined
 
 - name: Get pacman installed list
