@@ -21,11 +21,11 @@
   when: boost_download_result.msg is defined and boost_download_result.msg == "OK"
 
 - name: Build Boost
-  ansible.windows.win_shell: >
-    '{{ drive }}:\msys64\msys2_shell.cmd -mingw32 -defterm -no-start -here -c
-    "cd tools/build && ./bootstrap.bat mingw && cp b2 ../.. && cd ../.. &&
-    ./tools/build/b2.exe --build-type=minimal --toolset=gcc variant=release link=static
-    runtime-link=static address-model=32 threading=multi --with-system --with-program_options stage"'
+  ansible.windows.win_shell:
+    "{{ drive }}:\\msys64\\msys2_shell.cmd -mingw32 -defterm -no-start -here -c \
+    'cd tools/build && ./bootstrap.bat mingw && cp b2 ../.. && cd ../.. && \
+    ./tools/build/b2.exe --build-type=minimal --toolset=gcc variant=release link=static \
+    runtime-link=static address-model=32 threading=multi --with-system --with-program_options stage'"
   args:
     chdir: "{{ drive }}:\\{{ install_dir }}\\boost"
   register: boost_build_output
