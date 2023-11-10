@@ -32,9 +32,9 @@ devenv_vscode_packages:
   ]
 
 npcapsdk_version: "1.13"
-npcap_version: "1.31"
-pdcurses_version: "4.3.6"
-boost_version: "1.82.0"
+npcap_version: "1.60"
+pdcurses_version: "4.3.7"
+boost_version: "1.83.0"
 
 install_base: true
 install_runner: false
@@ -49,5 +49,3 @@ runner_github_repo: "xlinkhandheldassistant"
 # Add these variables using command line, vaulting these would be smart
 runner_token: "{{ token }}"
 runner_admin_password: "{{ password }}"
-
-

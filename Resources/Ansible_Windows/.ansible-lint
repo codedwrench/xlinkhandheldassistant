@@ -1,0 +1,6 @@
+---
+# .ansible-lint
+
+profile: shared # min, basic, moderate,safety, shared, production
+enable_list:
+  - fqcn

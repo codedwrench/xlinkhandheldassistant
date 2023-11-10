@@ -3,27 +3,27 @@
 
 # Leaving the installer so it can be installed manually for testing the xlha executable afterwards.
 - name: Download NPCAP Installer
-  win_get_url:
-    dest: '{{ drive }}:\{{ install_dir}}\npcap.exe'
-    url: "https://npcap.com/dist/npcap-{{ npcap_version }}.exe"
+  ansible.windows.win_get_url:
+    dest: "{{ drive }}:\\{{ install_dir }}\\npcap.exe"
+    url: https://npcap.com/dist/npcap-{{ npcap_version }}.exe
   register: npcapsdk_download_result
 
 - name: Grab wpcap.dll, the installer does not allow for silent install so we are going to mess with it.
-  win_shell: '7z x npcap.exe -oNPcap -aoa'
+  ansible.windows.win_shell: 7z x npcap.exe -oNPcap -aoa
   args:
-    chdir: '{{ drive }}:\{{ install_dir }}'
+    chdir: "{{ drive }}:\\{{ install_dir }}"
   register: extract_npcap_result
   when: (npcapsdk_download_result.msg is defined) and (npcapsdk_download_result.msg == "OK")
 
 - name: Copy wpcap.dll
   win_copy:
-    dest: '{{ drive }}:\\{{ install_dir }}\npcapsdk\wpcap.dll'
+    dest: "{{ drive }}:\\\\{{ install_dir }}\\npcapsdk\\wpcap.dll"
     operation: file_copy
-    remote_src: yes
-    src: '{{ drive }}:\{{ install_dir }}\Npcap\wpcap.dll'
+    remote_src: true
+    src: "{{ drive }}:\\{{ install_dir }}\\Npcap\\wpcap.dll"
   when: (npcapsdk_download_result.msg is defined) and (npcapsdk_download_result.msg == "OK")
 
 - name: Remove NPCAP dir
   win_file:
-    path: '{{ drive }}:\{{ install_dir }}\NPcap'
+    path: "{{ drive }}:\\{{ install_dir }}\\NPcap"
     state: absent
