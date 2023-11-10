@@ -288,27 +288,47 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> lConverter;
     std::wstring                                           lProf = GenerateXML(lConverter.from_bytes(aConnection.ssid));
     Logger::GetInstance().Log("Generated XML: " + lConverter.to_bytes(lProf), Logger::Level::TRACE);
-    DWORD dwReason;
+    DWORD dwReason = 0;
     // set profile
     DWORD dwError = WlanSetProfile(mWifiHandle,
                                    &mGUID,
                                    0,  // no flags for the profile
                                    lProf.c_str(),
-                                   NULL,  // use the default ACL
-                                   TRUE,  // overwrite a profile if it already exists
-                                   NULL,  // reserved
+                                   nullptr,  // use the default ACL
+                                   TRUE,     // overwrite a profile if it already exists
+                                   nullptr,  // reserved
                                    &dwReason);
 
+    std::string lReasonString;
+
+    // Obtain reason
+    if (dwError != ERROR_SUCCESS) {
+        std::array<WCHAR, 256> lReasonWchar{};
+        if (WlanReasonCodeToString(dwReason, lReasonWchar.size(), lReasonWchar.data(), NULL) == ERROR_SUCCESS) {
+            std::wstring lReasonWString = std::wstring(lReasonWchar.data());
+            lReasonString               = lConverter.to_bytes(lReasonWString);
+        }
+    }
 
     switch (dwError) {
+        case ERROR_SUCCESS:
+            // Everything is good, no error
+            break;
         case ERROR_INVALID_PARAMETER:
-            Logger::GetInstance().Log("The profile has invalid params.", Logger::Level::ERROR);
+            Logger::GetInstance().Log(std::string("The profile has invalid params: ") + lReasonString,
+                                      Logger::Level::ERROR);
             break;
         case ERROR_BAD_PROFILE:
-            Logger::GetInstance().Log("The profile is bad.", Logger::Level::ERROR);
+            Logger::GetInstance().Log(std::string("The profile is bad: ") + lReasonString, Logger::Level::ERROR);
             break;
         case ERROR_ALREADY_EXISTS:
-            Logger::GetInstance().Log("The profile is already exists.", Logger::Level::ERROR);
+            Logger::GetInstance().Log(std::string("The profile is already exists: ") + lReasonString,
+                                      Logger::Level::ERROR);
+            break;
+        default:
+            Logger::GetInstance().Log(
+                std::string("Unknown error setting profile: ") + std::to_string(dwError) + " : " + lReasonString,
+                Logger::Level::ERROR);
     }
 
     WLAN_CONNECTION_PARAMETERS mParameters{};
@@ -317,7 +337,6 @@ bool WifiInterface::Connect(const IWifiInterface::WifiInformation& aConnection)
         mParameters.dwFlags = WLAN_CONNECTION_ADHOC_JOIN_ONLY;
     }
 
-    WLAN_REASON_CODE lReason;
     mParameters.wlanConnectionMode = wlan_connection_mode_profile;
     mParameters.strProfile         = L"PSPAdhocNetwork";
 
