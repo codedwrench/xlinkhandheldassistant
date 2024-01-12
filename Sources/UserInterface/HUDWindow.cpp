@@ -1,7 +1,7 @@
 /* Copyright (c) 2021 [Rick de Bondt] - HUDWindow.cpp */
-#include <algorithm>
-
 #include "UserInterface/HUDWindow.h"
+
+#include <algorithm>
 
 #include "UserInterface/Button.h"
 #include "UserInterface/CheckBox.h"
