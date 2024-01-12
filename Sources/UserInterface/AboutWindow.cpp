@@ -1,6 +1,7 @@
 /* Copyright (c) 2021 [Rick de Bondt] - AboutWindow.cpp */
-
 #include "UserInterface/AboutWindow.h"
+
+#include <algorithm>
 
 #include "UserInterface/Button.h"
 #include "UserInterface/DefaultElements.h"
