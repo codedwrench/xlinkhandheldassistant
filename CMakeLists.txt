@@ -90,6 +90,7 @@ if (WIN32)
 	# We have no GUI anyway!
 	add_definitions(-DNOGDI)
 
+	set(BOOST_ROOT "c:/boost" CACHE STRING "Where boost is located")
 	set(PCAP_ROOT_DIR "c:/npcapsdk" CACHE STRING "Where the npcap sdk is located")
 	set(PDCURSES_ROOT_DIR "c:/pdcurses/" CACHE STRING "Where the pdcurses directory is located")
 
