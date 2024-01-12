@@ -18,6 +18,12 @@
 #define UNICODE
 #endif
 
+#ifndef _MSC_VER
+#define STDCALL __attribute__((stdcall))
+#else
+#define STDCALL __stdcall
+#endif
+
 // available network flags
 #define WLAN_AVAILABLE_NETWORK_CONNECTED   0x00000001  // This network is currently connected
 #define WLAN_AVAILABLE_NETWORK_HAS_PROFILE 0x00000002  // There is a profile for this network
@@ -105,7 +111,7 @@ static std::wstring GenerateXML(const std::wstring& aSSID)
     return lFirst + aSSID + lSecond;
 }
 
-static void __attribute__((stdcall)) WlanCallback(WLAN_NOTIFICATION_DATA* aScanNotificationData, PVOID aContext)
+static void STDCALL WlanCallback(WLAN_NOTIFICATION_DATA* aScanNotificationData, PVOID aContext)
 {
     // Get the data from my struct. If it's null, nothing to do
     auto* lCallbackInfo = static_cast<WLAN_CALLBACK_INFO*>(aContext);

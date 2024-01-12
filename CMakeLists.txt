@@ -77,7 +77,7 @@ if (WIN32)
 			)
 	else()
 		# MSVC specific steps
-		list(APPEND PLATFORM_SPECIFIC_LIBRARIES "delayimp.lib")
+		list(APPEND PLATFORM_SPECIFIC_LIBRARIES "delayimp.lib" "winmm.lib")
 
 		# We need to load wpcap
 		add_link_options(/DELAYLOAD:wpcap.dll)
