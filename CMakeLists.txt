@@ -76,6 +76,9 @@ if (WIN32)
 			WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build_scripts
 			)
 	else()
+		# Define Windows 7 target
+		add_definitions(-D_WIN32_WINNT=0x0601)
+
 		# MSVC specific steps
 		list(APPEND PLATFORM_SPECIFIC_LIBRARIES "delayimp.lib" "winmm.lib")
 

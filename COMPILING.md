@@ -49,13 +49,13 @@ cmake .. -G "MinGW Makefiles" \
 
 If you are unfamiliar with ansible, information to use ansible at all can be found [here](https://docs.ansible.com/ansible/latest/user_guide/windows.html): 
 
-### Manually
-Releases on Windows are compiled using MSYS2. Visual Studio should also work, but it might need some small fixing.
+### Manually with MSYS2
+Releases on Windows are compiled using MSYS2 is the only method that will be supported.
 
 **Note:** Monitor mode is not available on Windows. NPcap does not support packet injection, see: https://github.com/nmap/npcap/issues/85 .
 
 The following programs are needed:
-- MSYS2 with a GCC version of atleast 10. (Visual Studio 2019 or higher is also possible) 
+- MSYS2 with a GCC version of atleast 10.
   The official releases use the MSYS2 Mingw32 Command-Line to compile XLHA. 
   Installed in MSYS2:
   - bison
@@ -64,11 +64,10 @@ The following programs are needed:
   - mingw-w64-i686-make
   - mingw-w64-i686-tools-git
 
-- CMake, if using Visual Studio 2019/2022, this is built into it.
+- CMake
 
 The following libraries are needed:
 - Boost 0.7.1 or higher https://www.boost.org/users/download/ (system and program_options required 
-  (Visual Studio also wants date-time for some reason)).  
   Commands used (from root of boost dir (in MSYS2 MINGW32)): 
   - cd tools/build
   - ./bootstrap.bat mingw
@@ -100,9 +99,8 @@ By default it looks in the following paths:
 - c:\pdcurses\
 - c:\npcapsdk\
 
-If that is all in order you should be able to compile the program using Visual Studio 2019 or higher, by opening the project using it and then pressing the compile button.
 
-For MSYS2 you should be able to run the following commands:
+Build using the following commands:
 ```batch
 mkdir build 
 cd build 
@@ -125,6 +123,38 @@ And lastly:
 ```
 mingw32-make -j`nproc`
 ``` 
+
+### Manually with Visual Studio 2019
+Support for compiling with Visual Studio will not be provided.
+
+**Note:** Monitor mode is not available on Windows. NPcap does not support packet injection, see: https://github.com/nmap/npcap/issues/85
+
+The following libraries are needed:
+- Boost 0.7.1 or higher https://www.boost.org/users/download/
+  - Open `x86 native tools command prompt`, navigate to boost folder
+  - Run bootstrap.bat
+  - Run `.\b2.exe --build-type=minimal --toolset=msvc address-model=32 variant=debug link=static runtime-link=static threading=multi --with-system --with-program_options stage`
+
+PDCurses:
+- PDCurses 4.3.7 library https://github.com/Bill-Gray/PDCursesMod/releases/tag/v4.3.7
+  - Go to pdcurses/wincon folder in `x86 native tools command prompt`
+  - Edit `Makefile.vc` and add `/MTd` to CFLAGS on line 32
+  - Run `nmake -f Makefile.vc WIDE=Y CHTYPE_32=Y DEBUG=Y`
+
+- NPcap and NPcap SDK
+  - https://nmap.org/npcap/dist/npcap-1.60.exe Run the installer
+  - https://nmap.org/npcap/dist/npcap-sdk-1.06.zip
+  
+- Compiling XLHA
+  - Launch Visual Studio 2019
+  - Open the xlinkhandheldassistant folder using the `Open a local folder' option
+  - In the `Solution Explorer` pane right click `CMakeLists.txt` and select `CMake Settings`
+  - Select the `x86-Debug` configuration
+  - Under `CMake variables` set the paths for `BOOST_ROOT`, `PCAP_ROOT_DIR` and `PDCURSES_ROOT_DIR`
+  - Make sure `BUILD_STATIC` and `BUILD_X32` are checked
+  - From the top toolbar select `Project` then `CMake Cache` then `Delete Cache`
+  - From the top toolbar select `Project` then `Generate Cache`
+  - From the top toolbar select `Build` then `Build All`
 
 ## MacOS
 For MacOS you need Brew and XCode.
