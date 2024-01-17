@@ -1,0 +1,42 @@
+﻿{
+  "configurations": [
+    {
+      "name": "x86-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "msvc_x86_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "variables": [
+        {
+          "name": "PCAP_ROOT_DIR",
+          "value": "../npcapsdk",
+          "type": "STRING"
+        },
+        {
+          "name": "BOOST_ROOT",
+          "value": "../boost",
+          "type": "STRING"
+        },
+        {
+          "name": "PDCURSES_ROOT_DIR",
+          "value": "../pdcurses/",
+          "type": "STRING"
+        },
+        {
+          "name": "BUILD_X32",
+          "value": "True",
+          "type": "BOOL"
+        },
+        {
+          "name": "BUILD_STATIC",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
+    }
+  ]
+}
